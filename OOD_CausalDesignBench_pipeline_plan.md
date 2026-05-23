@@ -193,6 +193,28 @@ benchmark/
 
 这样可以避免答辩时被质疑“你只是要求 Agent 猜原论文答案”。评分标准是“是否满足因果识别的必要条件”，不是“是否复刻论文”。
 
+### 4.5 半自动构建策略
+
+人工不应该逐篇从头写任务包。推荐使用强模型生成初稿，再由人工做小规模审计。当前阶段只规划流程，不展开具体 prompt；prompt library 可以作为后续单独任务设计。
+
+建议把每篇论文的 case 构建拆成 5 个阶段：
+
+| 阶段 | 产物 | 目的 |
+|---|---|---|
+| Source fact extraction | `source_facts.md` | 从论文中抽取可追溯事实，避免模型凭记忆生成 |
+| Gold reference drafting | `gold_reference.md` | 形成只给评审使用的隐藏答案和评分依据 |
+| Anonymous task drafting | Level 1 / Level 2 / Level 3 task files | 构造给 Agent 的匿名任务输入 |
+| Variant drafting | `perturbed_variant.md` / `no_solution_variant.md` | 构造识别条件扰动和无强识别任务 |
+| Leakage and validity audit | `audit.md` | 检查是否泄漏原论文、是否暗含答案、任务是否仍可评测 |
+
+高层原则：
+
+- **先抽事实，再写 gold reference**：避免让模型凭论文名或预训练记忆补全细节。
+- **先 gold reference，再匿名任务**：先明确评分依据，再决定哪些信息给 Agent。
+- **生成和审计分离**：最好用不同模型或不同会话分别生成和审计。
+- **人工只审关键点**：重点检查 linchpin detail、匿名化泄漏、Level 2 信息充分性、Level 3 是否泄漏解法、variant 是否只改变一个关键条件。
+- **prompt 后置设计**：等 case schema 稳定后，再为每个阶段写正式 prompt 模板。
+
 ## 5. 信息梯度任务设计
 
 每个 case 至少构造 3 个信息层级。主实验使用 Level 2 和 Level 3，Level 1 作为 lower bound。
