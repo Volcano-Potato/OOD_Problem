@@ -1,0 +1,70 @@
+visibility: evaluator-only
+do_not_include_in_agent_context: true
+
+case_id: C000
+anonymous_short_name: template_case
+paper_key: replace_with_internal_source_key
+source_pdf: downloads/deepscientist_econ_business_experiment_papers/replace_with_source.pdf
+
+taxonomy:
+  domain: replace_with_domain_enum
+  subdomain: replace_with_subdomain
+  design_family: replace_with_design_family_enum
+  variation_source: replace_with_variation_source_enum
+  assignment_level: replace_with_unit_level_enum
+  outcome_level: replace_with_unit_level_enum
+  unit_of_observation: replace_with_unit_level_enum
+  key_failure_mode: replace_with_key_failure_mode_enum
+  secondary_failure_modes: []
+  difficulty: replace_with_easy_medium_or_hard
+  leakage_risk: replace_with_low_medium_or_high
+
+selection:
+  selected_for_pilot: false
+  selected_for_main: false
+  has_replication_data: unknown
+
+variants:
+  level1:
+    file: agent_task_level1.md
+    visibility: agent-facing
+    status: draft
+  level2:
+    file: agent_task_level2.md
+    visibility: agent-facing
+    status: draft
+  level3:
+    file: agent_task_level3.md
+    visibility: agent-facing
+    status: draft
+  perturbed:
+    file: agent_task_perturbed.md
+    visibility: agent-facing
+    status: draft
+  no_solution:
+    file: agent_task_no_solution.md
+    visibility: agent-facing
+    status: draft
+
+agent_context_allowlist:
+  - agent_task_level1.md
+  - agent_task_level2.md
+  - agent_task_level3.md
+  - agent_task_perturbed.md
+  - agent_task_no_solution.md
+
+agent_context_blocklist:
+  - metadata.yaml
+  - source_packet.md
+  - source_facts.md
+  - gold_reference.md
+  - perturbed_variant.md
+  - no_solution_variant.md
+  - audit.md
+
+audit:
+  leakage_audit_status: not_started
+  gold_reference_audit_status: not_started
+  variant_consistency_status: not_started
+  last_reviewed_by: null
+  last_reviewed_date: null

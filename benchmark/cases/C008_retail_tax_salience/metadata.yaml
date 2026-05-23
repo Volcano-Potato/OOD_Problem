@@ -1,0 +1,72 @@
+visibility: evaluator-only
+do_not_include_in_agent_context: true
+
+case_id: C008
+anonymous_short_name: retail_tax_salience
+paper_key: chetty_looney_kroft_2009_tax_salience
+source_pdf: downloads/deepscientist_econ_business_experiment_papers/Chetty_Looney_Kroft_2009_Salience_and_Taxation_Theory_and_Evidence.pdf
+
+taxonomy:
+  domain: public_econ
+  subdomain: tax_salience
+  design_family: DID
+  variation_source: policy_timing
+  assignment_level: product
+  outcome_level: transaction
+  unit_of_observation: panel_unit_time
+  key_failure_mode: timing_endogeneity
+  secondary_failure_modes:
+    - inference_mismatch
+    - spillover
+  difficulty: medium
+  leakage_risk: medium
+
+selection:
+  selected_for_pilot: true
+  selected_for_main: true
+  has_replication_data: "yes"
+
+variants:
+  level1:
+    file: agent_task_level1.md
+    visibility: agent-facing
+    status: not_started
+  level2:
+    file: agent_task_level2.md
+    visibility: agent-facing
+    status: not_started
+  level3:
+    file: agent_task_level3.md
+    visibility: agent-facing
+    status: not_started
+  perturbed:
+    file: agent_task_perturbed.md
+    visibility: agent-facing
+    status: not_started
+  no_solution:
+    file: agent_task_no_solution.md
+    visibility: agent-facing
+    status: not_started
+
+agent_context_allowlist:
+  - agent_task_level1.md
+  - agent_task_level2.md
+  - agent_task_level3.md
+  - agent_task_perturbed.md
+  - agent_task_no_solution.md
+
+agent_context_blocklist:
+  - metadata.yaml
+  - source_packet.md
+  - source_facts.md
+  - gold_reference.md
+  - perturbed_variant.md
+  - no_solution_variant.md
+  - audit.md
+
+audit:
+  leakage_audit_status: not_started
+  gold_reference_audit_status: not_started
+  variant_consistency_status: not_started
+  last_reviewed_by: null
+  last_reviewed_date: null

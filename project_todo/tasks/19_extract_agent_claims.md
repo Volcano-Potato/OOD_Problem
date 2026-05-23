@@ -1,0 +1,79 @@
+# Task 19: 从 Agent 输出抽取 Claim
+
+## 目标
+
+把长篇 Agent 输出转成 claim-level 标注表，减少人工标注负担。
+
+## 输入
+
+- `outputs/raw_agent_logs/main/`
+- Agent 的 Claim-Evidence Table
+
+## 需要做什么
+
+1. 为每个 run 抽取关键 claim。
+2. 拆分复合 claim。
+3. 保留 Agent 原文片段。
+4. 记录 cited evidence。
+5. 标记 claim_type。
+6. 输出待标注 CSV。
+
+## 具体执行方法
+
+1. 优先使用 Agent 自己输出的 Claim-Evidence Table。
+2. 如果表格缺失，人工或强模型从正文中抽取 claim，但必须保留原文 quote。
+3. 一个 claim 只能表达一个判断；复合句要拆开。
+4. 因果、机制、识别、假设、模型、robustness、限制性表述都要抽。
+5. 不要在本任务判断对错；只做结构化抽取。
+6. 每个 claim_id 使用稳定格式：`<run_id>_CL001`。
+
+## 拆分示例
+
+原句：
+
+```text
+Because treatment is random, OLS with controls identifies the causal effect and can test the mechanism.
+```
+
+拆成：
+
+```text
+CL001: Treatment is random.
+CL002: OLS with controls identifies the causal effect.
+CL003: The design can test the mechanism.
+```
+
+## 产出
+
+- `outputs/parsed_claims/claims_to_annotate.csv`
+
+## 推荐字段
+
+```csv
+case_id,variant_id,level,run_id,claim_id,claim_type,agent_claim,cited_evidence,verbatim_quote,notes
+```
+
+## Claim types
+
+- research_question
+- treatment_outcome_unit
+- identification_strategy
+- assumption
+- statistical_model
+- robustness_check
+- mechanism
+- limitation
+- additional_data
+
+## 验收标准
+
+- [ ] 每个 run 至少抽取 5 个关键 claim，除非输出极短且说明原因。
+- [ ] 所有因果识别和机制 claim 必须被抽取。
+- [ ] claim_id 唯一且稳定。
+- [ ] 不在本任务判断 claim 对错，只抽取。
+
+## 常见风险
+
+- 只抽取 conclusion，漏掉 assumptions 和 model claims。
+- 一个 claim 包含多个判断，导致后续无法标注。
+- 没有保留原文，人工复查困难。

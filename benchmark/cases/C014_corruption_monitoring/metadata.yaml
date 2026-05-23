@@ -1,0 +1,72 @@
+visibility: evaluator-only
+do_not_include_in_agent_context: true
+
+case_id: C014
+anonymous_short_name: corruption_monitoring
+paper_key: olken_2007_corruption_monitoring
+source_pdf: downloads/deepscientist_econ_business_experiment_papers/Olken_2007_Monitoring_Corruption_Evidence_from_a_Field_Experiment_in_Indonesia.pdf
+
+taxonomy:
+  domain: political_econ
+  subdomain: public_project_monitoring
+  design_family: field_experiment
+  variation_source: researcher_randomization
+  assignment_level: village
+  outcome_level: village
+  unit_of_observation: village
+  key_failure_mode: measurement_error
+  secondary_failure_modes:
+    - spillover
+    - inference_mismatch
+  difficulty: medium
+  leakage_risk: medium
+
+selection:
+  selected_for_pilot: true
+  selected_for_main: true
+  has_replication_data: "no"
+
+variants:
+  level1:
+    file: agent_task_level1.md
+    visibility: agent-facing
+    status: not_started
+  level2:
+    file: agent_task_level2.md
+    visibility: agent-facing
+    status: not_started
+  level3:
+    file: agent_task_level3.md
+    visibility: agent-facing
+    status: not_started
+  perturbed:
+    file: agent_task_perturbed.md
+    visibility: agent-facing
+    status: not_started
+  no_solution:
+    file: agent_task_no_solution.md
+    visibility: agent-facing
+    status: not_started
+
+agent_context_allowlist:
+  - agent_task_level1.md
+  - agent_task_level2.md
+  - agent_task_level3.md
+  - agent_task_perturbed.md
+  - agent_task_no_solution.md
+
+agent_context_blocklist:
+  - metadata.yaml
+  - source_packet.md
+  - source_facts.md
+  - gold_reference.md
+  - perturbed_variant.md
+  - no_solution_variant.md
+  - audit.md
+
+audit:
+  leakage_audit_status: not_started
+  gold_reference_audit_status: not_started
+  variant_consistency_status: not_started
+  last_reviewed_by: null
+  last_reviewed_date: null
