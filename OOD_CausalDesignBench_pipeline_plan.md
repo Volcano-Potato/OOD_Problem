@@ -2,7 +2,7 @@
 
 ## 1. 项目定位
 
-本项目选择 `revised_final_project_openclaw_deepscientist-3.pdf` 中的 **方向 B：智能体框架缺陷诊断（Research 赛道）**，但把原要求中的“科研报告生成中的引用与结论不一致”扩展到一个更贴合商科 OOD 的版本：
+本项目的主目标是构建一个能真实诊断科研 Agent OOD 弱点的小型评测基准。benchmark 的设计、规模和结论口径优先服务于研究问题本身，而不是被任何最低交付清单限制：
 
 > 测试基于 OpenClaw / DeepScientist 搭建的科研 Agent 在泛商科、经济学、营销学研究设计任务中，是否会生成没有被输入材料充分支持的因果识别 claim、实验设计 claim、机制解释 claim 或稳健性 claim。
 
@@ -14,10 +14,10 @@
 4. 当任务信息逐步充分时，Agent 的错误率是否下降？
 5. 当关键识别条件被扰动或移除时，Agent 是否会调整设计，还是机械套用模板？
 
-这使项目同时满足课程要求和你的 OOD 研究目标：
+因此，本计划按研究 benchmark 的标准设计：
 
-- 课程要求：至少 5 个测试样例、输入材料、Agent 输出、人工判断、错误类型、错误率、2 个失败案例、1 个 QQ/WeChat 完整交互。
-- 你的目标：诊断科研 Agent 从 AI / AI for Science 迁移到泛商科研究设计时的能力边界。
+- 主目标：诊断科研 Agent 从 AI / AI for Science 迁移到泛商科研究设计时的能力边界。
+- 次目标：保留足够日志、标注表、失败案例和可复现实验脚本，使结论可以被复查、复跑和展示。
 
 ## 2. Benchmark 名称与核心定义
 
@@ -40,18 +40,18 @@
 | 识别策略设计 | 提出能支撑因果 claim 的 RCT / DID / IV / RDD / event study / audit design | 策略与数据结构不匹配 |
 | 证据边界意识 | 知道哪些结论不能由现有材料推出 | 过度声称机制、外推性或因果性 |
 
-### 2.2 与课程方向 B 的对应关系
+### 2.2 与错误类型的关系
 
-课程方向 B 的原始错误类型可以迁移为以下版本：
+本 benchmark 采用四类基础错误标签，并把它们升级为“设计 claim 与 evidence 是否一致”的诊断标签：
 
-| 课程错误类型 | 在本项目中的定义 |
+| 错误类型 | 在本项目中的定义 |
 |---|---|
 | Unsupported Claim | Agent 声称某设计可以识别因果效应或机制，但输入材料中没有足够条件支持 |
 | Overclaim | 材料只支持描述性、相关性或平均处理效应，Agent 写成强因果、机制分解或可推广结论 |
 | Mis-citation | Agent 引用某个输入事实作为设计依据，但该事实不能支持具体识别策略 |
 | Contradiction | Agent 的设计或结论与输入约束冲突，例如任务说明处理不是随机的，Agent 却当作 RCT |
 
-关键改动：这里的“引用与结论不一致”不只看 bibliographic citation，也看 **Agent 输出中的设计 claim 与输入 evidence 是否一致**。这更适合实验设计能力诊断。
+关键改动：这里的“引用与结论不一致”不只看 bibliographic citation，也看 **Agent 输出中的设计 claim 与输入 evidence 是否一致**。这使评测可以覆盖实验设计、因果识别和机制解释，而不局限在文献引用准确性。
 
 ## 3. 总体 Pipeline
 
@@ -77,7 +77,7 @@
 统计错误率与设计能力分数
         |
         v
-选择成功案例、失败案例、边界案例用于报告和现场展示
+形成错误归因、能力边界结论和后续改进建议
 ```
 
 ## 4. 数据与案例构建
@@ -92,9 +92,17 @@
 
 这些材料已经覆盖经济学、营销学、行为经济学、公共经济学中的经典 field experiment / lab experiment，并且多数 PDF 已经下载到本地，适合构建可复现测试包。
 
-### 4.2 建议主测试 5 个 case
+### 4.2 建议 case pool
 
-建议先做 5 个主 case，满足课程最低要求；如果时间允许，再扩展到 8-10 个。
+不要把 case 数量固定在 5 个。5 个只能做演示，不能支撑稳定的错误模式判断。建议把案例分成三层：
+
+| 层级 | 数量 | 用途 |
+|---|---:|---|
+| Pilot set | 5 个 | 快速跑通 pipeline、发现 prompt 和标注问题 |
+| Main set | 10 个 | 主结果，覆盖营销、行为经济学、发展经济学、公共经济学、劳动经济学 |
+| Stress set | 15-20 个 | 如果时间允许，用于检验错误模式是否跨领域稳定 |
+
+第一轮建议从下面 5 个高诊断价值 case 开始，但它们不是最终上限：
 
 | Case | 领域 | 真实论文作为隐藏 gold reference | 要测的核心弱点 |
 |---|---|---|---|
@@ -104,12 +112,18 @@
 | C4 | 税收显著性 / 消费行为 | Chetty, Looney & Kroft (2009) | 是否从简单前后比较升级到 treated goods × control goods × store × week 的差分结构 |
 | C5 | 农户采纳 / present bias | Duflo, Kremer & Robinson (2011) | 是否能把机制从“价格水平”转向“购买时点、承诺和 present bias” |
 
-备选 case：
+扩展 case：
 
 - Niederle & Vesterlund (2007)：竞争偏好、性别差异、风险偏好和自信心的区分。
 - Cohen & Dupas (2010) / Ashraf et al. (2010)：价格、筛选效应和 sunk-cost effect 的区分。
 - Olken (2007)：不能用可能被操纵的官方账本作为唯一 outcome。
 - Bertrand & Mullainathan (2004)：适合 sanity check，但论文太有名，Agent 可能从预训练中记住。
+- Ashraf, Berry & Shapiro (2010)：适合价格、筛选效应和 sunk-cost effect 的机制区分。
+- Fryer, Levitt, List & Sadoff (2022)：适合测试 Agent 是否能设计经济等价但心理框架不同的处理臂。
+- Olken (2007)：适合测试 Agent 是否意识到 outcome measurement 也可能内生或被操纵。
+- Goldstein, Cialdini & Griskevicius (2008)：适合测试社会规范 reference group 的精细化设计。
+
+最终建议至少完成 10 个 main-set case。后续任何展示或汇报都可以从 main set 中裁剪，不要让展示需求反过来限制 benchmark。
 
 ### 4.3 每个 case 的文件结构
 
@@ -171,7 +185,7 @@ benchmark/
 - 如果遗漏该细节，识别会如何失败：
 
 ## 可接受替代设计
-- 允许 Agent 不复现原论文，但必须满足哪些最低识别条件：
+- 允许 Agent 不复现原论文，但必须满足哪些必要识别条件：
 
 ## 不可接受设计
 - 哪些看似合理但实际不支持因果 claim：
@@ -306,7 +320,7 @@ benchmark/
 [E4] 已知威胁：...
 ```
 
-这会让后续“结论与证据一致性”标注更容易，也更贴合课程方向 B。
+这会让后续“结论与证据一致性”标注更容易，也更适合做 claim-level 诊断。
 
 ## 7. Agent 运行设置
 
@@ -334,27 +348,35 @@ benchmark/
 
 ### 7.3 运行矩阵
 
-最低版本：
+运行矩阵应服务于能力曲线和失败归因，而不是只凑样例数。推荐分三档：
 
 | 维度 | 设置 |
 |---|---|
-| Cases | 5 个 |
-| 信息层级 | Level 2 + Level 3 |
-| 变体 | 至少 1 个 Perturbed 或 No-solution |
-| 每个设置重复 | 1 次 |
-| 总任务数 | 11 个左右 |
+| Pilot run | 5 cases × Level 2 × 1 repeat |
+| 目的 | 检查任务包是否清楚、Agent 输出格式是否可标注 |
+| 预计输出 | 5 个 Agent outputs |
 
-推荐版本：
+主实验：
 
 | 维度 | 设置 |
 |---|---|
-| Cases | 5 个 |
+| Cases | 10 个 |
 | 信息层级 | Level 1 + Level 2 + Level 3 |
-| 变体 | 每个 case 1 个 Perturbed，另加 1 个 No-solution |
-| 每个设置重复 | 2 次 |
-| 总任务数 | 40 个左右 |
+| 变体 | 每个 case 至少 1 个 Perturbed variant |
+| 每个设置重复 | 1 次 |
+| 预计输出 | 40 个 Agent outputs |
 
-如果时间紧，优先完成最低版本，并确保标注和失败分析扎实。
+稳健性实验：
+
+| 维度 | 设置 |
+|---|---|
+| Cases | 从 main set 中选 5 个高争议 case |
+| 信息层级 | Level 2 + Level 3 |
+| 变体 | No-solution / adversarial constraint / open-book retrieval |
+| 每个设置重复 | 2-3 次 |
+| 目的 | 测试随机性、检索污染、无解识别诚实性 |
+
+如果时间紧，优先保留 main set 的 10 个 case 和 Level 2 / Level 3；可以牺牲重复次数，但不要把 benchmark 压缩成只看 5 个案例的演示。
 
 ## 8. 人工标注方案
 
@@ -384,7 +406,7 @@ Explanation: exposure 不是随机的，且与购买意向相关。
 
 | 字段 | 含义 |
 |---|---|
-| case_id | C1-C5 |
+| case_id | C1-C20 |
 | variant_id | level1 / level2 / level3 / perturbed / no_solution |
 | run_id | 第几次运行 |
 | claim_id | Agent 输出中的 claim 编号 |
@@ -411,26 +433,28 @@ Explanation: exposure 不是随机的，且与购买意向相关。
 | 局限性与补充数据 | 10 | 是否知道哪些结论不能下 |
 | OOD 适应性 | 5 | 在反事实变体中是否调整设计 |
 
-### 8.4 最好有第二标注人
+### 8.4 标注一致性
 
-如果可以，找 1 名同学对部分 claim 复标：
+如果要把它做成可信的研究型 benchmark，建议加入第二标注人，而不是只做单人判断：
 
 - 至少复标 20%-30% claim。
 - 统计 simple agreement。
 - 如果两人有分歧，进行 adjudication。
 
-这不是课程硬要求，但能提高答辩可信度。
+这一步的价值是降低“你主观觉得 Agent 错了”的质疑。即使不计算 Cohen's kappa，也至少应该报告复标比例和一致率。
 
 ## 9. 指标统计
 
-### 9.1 课程要求指标
+### 9.1 主指标
 
-至少报告：
+主指标应直接回答“Agent 的设计 claim 是否被 evidence 支持”：
 
 ```text
-Citation / Evidence Inconsistency Rate
+Design-Evidence Inconsistency Rate
 = (Unsupported Claim + Overclaim + Mis-citation + Contradiction) / Total Claims
 ```
+
+这个指标比 citation inconsistency rate 更广：只要 Agent 的因果识别、机制解释或模型建议没有被输入材料支持，就计入不一致。
 
 ### 9.2 本项目核心指标
 
@@ -448,15 +472,16 @@ Citation / Evidence Inconsistency Rate
 
 ### 9.3 输出图表
 
-项目报告中建议放 3 张图：
+研究报告中建议放 4 张图：
 
 1. **不同信息层级下的平均设计分**：Level 1 / Level 2 / Level 3。
 2. **错误类型分布柱状图**：Unsupported、Overclaim、Mis-citation、Contradiction。
-3. **每个 case 的 critical design omission 是否发生**：5 个 case 的热力图。
+3. **每个 case 的 critical design omission 是否发生**：case × linchpin detail 热力图。
+4. **Perturbed variant 前后设计变化图**：看 Agent 是否真的对关键识别条件敏感。
 
 ## 10. 失败案例选择
 
-至少准备 2 个失败案例，用于报告和展示。
+失败案例不是为了凑数量，而是为了做错误机制归因。建议最终选择 3-4 个最能代表系统性弱点的失败案例。
 
 ### 失败案例 A：内生 exposure 被当成随机处理
 
@@ -499,7 +524,7 @@ Citation / Evidence Inconsistency Rate
 
 ### 边界案例：无解任务
 
-适合现场展示：
+适合报告展示：
 
 - 给 Agent 一个只有横截面问卷和自报购买意向的数据。
 - 任务要求评估促销是否因果提升购买。
@@ -567,13 +592,12 @@ results/failure_cases.md
 - 人工解释
 - 所属错误类型
 
-## 12. 报告结构
+## 12. 研究报告结构
 
-最终项目报告建议 6-10 页：
+建议主报告结构如下：
 
 1. **题目与方向**
    - 题目：OOD-CausalDesignBench: 科研 Agent 的商科 OOD 因果研究设计能力诊断
-   - 方向：Research 赛道，智能体框架缺陷诊断
    - 基础系统：OpenClaw / DeepScientist
 
 2. **问题定义**
@@ -588,11 +612,10 @@ results/failure_cases.md
    - Perturbed / No-solution 变体。
 
 4. **实验设置**
-   - 5 个 case。
+   - Pilot set、main set 和 stress set。
    - Agent prompt。
    - 运行方式。
    - 日志保存。
-   - QQ/WeChat 真实交互案例。
 
 5. **标注与指标**
    - claim-level 标注表。
@@ -606,7 +629,7 @@ results/failure_cases.md
    - case-level 分析。
 
 7. **失败案例**
-   - 至少 2 个具体输出片段。
+   - 3-4 个具体输出片段。
    - 展示输入材料、Agent claim、人工判断、错误原因。
 
 8. **改进建议**
@@ -620,27 +643,27 @@ results/failure_cases.md
    - 人工标注存在主观性。
    - 商科 OOD 只覆盖因果设计类任务，不代表全部商科科研能力。
 
-## 13. 现场展示设计
+## 13. 展示与交付裁剪
 
-现场 10 分钟建议流程：
+如果后续需要做课堂展示、组会汇报或 poster，可以从完整 benchmark 中裁剪，不应该反向决定实验设计。建议 10 分钟展示只呈现主结果的一个切片：
 
 | 时间 | 内容 |
 |---:|---|
-| 1 min | 说明选择 Research 赛道和商科 OOD 问题 |
-| 2 min | 展示 benchmark pipeline 和 5 个 case |
-| 2 min | 展示 QQ/WeChat 中一个完整任务交互 |
-| 2 min | 展示一个成功案例和一个失败案例 |
+| 1 min | 说明商科 OOD 因果设计为什么是科研 Agent 的压力测试 |
+| 2 min | 展示 benchmark pipeline 和 case pool |
+| 2 min | 展示一个完整 Agent 运行记录 |
+| 2 min | 展示一个成功案例和两个失败案例 |
 | 2 min | 展示错误率、错误类型分布和信息梯度结果 |
 | 1 min | 总结 Agent 弱点与改进建议 |
 
-现场必须准备：
+展示材料建议包括：
 
-- QQ/WeChat 真实交互截图。
 - Agent 后台运行截图。
-- 至少 5 个输入/输出样例 PDF 或 markdown。
+- 完整 prompt 和输出日志。
 - 标注表截图。
 - 统计脚本运行截图。
-- 一个失败案例的逐行解释。
+- 失败案例的逐行解释。
+- 如果某个具体交付场景要求聊天界面交互，再从 main set 中抽一个 case 补充截图；它不是主实验设置。
 
 如果现场系统不稳定，要准备录屏和日志，避免展示风险。
 
@@ -670,48 +693,62 @@ results/failure_cases.md
 
 > 主实验采用闭卷设置，只允许使用给定匿名材料，避免检索污染。开卷检索可以作为扩展实验，但不作为主结论依据。
 
-## 15. 最小可行版本
+## 15. 研究优先版本
 
-如果时间有限，按这个版本执行：
+如果时间有限，也不要只围绕最低交付做。建议采用一个压缩但仍然研究有效的版本：
 
-1. 选 5 个 case：消费信贷、慈善捐赠、在线广告、税收显著性、农户肥料采纳。
-2. 每个 case 只做 Level 2 和 Level 3。
-3. 额外做 1 个 no-solution 边界任务。
-4. 每个任务运行 1 次，共 11 个输出。
-5. 手工抽取每个输出 5-8 个关键 claim。
-6. 标注 60-80 个 claim。
-7. 统计一个主错误率和 3 个辅助指标。
-8. 展示 2 个失败案例、1 个 QQ/WeChat 完整交互、1 张错误类型图。
+1. 选 10 个 case：先用 5 个高诊断 case，再加入 5 个扩展 case。
+2. 每个 case 做 Level 2 和 Level 3。
+3. 每个 case 至少做 1 个 perturbed variant。
+4. 额外做 2 个 no-solution 边界任务。
+5. 每个任务运行 1 次，共约 32 个输出。
+6. 手工抽取每个输出 5-8 个关键 claim。
+7. 标注约 160-250 个 claim。
+8. 统计主错误率、critical omission rate、mechanism confounding rate、no-solution honesty rate。
+9. 展示 3-4 个失败案例、1 张信息梯度图、1 张错误类型图、1 张 case × linchpin 热力图。
 
-这个版本已经满足课程 Research 赛道最低要求，并且足以支撑“科研 Agent 在商科 OOD 因果设计任务中存在系统性 unsupported design claims”的结论。
+这个版本的规模仍然可控，但比小样本演示更能支撑“科研 Agent 在商科 OOD 因果设计任务中存在系统性 unsupported design claims”的结论。
 
 ## 16. 推荐执行时间表
 
 | 阶段 | 时间 | 产物 |
 |---|---|---|
-| Day 1 | 构建 5 个 gold reference 和 Level 2 / Level 3 任务包 | `benchmark/cases/` |
-| Day 2 | 配置 Agent prompt，完成本地和 QQ/WeChat 跑通 | raw logs、截图 |
-| Day 3 | 完成所有 case 运行，整理输出 | `outputs/raw_agent_logs/` |
-| Day 4 | claim 抽取和人工标注 | `annotations/annotation_sheet.csv` |
-| Day 5 | 跑统计脚本，生成图表和失败案例 | `results/` |
-| Day 6 | 写项目报告和证据材料 PDF | report、evidence PDF |
-| Day 7 | 彩排现场展示，准备 poster | slides / poster / demo script |
+| Day 1 | 构建 5 个 pilot gold reference 和 Level 2 任务包 | `benchmark/cases/` |
+| Day 2 | 跑 pilot，修正 prompt、任务包和标注规范 | raw logs、annotation guide |
+| Day 3-4 | 扩展到 10 个 main-set case，并构造 Level 3 和 perturbed variants | 完整 case package |
+| Day 5 | 完成 main-set Agent 运行，整理输出 | `outputs/raw_agent_logs/` |
+| Day 6 | claim 抽取和人工标注 | `annotations/annotation_sheet.csv` |
+| Day 7 | 第二标注人复标、分歧裁决 | `annotations/adjudicated_labels.csv` |
+| Day 8 | 跑统计脚本，生成图表和失败案例 | `results/` |
+| Day 9 | 写研究报告和可复现说明 | report、README |
+| Day 10 | 裁剪展示材料或 poster | slides / poster / demo script |
 
-## 17. 最终提交清单
+## 17. 仓库交付清单
 
 ```text
-GroupXX_LLM_Project_Research.zip
-  project_report.pdf
-  evidence_materials.pdf
-  code_and_data/
-    README.md
-    benchmark/
+OOD_Problem/
+  README.md
+  OOD_CausalDesignBench_pipeline_plan.md
+  benchmark/
+    cases/
     prompts/
-    outputs/
-    annotations/
-    scripts/
-    results/
-    configs/
+  outputs/
+    raw_agent_logs/
+    parsed_claims/
+  annotations/
+    annotation_sheet.csv
+    adjudicated_labels.csv
+    annotation_guide.md
+  scripts/
+    compute_metrics.py
+    summarize_failures.py
+  results/
+    metrics_summary.csv
+    figures/
+    failure_cases.md
+  report/
+    research_report.md
+    course_submission_notes.md
 ```
 
 `README.md` 至少说明：
@@ -719,11 +756,11 @@ GroupXX_LLM_Project_Research.zip
 - 如何启动 OpenClaw / DeepScientist Agent。
 - 如何运行一个测试 case。
 - 如何复现统计结果。
-- 哪个 case 是 QQ/WeChat 完整交互。
 - 哪些文件对应报告中的失败案例。
+- 哪些材料可被裁剪成展示版或简短汇报版。
 
 ## 18. 核心结论模板
 
 如果实验结果符合预期，报告可以这样收束：
 
-> 在 5 个泛商科 OOD 因果研究设计任务中，OpenClaw / DeepScientist 搭建的科研 Agent 能够生成形式完整的研究方案，但经 claim-level 标注发现，它经常把弱证据写成强因果设计 claim，尤其容易遗漏内生 exposure、机制分解和关键流程细节。信息更充分时，部分错误下降，但在 perturbed 和 no-solution 任务中仍存在模板化设计和过度声称因果的问题。这说明当前科研 Agent 在跨域研究设计中需要额外的因果识别 verifier、证据边界检查和领域约束感知模块。
+> 在一组泛商科 OOD 因果研究设计任务中，OpenClaw / DeepScientist 搭建的科研 Agent 能够生成形式完整的研究方案，但经 claim-level 标注发现，它经常把弱证据写成强因果设计 claim，尤其容易遗漏内生 exposure、机制分解和关键流程细节。信息更充分时，部分错误下降，但在 perturbed 和 no-solution 任务中仍存在模板化设计和过度声称因果的问题。这说明当前科研 Agent 在跨域研究设计中需要额外的因果识别 verifier、证据边界检查和领域约束感知模块。
