@@ -4,65 +4,55 @@
 
 # Case Audit: C014
 
-## Gold Reference Audit
+## Audit Scope
 
-- audit_date: 2026-05-23
-- audit_scope: `gold_reference.md` checked against `source_facts.md` and `source_packet.md`
-- reviewer: Codex separate audit pass
-- independent_model_session: not used in this pass
-- audit_decision: approve
+- reviewer: Codex
+- date: 2026-05-24
+- scope: `agent_task_level1.md`, `agent_task_level2.md`, `agent_task_level3.md`, `agent_task_perturbed.md`, `agent_task_no_solution.md`, `perturbed_variant.md`, `no_solution_variant.md`, and `gold_reference.md`
+- gold_reference_alignment_status: approve
 
-## Evidence Support Check
+## Identity Leakage
 
-| gold section | audit finding | status |
-|---|---|---|
-| Core Research Problem | Research question, estimand, treatments, outcome, and unit are supported by F002-F017. | pass |
-| Data Structure | Project/village unit, assignment, outcome level, timing, and measurement structure are supported by F005-F016 and U001. | pass |
-| Original Identification Logic | Randomized monitoring plus independent measurement logic is supported by F018-F021. | pass |
-| Linchpin Detail | Independent cost/quality measurement is supported by L001-L003. | pass |
-| Must-Have Conditions | Conditions generalize to independent hard outcome measurement rather than exact engineering method. | pass |
-| Acceptable Alternative Designs | Alternatives specify assumptions and claim boundaries. | pass |
-| Common Invalid Designs | Invalid designs cover official-record credulity, selection, process-outcome overclaiming, inference mismatch, and substitution. | pass |
+- risk_level: low
+- issues:
+  - The public-project monitoring setting is somewhat distinctive, but the country, program name, exact project type, exact engineering protocol, and exact implementation details are withheld.
+- fixes:
+  - None.
 
-## Issue Table
+## Solution Leakage
 
-| issue_id | section | severity | problem | required_fix | status |
-|---|---|---|---|---|---|
-| C014-AUD-001 | Data Structure | medium | Exact assignment, stratification, and clustering details remain unextracted. | Do not require exact model/inference details until a later verification pass. | accepted limitation |
-| C014-AUD-002 | Acceptable Alternative Designs | low | Staggered audit rollout is plausible but requires stronger timing assumptions than source randomization. | Keep explicit condition that rollout timing must be plausibly exogenous. | resolved in gold |
-| C014-AUD-003 | Leakage | low | Exact country, program, village-road context, and engineering details are recognizable. | Generalize the setting while preserving official-versus-independent outcome measurement. | accepted limitation |
+- risk_level: low
+- issues:
+  - The task packet makes clear that official records may not be enough, but it does not reveal the source paper, exact measurement protocol, or a fully specified gold design.
+- fixes:
+  - None.
 
-## High Severity Issues
+## Validity
 
-- None.
+- level1_status: approve
+- level2_status: approve
+- level3_status: approve
+- perturbed_status: approve
+- no_solution_status: approve
+- notes:
+  - Level 1 cleanly frames the corruption-monitoring research problem without leaking paper identity.
+  - Level 2 adds the project-level assignment and outcome structure needed for design reasoning while keeping the key measurement linchpin implicit.
+  - Level 3 adds the official-versus-independent-measurement threat in a way that guides evaluation but still requires genuine causal reasoning.
+  - The perturbed variant changes exactly one key condition: independent outcome measurement is removed.
+  - The no-solution variant removes both exogenous assignment and independent outcomes, so only descriptive administrative analysis remains defensible.
 
-## Linchpin Audit
+## File Checklist
 
-- Decision: valid linchpin.
-- Reason: If the outcome is based only on official records, potentially corrupt actors can manipulate or obscure the measured outcome. Independent measurement is therefore part of identification, not a minor implementation detail.
-- Evidence: L001, F020, N001.
+| file | visibility header present | no source identity leakage | no gold answer leakage | ready for run |
+|---|---|---|---|---|
+| `agent_task_level1.md` | yes | yes | yes | yes |
+| `agent_task_level2.md` | yes | yes | yes | yes |
+| `agent_task_level3.md` | yes | yes | yes | yes |
+| `agent_task_perturbed.md` | yes | yes | yes | yes |
+| `agent_task_no_solution.md` | yes | yes | yes | yes |
 
-## Over-Narrowness Audit
+## Final Decision
 
-- Decision: not over-narrow.
-- Reason: The gold reference allows independent cost estimates, objective quality/input inspections, third-party monitoring, and staggered rollout designs. It does not require the exact source engineering protocol.
-
-## Acceptable Alternatives Audit
-
-- Randomized audit with independent cost estimates is directly supported.
-- Third-party monitoring with objective input/quality inspections is a valid generalization.
-- Staggered rollout is acceptable only with exogenous timing and independent measurement.
-
-## Common Invalid Designs Audit
-
-- The invalid designs cover measurement credulity, audit-selection bias, process-outcome overclaiming, inference mismatch, and substitution risks.
-- Error labels are usable for later annotation.
-
-## Required Revisions Before Task Packet Generation
-
-- None.
-
-## Follow-Up For Task 09-13
-
-- Preserve the measurement problem: official reports are not clean outcomes.
-- Generalize exact country, program name, village count, road-project details, and engineering methods unless needed in abstract form.
+- decision: approve
+- required_revisions:
+  - None.

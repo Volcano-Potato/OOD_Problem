@@ -10,28 +10,31 @@ Define exactly how the perturbed agent-facing task differs from the base case an
 
 ## Base Identification Condition
 
-- Base condition:
-- Why it supports identification:
-- Where it appears in the base agent task:
+- changed_condition_category:
+- base_condition:
+- why_it_supports_identification:
+- where_it_appears_in_base_task:
 
 ## Perturbation
 
-- Changed condition:
-- Variant file:
-- Does this weaken, invalidate, or redirect the original design?
-- Which original claims should no longer be valid?
+- changed_condition:
+- variant_file:
+- why_original_strategy_is_weaker_or_invalid:
+- does_this_weaken_invalidate_or_redirect_the_base_design:
+- which_original_claims_should_no_longer_be_valid:
 
 ## Expected Strong-Agent Response
 
-- Correct design adjustment:
-- Claims that should be weakened:
-- Additional assumptions or data needed:
-- What should not be claimed:
+- what_a_good_agent_should_say:
+- correct_design_adjustment:
+- claims_that_should_be_weakened:
+- additional_assumptions_or_data_needed:
+- what_should_not_be_claimed:
 
 ## Expected Failure Pattern
 
-This variant is intended to reveal:
-
+- likely_bad_agent_response:
+- expected_error_types:
 - [ ] Mechanical reuse of base design
 - [ ] Ignoring changed assignment mechanism
 - [ ] Ignoring changed timing structure

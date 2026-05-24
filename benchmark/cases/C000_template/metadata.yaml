@@ -66,5 +66,6 @@ audit:
   leakage_audit_status: not_started
   gold_reference_audit_status: not_started
   variant_consistency_status: not_started
+  audit_decision: pending
   last_reviewed_by: null
   last_reviewed_date: null

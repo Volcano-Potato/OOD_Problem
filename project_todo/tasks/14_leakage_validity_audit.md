@@ -82,12 +82,50 @@ approve / revise / reject
 - `audit.md`
 - 更新 `metadata.yaml` 中的 `leakage_risk` 和 `audit_decision`
 
+## 完成记录
+
+Pilot set 已完成：
+
+- `benchmark/cases/C001_charitable_giving/audit.md`
+- `benchmark/cases/C001_charitable_giving/metadata.yaml`
+- `benchmark/cases/C002_consumer_credit/audit.md`
+- `benchmark/cases/C002_consumer_credit/metadata.yaml`
+- `benchmark/cases/C005_online_ad_measurement/audit.md`
+- `benchmark/cases/C005_online_ad_measurement/metadata.yaml`
+- `benchmark/cases/C008_retail_tax_salience/audit.md`
+- `benchmark/cases/C008_retail_tax_salience/metadata.yaml`
+- `benchmark/cases/C014_corruption_monitoring/audit.md`
+- `benchmark/cases/C014_corruption_monitoring/metadata.yaml`
+
+本轮同时升级了 `C000_template/audit.md`，让后续 case 可以直接复用 `Identity Leakage / Solution Leakage / Validity / File Checklist / Final Decision` 结构，而不是只保留早期的 gold-reference 审计框架。
+
+本次审计覆盖：
+
+1. `agent_task_level1.md`
+2. `agent_task_level2.md`
+3. `agent_task_level3.md`
+4. `agent_task_perturbed.md`
+5. `agent_task_no_solution.md`
+6. `perturbed_variant.md`
+7. `no_solution_variant.md`
+8. `gold_reference.md`
+
+审计结论：
+
+- 5 个 pilot case 的 agent-facing 文件均未发现高严重度 identity leakage。
+- 5 个 pilot case 的 Level 2/Level 3 均未直接泄漏原论文题名、作者、地点、年份、样本量组合或 source-specific 方法名。
+- 5 个 perturbed variant 都只改动一个关键 identification condition。
+- 5 个 no-solution variant 都已显式移除可信强识别来源，同时仍保留现实研究价值和“诱导错误回归”的数据外观。
+- `metadata.yaml` 已同步更新 `taxonomy.leakage_risk`、`audit.audit_decision`、各 variant 状态、以及审计完成时间。
+
+未运行 OpenClaw。
+
 ## 验收标准
 
-- [ ] 所有 agent-facing 文件的 leakage risk 为 low 或有明确修订计划。
-- [ ] audit 中 high severity issue 必须修复。
-- [ ] 每个 variant 都有 evaluator-only expected response。
-- [ ] 审计者不需要读原论文全文，也能判断任务是否可评测。
+- [x] 所有 agent-facing 文件的 leakage risk 为 low 或有明确修订计划。
+- [x] audit 中 high severity issue 必须修复。
+- [x] 每个 variant 都有 evaluator-only expected response。
+- [x] 审计者不需要读原论文全文，也能判断任务是否可评测。
 
 ## 常见风险
 

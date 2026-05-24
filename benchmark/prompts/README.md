@@ -1,9 +1,10 @@
 # Prompts
 
-This directory will contain prompt templates for later construction tasks.
+This directory contains reusable prompt blocks and output contracts for benchmark execution.
 
 Current policy:
 
-- Do not place final construction prompts here until the case schema is stable.
-- Treat all prompt files as evaluator-only unless a prompt is explicitly designed for agent-facing benchmark execution.
-- Prompt templates must not contain source-paper titles, author names, or gold-reference answers unless they are construction-only prompts.
+- `closed_book_design_prompt.md` defines the canonical agent-facing task rule.
+- `evidence_aware_output_contract.md` defines the canonical agent-facing output schema.
+- Do not place source-paper titles, author names, or gold-reference answers in any agent-facing prompt block stored here.
+- Construction-only prompts, if added later, must be clearly marked evaluator-only.

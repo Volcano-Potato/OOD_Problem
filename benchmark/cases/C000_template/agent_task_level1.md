@@ -8,39 +8,79 @@
 
 You must not search the web, infer the original paper, or use external literature. Use only the information provided below. Your goal is to design a rigorous empirical strategy, not to write a literature review.
 
+Do not assume that a known paper has already solved the task. Treat this as an anonymous applied business/economics research problem.
+
 If credible causal identification is not possible from the provided information, do not invent an identification strategy. State the strongest defensible descriptive or correlational analysis instead.
 
 ## Research Background
 
-[Write an anonymized business/economics setting. Remove source-paper title, author names, exact geography, named organizations, exact sample sizes, and distinctive phrases.]
+[Write a rich anonymized business/economics setting. Include the practical decision problem, the relevant actors, the behavior or market friction being studied, and why the question matters for firms, policy, or welfare. Remove source-paper title, author names, exact geography, named organizations, exact sample sizes, exact years, and distinctive searchable phrases.]
+
+## Research Setting
+
+[Describe the institutional or business environment at a high level. State what decisions are made, by whom, and in what sequence. Keep it generic enough that the original paper cannot be identified.]
 
 ## Research Objective
 
-[State the causal or mechanism question in generic terms.]
+[State the main causal or mechanism question in generic terms.]
+
+## Specific Questions To Answer
+
+The research design should answer the following, using only the information in this task packet:
+
+1. [Question about the main treatment or exposure effect.]
+2. [Question about the relevant mechanism or channel.]
+3. [Question about whether observed behavior reflects selection, incentives, information, attention, pressure, measurement, or another case-relevant pathway.]
+4. [Question about what can and cannot be interpreted causally from the proposed design.]
+
+## Mechanism Intuition
+
+[Describe 2-4 plausible causal pathways or behavioral mechanisms. These should orient the agent, not reveal the original identification strategy or linchpin solution.]
+
+Example format:
+
+- Pathway A: [X may affect Y through channel A.]
+- Pathway B: [X may affect Y through channel B.]
+- Alternative explanation: [Observed association may reflect selection, timing, measurement, or omitted factors.]
+
+## Available Information
+
+[State what the researcher broadly has access to, without giving a full data card. Examples: administrative records, transaction logs, survey outcomes, platform logs, field implementation records, pre/post outcomes, or repeated observations. Do not include exact variable names if they are source-identifying.]
+
+## Information Not Provided
+
+The task packet does not provide the original source, exact sample size, exact geography, exact dates, named institutions, or a complete variable dictionary. If your proposed design requires additional information, state it explicitly.
 
 ## Known Constraints
 
-- The design should be feasible in the described institutional setting.
-- The answer must distinguish causal claims from descriptive claims.
+- The design should be feasible in the described institutional or business setting.
+- The answer must distinguish descriptive associations, randomized or quasi-random causal claims, and mechanism claims.
 - The answer should state what cannot be learned from the available information.
+- Do not infer missing facts from external knowledge or from a suspected source paper.
+- Do not rely on a single polished model. Explain the identification logic, assumptions, sample restrictions, and failure modes.
 
 ## Required Output
 
-1. Research question
-2. Estimand
-3. Treatment or exposure
-4. Outcome
-5. Main identification challenge
-6. Proposed empirical design
-7. Why the design is valid
-8. Required assumptions
-9. Statistical model
-10. Robustness or placebo checks
-11. Heterogeneity analysis
-12. Failure modes
-13. What cannot be claimed
-14. Additional data needed
-15. Claim-evidence table
+1. Executive summary
+2. Research question
+3. Target estimand or strongest defensible estimand
+4. Treatment or exposure and main outcomes
+5. Data structure summary
+6. Relevant causal mechanisms
+7. Main identification challenge
+8. Whether credible causal identification is possible
+9. Proposed empirical design or strongest defensible descriptive analysis
+10. Why the design is valid or why causal identification is not credible
+11. Required assumptions
+12. Statistical model or analysis equation
+13. Robustness, placebo, falsification checks, or diagnostic tests
+14. Heterogeneity analysis if supportable
+15. Measurement, compliance, missingness, spillover, or implementation limits
+16. Failure modes and alternative explanations
+17. What cannot be claimed
+18. Additional data needed
+19. Threat-response table if explicitly requested by the task packet
+20. Claim-evidence table
 
 ## Claim-Evidence Table
 

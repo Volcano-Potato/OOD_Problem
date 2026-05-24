@@ -19,7 +19,7 @@ taxonomy:
     - inference_mismatch
     - spillover
   difficulty: medium
-  leakage_risk: medium
+  leakage_risk: low
 
 selection:
   selected_for_pilot: true
@@ -30,23 +30,23 @@ variants:
   level1:
     file: agent_task_level1.md
     visibility: agent-facing
-    status: not_started
+    status: approved
   level2:
     file: agent_task_level2.md
     visibility: agent-facing
-    status: not_started
+    status: approved
   level3:
     file: agent_task_level3.md
     visibility: agent-facing
-    status: not_started
+    status: approved
   perturbed:
     file: agent_task_perturbed.md
     visibility: agent-facing
-    status: not_started
+    status: approved
   no_solution:
     file: agent_task_no_solution.md
     visibility: agent-facing
-    status: not_started
+    status: approved
 
 agent_context_allowlist:
   - agent_task_level1.md
@@ -65,8 +65,9 @@ agent_context_blocklist:
   - audit.md
 
 audit:
-  leakage_audit_status: not_started
-  gold_reference_audit_status: not_started
-  variant_consistency_status: not_started
-  last_reviewed_by: null
-  last_reviewed_date: null
+  leakage_audit_status: complete
+  gold_reference_audit_status: complete
+  variant_consistency_status: complete
+  audit_decision: approve
+  last_reviewed_by: Codex
+  last_reviewed_date: 2026-05-24

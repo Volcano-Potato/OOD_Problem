@@ -1,5 +1,5 @@
 <!-- visibility: agent-facing -->
-<!-- case_id: C000 -->
+<!-- case_id: C014 -->
 <!-- variant: perturbed -->
 
 # Anonymous Research Design Task: Perturbed Variant
@@ -8,54 +8,114 @@
 
 You must not search the web, infer the original paper, or use external literature. Use only the information provided below. Your goal is to design a rigorous empirical strategy, not to write a literature review.
 
+Do not assume that a known paper has already solved the task. Treat this as an anonymous applied business/economics research problem.
+
 If credible causal identification is not possible from the provided information, do not invent an identification strategy. State the strongest defensible descriptive or correlational analysis instead.
 
 ## Research Background
 
-[Use the same anonymized setting as the base case.]
+Local public projects often involve multiple layers of administration, procurement, implementation, and reporting. Monitoring may reduce leakage or misuse, but different monitoring approaches can work through different channels, and official records may not cleanly reveal true corruption outcomes.
+
+The research problem is to design an evaluation in which outcome measurement is part of identification rather than an afterthought.
+
+## Research Setting
+
+Local public projects receive funds, are implemented over time, and generate administrative records as well as observable physical outputs. Researchers may be able to vary monitoring intensity or participation procedures before implementation is complete.
 
 ## Research Objective
 
-[Use the same or closely related objective as the base case.]
+Design a study to estimate whether monitoring interventions reduce corruption or resource leakage in local public projects, and to compare formal oversight with community-based monitoring where possible.
+
+## Specific Questions To Answer
+
+1. How should the study estimate the effect of monitoring on corruption or leakage?
+2. What kind of outcome measure remains credible if only official financial reports are available?
+3. How should the design compare formal oversight with grassroots monitoring without overinterpreting administrative outcomes?
+4. Which claims about true corruption reduction can still be made, and which cannot?
+
+## Data Structure Overview
+
+- Stage 1: Eligible local public projects are funded and enter an implementation process with planned expenditures and reporting requirements.
+- Stage 2: Projects or communities may be assigned to different monitoring or participation conditions before implementation is complete.
+- Stage 3: Administrative records and implementation milestones accumulate during construction or delivery.
+- Stage 4: After implementation, the researcher observes official project spending and reporting records but does not have independent technical cost or quality measurement.
 
 ## Data Card
 
-[Start from Level 2 or Level 3, then change exactly one key identification condition.]
-
 | field | description |
 |---|---|
-| unit of observation |  |
-| time span |  |
-| treatment or exposure variable |  |
-| outcome variable |  |
-| assignment or variation source |  |
-| assignment level |  |
-| outcome measurement level |  |
-| panel or repeated structure |  |
-| compliance or take-up |  |
-| spillover or interference |  |
+| unit of observation | Local public project, village project, or equivalent administrative project unit. |
+| time span | Project funding, pre-implementation monitoring assignment, implementation, completion, and post-completion reporting. |
+| sample construction | Eligible projects receive public funds and can be assigned to monitoring or participation interventions before implementation is complete. |
+| treatment or exposure variable | Monitoring condition, such as increased formal oversight probability, community information or participation intervention, or no additional monitoring. |
+| outcome variable | Officially reported project expenditures, reported completion, or other administrative reporting outcomes. |
+| secondary outcomes | Participation or process outcomes, implementation milestones, and any administrative indicators of reporting irregularity if observed. |
+| assignment or variation source | Researcher- or government-controlled assignment of monitoring interventions across eligible projects or communities. |
+| assignment level | Project or community level. |
+| outcome measurement level | Project or community level. |
+| panel or repeated structure | Mainly project-level cross-section with staged timing; repeated administrative reports may exist during implementation. |
+| compliance or take-up | Assigned monitoring may not be fully implemented; community participation may vary even under the same assigned condition. |
+| spillover or interference | Officials or contractors may shift behavior across nearby projects; community information may spread beyond assigned units. |
+
+## Variable Groups
+
+### Treatment Or Exposure Variables
+
+- Formal monitoring or audit assignment.
+- Community participation or information assignment.
+
+### Selection Or Sample-Flow Variables
+
+- Eligibility for the funded-project sample.
+- Inclusion in the monitoring experiment.
+
+### Main Outcome Variables
+
+- Officially reported project expenditures.
+- Administrative completion or reporting outcomes.
+
+### Secondary Outcome Variables
+
+- Participation or meeting outcomes.
+- Complaint or process indicators.
+
+### Baseline Controls And Design Variables
+
+- Project type, project size, community or region indicators, and implementation timing.
 
 ## Perturbed Condition
 
-[Describe the changed condition in natural language without saying that it is a perturbation of a source paper. Example: treatment is now self-selected rather than randomized; pre-period data are no longer available; exposure is observed only after user choice; outcome is self-reported rather than independently measured.]
+Independent post-completion measurement is unavailable. The researcher observes only official project reports and related administrative records as outcome data.
+
+## Known Constraints
+
+- The business setting and most of the data structure are intentionally similar to the base task.
+- One key identification condition has changed.
+- The answer must explain whether the original design logic still works, becomes weaker, or fails.
+- If strong causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.
 
 ## Required Output
 
-1. Research question
-2. Estimand
-3. Treatment or exposure
-4. Outcome
-5. Main identification challenge
-6. Proposed empirical design
-7. Why the design is valid
-8. Required assumptions
-9. Statistical model
-10. Robustness or placebo checks
-11. Heterogeneity analysis
-12. Failure modes
-13. What cannot be claimed
-14. Additional data needed
-15. Claim-evidence table
+1. Executive summary
+2. Research question
+3. Target estimand or strongest defensible estimand
+4. Treatment or exposure and main outcomes
+5. Data structure summary
+6. Relevant causal mechanisms
+7. Main identification challenge
+8. Whether credible causal identification is possible
+9. Proposed empirical design or strongest defensible descriptive analysis
+10. Why the design is valid or why causal identification is not credible
+11. Required assumptions
+12. Statistical model or analysis equation
+13. Robustness, placebo, falsification checks, or diagnostic tests
+14. Heterogeneity analysis if supportable
+15. Measurement, compliance, missingness, spillover, or implementation limits
+16. Failure modes and alternative explanations
+17. What cannot be claimed
+18. Additional data needed
+19. Threat-response table if explicitly requested by the task packet
+20. Claim-evidence table
 
 ## Claim-Evidence Table
 

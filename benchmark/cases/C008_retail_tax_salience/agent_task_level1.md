@@ -8,49 +8,78 @@
 
 You must not search the web, infer the original paper, or use external literature. Use only the information provided below. Your goal is to design a rigorous empirical strategy, not to write a literature review.
 
+Do not assume that a known paper has already solved the task. Treat this as an anonymous applied business/economics research problem.
+
 If credible causal identification is not possible from the provided information, do not invent an identification strategy. State the strongest defensible descriptive or correlational analysis instead.
 
 ## Research Background
 
-Consumers sometimes face add-on charges that are paid at checkout but are not fully visible when they choose products. If shoppers focus mainly on displayed prices, making the full cost more visible at the point of decision may reduce demand even when the underlying economic price is unchanged.
+Consumers sometimes face add-on charges that are paid at checkout but are not fully visible when they choose products. If shoppers focus mainly on the posted shelf price, making the full cost more visible at the point of decision may change demand even when the underlying economic price is unchanged.
 
-This question matters for retail pricing, consumer attention, and policy design. A retailer or researcher wants to know whether increasing the visibility of an add-on charge changes purchasing behavior, not merely whether demand changes over time for unrelated reasons.
+This matters for retail pricing, consumer attention, and policy design. A retailer or researcher wants to know whether increased price visibility changes purchasing behavior, rather than merely observing that sales moved during the same period as an in-store intervention.
+
+## Research Setting
+
+A retailer can change how price information is displayed for some products or categories while observing sales over time. Transaction or scanner data are available, and untreated products or stores may provide comparison groups. The setting involves real purchasing decisions rather than hypothetical responses.
+
+The task packet does not reveal the original store chain, exact tax or fee, exact product categories, or exact dates. The design should therefore focus on the comparison structure required for identification.
 
 ## Research Objective
 
 Design a study to estimate the causal effect of making an add-on charge visible at the point of product choice on consumer demand.
 
-## Operational Context
+## Specific Questions To Answer
 
-A retailer observes product-level sales over time and can modify how price information is displayed for some products or categories. Other products, time periods, or stores may be available for comparison, but the task packet does not provide exact product categories, locations, intervention dates, charge rates, sample sizes, or a full scanner-data schema.
+1. How should the researcher estimate the effect of visible all-in pricing on product demand?
+2. What comparison groups are needed to separate the intervention from unrelated store, category, and time shocks?
+3. How should the design distinguish salience effects from actual price or promotion changes?
+4. What claims can be made about short-run demand responses, and what remains uncertain?
 
-The proposed design should address the possibility that demand changes reflect seasonality, product-category trends, store-wide shocks, discounts, or actual price changes rather than salience alone.
+## Mechanism Intuition
+
+- Attention channel: consumers may respond differently when the total price is visible at the shelf.
+- Time-shock channel: sales may change over time for reasons unrelated to salience.
+- Category-composition channel: treated categories may differ from untreated categories even without the intervention.
+- Measurement risk: observed demand changes may reflect discounts, promotions, or stock conditions rather than salience alone.
+
+## Available Information
+
+The researcher can observe product-level or category-level transaction outcomes over time and can identify which products or stores were exposed to the display change. Some comparison products, stores, or time periods are also available.
+
+## Information Not Provided
+
+This task packet does not provide the original source, exact store chain, exact intervention dates, exact categories, exact charge rate, or the source paper's final specification. It also does not provide a complete product dictionary.
 
 ## Known Constraints
 
 - The design should be feasible in the described institutional setting.
-- The answer must distinguish causal claims from descriptive claims.
+- The answer must distinguish descriptive associations, causal claims, and mechanism claims.
 - The answer should state what cannot be learned from the available information.
 - Do not assume that a simple before-after comparison is causal.
-- Do not rely on external facts about any named retailer, jurisdiction, product category, tax rule, or prior paper.
+- Do not infer missing facts from external knowledge or from a suspected source paper.
 
 ## Required Output
 
-1. Research question
-2. Estimand
-3. Treatment or exposure
-4. Outcome
-5. Main identification challenge
-6. Proposed empirical design
-7. Why the design is valid
-8. Required assumptions
-9. Statistical model
-10. Robustness or placebo checks
-11. Heterogeneity analysis
-12. Failure modes
-13. What cannot be claimed
-14. Additional data needed
-15. Claim-evidence table
+1. Executive summary
+2. Research question
+3. Target estimand or strongest defensible estimand
+4. Treatment or exposure and main outcomes
+5. Data structure summary
+6. Relevant causal mechanisms
+7. Main identification challenge
+8. Whether credible causal identification is possible
+9. Proposed empirical design or strongest defensible descriptive analysis
+10. Why the design is valid or why causal identification is not credible
+11. Required assumptions
+12. Statistical model or analysis equation
+13. Robustness, placebo, falsification checks, or diagnostic tests
+14. Heterogeneity analysis if supportable
+15. Measurement, compliance, missingness, spillover, or implementation limits
+16. Failure modes and alternative explanations
+17. What cannot be claimed
+18. Additional data needed
+19. Threat-response table if explicitly requested by the task packet
+20. Claim-evidence table
 
 ## Claim-Evidence Table
 

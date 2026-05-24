@@ -4,46 +4,55 @@
 
 # Case Audit
 
-## Leakage Audit
+## Audit Scope
 
-- [ ] Agent-facing files do not contain original paper title.
-- [ ] Agent-facing files do not contain author names.
-- [ ] Agent-facing files do not contain exact named organizations or distinctive locations.
-- [ ] Agent-facing files do not contain exact sample sizes when searchable.
-- [ ] Agent-facing files do not contain unique treatment-arm labels or source phrases.
-- [ ] Agent-facing files do not contain source PDF paths.
-- [ ] File and directory names are anonymous.
+- reviewer: replace_with_reviewer
+- date: YYYY-MM-DD
+- scope: `agent_task_level1.md`, `agent_task_level2.md`, `agent_task_level3.md`, `agent_task_perturbed.md`, `agent_task_no_solution.md`, `perturbed_variant.md`, `no_solution_variant.md`, and `gold_reference.md`
+- gold_reference_alignment_status: approve / revise / reject
 
-## Agent-Facing File Audit
+## Identity Leakage
+
+- risk_level: low / medium / high
+- issues:
+  - [Describe whether title, authors, exact place, exact sample size, named organization, or distinctive phrase leakage remains.]
+- fixes:
+  - [If no fixes are needed, write `None.`]
+
+## Solution Leakage
+
+- risk_level: low / medium / high
+- issues:
+  - [Describe whether Level 2 or Level 3 gives away the hidden design, linchpin, or exact source method.]
+- fixes:
+  - [If no fixes are needed, write `None.`]
+
+## Validity
+
+- level1_status: approve / revise / reject
+- level2_status: approve / revise / reject
+- level3_status: approve / revise / reject
+- perturbed_status: approve / revise / reject
+- no_solution_status: approve / revise / reject
+- notes:
+  - [Explain whether Level 1 remains understandable.]
+  - [Explain whether Level 2 adds enough structure without method leakage.]
+  - [Explain whether Level 3 adds threats without handing out the answer.]
+  - [Explain whether the perturbed variant changes exactly one key condition.]
+  - [Explain whether the no-solution variant truly removes strong identification.]
+
+## File Checklist
 
 | file | visibility header present | no source identity leakage | no gold answer leakage | ready for run |
 |---|---|---|---|---|
-| `agent_task_level1.md` | no | no | no | no |
-| `agent_task_level2.md` | no | no | no | no |
-| `agent_task_level3.md` | no | no | no | no |
-| `agent_task_perturbed.md` | no | no | no | no |
-| `agent_task_no_solution.md` | no | no | no | no |
+| `agent_task_level1.md` | yes / no | yes / no | yes / no | yes / no |
+| `agent_task_level2.md` | yes / no | yes / no | yes / no | yes / no |
+| `agent_task_level3.md` | yes / no | yes / no | yes / no | yes / no |
+| `agent_task_perturbed.md` | yes / no | yes / no | yes / no | yes / no |
+| `agent_task_no_solution.md` | yes / no | yes / no | yes / no | yes / no |
 
-## Gold Reference Audit
+## Final Decision
 
-- [ ] Gold reference states the true research question.
-- [ ] Gold reference states treatment, outcome, unit, and estimand.
-- [ ] Gold reference states the identification logic.
-- [ ] Gold reference states must-recognize threats.
-- [ ] Gold reference lists acceptable alternative designs.
-- [ ] Gold reference lists unacceptable designs and error labels.
-
-## Variant Consistency Audit
-
-- [ ] Level 1, Level 2, and Level 3 describe the same base research setting.
-- [ ] Level 2 adds data structure without leaking the gold design.
-- [ ] Level 3 adds institutional details and threat hints without giving away the answer.
-- [ ] Perturbed variant changes exactly one key identification condition.
-- [ ] No-solution variant removes credible causal identification without becoming nonsensical.
-
-## Audit Decision
-
-- Decision: approve / revise / reject
-- Reviewer:
-- Date:
-- Required revisions:
+- decision: approve / revise / reject
+- required_revisions:
+  - [If no revisions are needed, write `None.`]

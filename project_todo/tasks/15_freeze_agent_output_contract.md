@@ -30,20 +30,26 @@
 
 ```markdown
 ## Required Output
-1. Research question
-2. Estimand
-3. Treatment and outcome
-4. Main identification challenge
-5. Proposed empirical design
-6. Why the design is valid
-7. Required assumptions
-8. Statistical model
-9. Robustness/placebo checks
-10. Heterogeneity analysis
-11. Failure modes
-12. What cannot be claimed
-13. Additional data needed
-14. Claim-evidence table
+1. Executive summary
+2. Research question
+3. Target estimand or strongest defensible estimand
+4. Treatment or exposure and main outcomes
+5. Data structure summary
+6. Relevant causal mechanisms
+7. Main identification challenge
+8. Whether credible causal identification is possible
+9. Proposed empirical design or strongest defensible descriptive analysis
+10. Why the design is valid or why causal identification is not credible
+11. Required assumptions
+12. Statistical model or analysis equation
+13. Robustness, placebo, falsification checks, or diagnostic tests
+14. Heterogeneity analysis if supportable
+15. Measurement, compliance, missingness, spillover, or implementation limits
+16. Failure modes and alternative explanations
+17. What cannot be claimed
+18. Additional data needed
+19. Threat-response table if explicitly requested by the task packet
+20. Claim-evidence table
 ```
 
 ## Claim-Evidence Table 固定列
@@ -58,12 +64,31 @@
 - `benchmark/prompts/closed_book_design_prompt.md`
 - `benchmark/prompts/evidence_aware_output_contract.md`
 
+## 完成记录
+
+本轮已完成：
+
+- 新建 `benchmark/prompts/closed_book_design_prompt.md`
+- 新建 `benchmark/prompts/evidence_aware_output_contract.md`
+- 更新 `benchmark/prompts/README.md`
+
+冻结决定如下：
+
+- 所有 agent-facing benchmark output contract 统一使用英文。
+- 所有 variant 统一共享同一套 closed-book `Task Rule`。
+- 所有 variant 统一共享同一套 evidence-aware `Required Output`。
+- `no_solution` 不再使用单独的缩短版输出结构，而是在统一合同下明确回答 “Whether credible causal identification is possible”。
+- `Claim-Evidence Table` 固定列名不变：`Claim | Evidence Used | Claim Type | Confidence | What Would Falsify This Claim`。
+- `Evidence Used` 必须引用 task packet 内部证据来源，而不是外部文献或模糊表述。
+
+本轮还将现有 `agent_task_*.md` 的 `Required Output` 对齐到统一合同，避免 pilot run 前出现不同 level / variant 之间的格式漂移。
+
 ## 验收标准
 
-- [ ] 所有 case 使用同一输出合同。
-- [ ] Claim-Evidence Table 有固定列。
-- [ ] 明确禁止联网、搜索原论文、使用外部文献。
-- [ ] 明确要求区分 causal claims 和 descriptive claims。
+- [x] 所有 case 使用同一输出合同。
+- [x] Claim-Evidence Table 有固定列。
+- [x] 明确禁止联网、搜索原论文、使用外部文献。
+- [x] 明确要求区分 causal claims 和 descriptive claims。
 
 ## 常见风险
 
