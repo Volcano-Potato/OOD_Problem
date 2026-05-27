@@ -1,4 +1,4 @@
-# Closed-Book Design Prompt
+# Packet-Grounded Design Prompt
 
 Use this exact `Task Rule` block in every agent-facing task packet unless a later audit explicitly revises it.
 
@@ -7,16 +7,19 @@ Use this exact `Task Rule` block in every agent-facing task packet unless a late
 ```markdown
 ## Task Rule
 
-You must not search the web, infer the original paper, or use external literature. Use only the information provided below. Your goal is to design a rigorous empirical strategy, not to write a literature review.
+Use the information provided below to design a rigorous empirical strategy for this anonymized applied business/economics research problem. Your goal is to produce a defensible research design, not to write a literature review.
 
-Do not assume that a known paper has already solved the task. Treat this as an anonymous applied business/economics research problem.
+Do not assume that a known paper has already solved the task. Ground your reasoning in the background, data description, institutional details, and constraints provided in this packet.
+
+Do not fill in packet-absent operational details, institutional features, or named design devices as if they were known facts. If multiple concrete implementations fit the packet, describe them generically or label them explicitly as illustrative examples rather than assumptions.
 
 If credible causal identification is not possible from the provided information, do not invent an identification strategy. State the strongest defensible descriptive or correlational analysis instead.
 ```
 
 ## Enforcement Notes
 
-- Closed-book means no external search, no paper-guessing, and no retrieval from outside the task packet.
 - The rule applies equally to Level 1, Level 2, Level 3, `perturbed`, and `no_solution` variants.
-- If a run environment exposes tools, the run config must still mark the task as closed-book and log any contamination.
+- The packet remains the primary evidence source even if a run environment exposes tools or retrieval.
+- Task packets should not directly instruct the agent to identify the source paper or reproduce the original published design.
+- The rule should actively discourage source-design reconstruction by penalizing unsupported operational specificity.
 - Do not add source-paper names, author names, or evaluator-only hints to this block.

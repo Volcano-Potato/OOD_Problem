@@ -42,7 +42,7 @@ This file is the canonical output contract for every agent-facing benchmark task
 
 - The entire response must be in English.
 - If causal identification is not credible, the agent must say so explicitly in sections 8, 9, 10, and 17.
-- `Evidence Used` must cite packet-local evidence such as `Research Setting`, `Data Card: assignment or variation source`, `Potential Threats`, or named variables. Do not cite external literature.
+- `Evidence Used` should primarily cite packet-local evidence such as `Research Setting`, `Data Card: assignment or variation source`, `Potential Threats`, or named variables, and should clearly separate packet evidence from general methodological reasoning.
 - `Claim Type` should use concise labels such as `causal`, `descriptive`, `mechanism`, `assumption`, or `limitation`.
 - If a section is unsupported by the packet, the agent should write `Not supportable from the provided information` rather than invent content.
 - If the task packet includes a required threat-response table, the agent must include it using the exact table requested in the packet.

@@ -1,6 +1,15 @@
 # Run Configs
 
-This directory will contain OpenClaw / agent run configurations.
+This directory stores reproducible OpenClaw / agent run policies for the benchmark.
+
+The current canonical runtime is `benchmark_isolated`: a locally isolated OpenClaw agent that receives exactly one agent-facing task packet per run while keeping remote web and literature tools available by default.
+
+Current canonical file:
+
+- `run_config.md`
+- `formal_eval_minimal_isolation.md`
+- `batch_runner_spec.md`
+- `batch_runner_spec.example.csv`
 
 Run configs should point only to files matching:
 

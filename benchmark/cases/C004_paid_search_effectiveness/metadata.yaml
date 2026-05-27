@@ -1,0 +1,74 @@
+visibility: evaluator-only
+do_not_include_in_agent_context: true
+
+case_id: C004
+anonymous_short_name: paid_search_effectiveness
+paper_key: blake_nosko_tadelis_2015_paid_search
+source_pdf: downloads/deepscientist_econ_business_experiment_papers/Blake_Nosko_Tadelis_2015_Consumer_Heterogeneity_and_Paid_Search_Effectiveness_A_Large_Scale_Field_Experiment.pdf
+
+taxonomy:
+  domain: platform_economics
+  subdomain: search_advertising
+  design_family: field_experiment
+  variation_source: platform_randomization
+  assignment_level: individual
+  outcome_level: transaction
+  unit_of_observation: panel_unit_time
+  key_failure_mode: endogenous_exposure
+  secondary_failure_modes:
+    - selection
+    - spillover
+    - inference_mismatch
+  difficulty: hard
+  leakage_risk: low
+
+selection:
+  selected_for_pilot: false
+  selected_for_main: true
+  has_replication_data: "no"
+
+variants:
+  level1:
+    file: agent_task_level1.md
+    visibility: agent-facing
+    status: approved
+  level2:
+    file: agent_task_level2.md
+    visibility: agent-facing
+    status: approved
+  level3:
+    file: agent_task_level3.md
+    visibility: agent-facing
+    status: approved
+  perturbed:
+    file: agent_task_perturbed.md
+    visibility: agent-facing
+    status: approved
+  no_solution:
+    file: agent_task_no_solution.md
+    visibility: agent-facing
+    status: approved
+
+agent_context_allowlist:
+  - agent_task_level1.md
+  - agent_task_level2.md
+  - agent_task_level3.md
+  - agent_task_perturbed.md
+  - agent_task_no_solution.md
+
+agent_context_blocklist:
+  - metadata.yaml
+  - source_packet.md
+  - source_facts.md
+  - gold_reference.md
+  - perturbed_variant.md
+  - no_solution_variant.md
+  - audit.md
+
+audit:
+  leakage_audit_status: complete
+  gold_reference_audit_status: complete
+  variant_consistency_status: complete
+  audit_decision: approve
+  last_reviewed_by: Codex
+  last_reviewed_date: 2026-05-26

@@ -116,6 +116,16 @@ Pilot set 已完成：
 
 这些扰动都只改一个关键 identification condition，其他业务场景和大部分数据结构保持可比。未运行 OpenClaw。
 
+主集扩展：`C004` 已新增完成 `benchmark/cases/C004_paid_search_effectiveness/agent_task_perturbed.md` 和 `benchmark/cases/C004_paid_search_effectiveness/perturbed_variant.md`。其单点扰动为：市场级 ad-availability assignment 不再外生，而是由 campaign managers 基于预期需求或运营判断决定。
+
+主集扩展：`C010` 已新增完成 `benchmark/cases/C010_fertilizer_present_bias/agent_task_perturbed.md` 和 `benchmark/cases/C010_fertilizer_present_bias/perturbed_variant.md`。其单点扰动为：later offer windows are announced in advance, weakening the original timing-based mechanism test.
+
+主集扩展：`C016` 已新增完成 `benchmark/cases/C016_hiv_risk_information/agent_task_perturbed.md` 和 `benchmark/cases/C016_hiv_risk_information/perturbed_variant.md`。其单点扰动为：objective downstream outcomes are removed, leaving only selected self-reported behavioral outcomes.
+
+主集扩展：`C019` 已新增完成 `benchmark/cases/C019_in_store_travel_distance/agent_task_perturbed.md` 和 `benchmark/cases/C019_in_store_travel_distance/perturbed_variant.md`。其单点扰动为：reliable pre-trip basket capture is removed, invalidating the base route-benchmark logic.
+
+主集扩展：`C020` 已新增完成 `benchmark/cases/C020_price_ending_field_experiment/agent_task_perturbed.md` 和 `benchmark/cases/C020_price_ending_field_experiment/perturbed_variant.md`。其单点扰动为：ending-format variation is always bundled with markdown or sale framing, so the base design no longer isolates the format itself.
+
 ## 验收标准
 
 - [x] 只改变一个关键条件，便于错误归因。

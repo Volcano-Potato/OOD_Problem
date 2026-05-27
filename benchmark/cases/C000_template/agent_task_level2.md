@@ -6,9 +6,11 @@
 
 ## Task Rule
 
-You must not search the web, infer the original paper, or use external literature. Use only the information provided below. Your goal is to design a rigorous empirical strategy, not to write a literature review.
+Use the information provided below to design a rigorous empirical strategy for this anonymized applied business/economics research problem. Your goal is to produce a defensible research design, not to write a literature review.
 
-Do not assume that a known paper has already solved the task. Treat this as an anonymous applied business/economics research problem.
+Do not assume that a known paper has already solved the task. Ground your reasoning in the background, data description, institutional details, and constraints provided in this packet.
+
+Do not fill in packet-absent operational details, institutional features, or named design devices as if they were known facts. If multiple concrete implementations fit the packet, describe them generically or label them explicitly as illustrative examples rather than assumptions.
 
 If credible causal identification is not possible from the provided information, do not invent an identification strategy. State the strongest defensible descriptive or correlational analysis instead.
 
@@ -106,7 +108,7 @@ Define the variable groups needed for the research design. Use generic names rat
 - The answer must distinguish descriptive associations, randomized or quasi-random causal claims, and mechanism claims.
 - The answer should state what cannot be learned from the available information.
 - Do not label the final identification strategy by name unless you have justified why the data support it.
-- Do not rely on external facts about the original paper, place, firm, platform, or policy.
+- Do not rely on unsupported source-specific facts about the original paper, place, firm, platform, or policy.
 
 ## Required Output
 

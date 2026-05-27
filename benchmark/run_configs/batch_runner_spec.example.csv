@@ -1,0 +1,3 @@
+case_id,variant_id,input_file,split,enabled,notes
+C001,level2,benchmark/cases/C001_charitable_giving/agent_task_level2.md,pilot,true,focused rerun example
+C002,level2,benchmark/cases/C002_consumer_credit/agent_task_level2.md,pilot,true,focused rerun example

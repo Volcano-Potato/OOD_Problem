@@ -41,7 +41,7 @@
 
 ## 完成范围
 
-本轮已完成 frozen pilot set：`C001`、`C002`、`C005`、`C008`、`C014`，审计结果写入各 case 的 `audit.md`。本轮未启动单独子代理或外部模型会话；审计者记录为 `Codex separate audit pass`。如果后续要严格满足“独立模型会话”，需要再运行一次外部/子代理审计。
+本轮已完成 frozen pilot set：`C001`、`C002`、`C005`、`C008`、`C014`，审计结果写入各 case 的 `audit.md`。随后主集扩展中，`C004`、`C010`、`C016`、`C019` 和 `C020` 也已完成 gold-reference 审计并写入各自 case 目录下的 `audit.md`。本轮未启动单独子代理或外部模型会话；审计者记录为 `Codex separate audit pass`。如果后续要严格满足“独立模型会话”，需要再运行一次外部/子代理审计。
 
 ## 验收标准
 

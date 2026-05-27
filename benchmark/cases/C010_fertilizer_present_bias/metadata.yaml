@@ -1,0 +1,73 @@
+visibility: evaluator-only
+do_not_include_in_agent_context: true
+
+case_id: C010
+anonymous_short_name: fertilizer_present_bias
+paper_key: duflo_kremer_robinson_2011_fertilizer_timing
+source_pdf: downloads/deepscientist_econ_business_experiment_papers/Duflo_Kremer_Robinson_2011_Nudging_Farmers_to_Use_Fertilizer_Theory_and_Experimental_Evidence_from_Kenya.pdf
+
+taxonomy:
+  domain: development
+  subdomain: agricultural_adoption
+  design_family: mechanism_experiment
+  variation_source: encouragement_randomization
+  assignment_level: household
+  outcome_level: household
+  unit_of_observation: household
+  key_failure_mode: mechanism_confounding
+  secondary_failure_modes:
+    - timing_endogeneity
+    - non_compliance
+  difficulty: hard
+  leakage_risk: low
+
+selection:
+  selected_for_pilot: false
+  selected_for_main: true
+  has_replication_data: "yes"
+
+variants:
+  level1:
+    file: agent_task_level1.md
+    visibility: agent-facing
+    status: approved
+  level2:
+    file: agent_task_level2.md
+    visibility: agent-facing
+    status: approved
+  level3:
+    file: agent_task_level3.md
+    visibility: agent-facing
+    status: approved
+  perturbed:
+    file: agent_task_perturbed.md
+    visibility: agent-facing
+    status: approved
+  no_solution:
+    file: agent_task_no_solution.md
+    visibility: agent-facing
+    status: approved
+
+agent_context_allowlist:
+  - agent_task_level1.md
+  - agent_task_level2.md
+  - agent_task_level3.md
+  - agent_task_perturbed.md
+  - agent_task_no_solution.md
+
+agent_context_blocklist:
+  - metadata.yaml
+  - source_packet.md
+  - source_facts.md
+  - gold_reference.md
+  - perturbed_variant.md
+  - no_solution_variant.md
+  - audit.md
+
+audit:
+  leakage_audit_status: complete
+  gold_reference_audit_status: complete
+  variant_consistency_status: complete
+  audit_decision: approve
+  last_reviewed_by: Codex
+  last_reviewed_date: 2026-05-26

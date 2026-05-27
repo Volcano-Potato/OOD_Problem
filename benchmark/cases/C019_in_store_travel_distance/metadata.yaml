@@ -1,0 +1,73 @@
+visibility: evaluator-only
+do_not_include_in_agent_context: true
+
+case_id: C019
+anonymous_short_name: in_store_travel_distance
+paper_key: hui_inman_huang_suher_2013_store_travel_distance
+source_pdf: downloads/deepscientist_econ_business_experiment_papers/Hui_Inman_Huang_Suher_2013_The_Effect_of_In_Store_Travel_Distance_on_Unplanned_Spending_Applications_to_Mobile_Promotion_Strategies.pdf
+
+taxonomy:
+  domain: marketing
+  subdomain: retail_navigation
+  design_family: IV
+  variation_source: market_exposure
+  assignment_level: individual
+  outcome_level: transaction
+  unit_of_observation: transaction
+  key_failure_mode: endogenous_exposure
+  secondary_failure_modes:
+    - selection
+    - weak_identification
+  difficulty: hard
+  leakage_risk: low
+
+selection:
+  selected_for_pilot: false
+  selected_for_main: true
+  has_replication_data: "no"
+
+variants:
+  level1:
+    file: agent_task_level1.md
+    visibility: agent-facing
+    status: approved
+  level2:
+    file: agent_task_level2.md
+    visibility: agent-facing
+    status: approved
+  level3:
+    file: agent_task_level3.md
+    visibility: agent-facing
+    status: approved
+  perturbed:
+    file: agent_task_perturbed.md
+    visibility: agent-facing
+    status: approved
+  no_solution:
+    file: agent_task_no_solution.md
+    visibility: agent-facing
+    status: approved
+
+agent_context_allowlist:
+  - agent_task_level1.md
+  - agent_task_level2.md
+  - agent_task_level3.md
+  - agent_task_perturbed.md
+  - agent_task_no_solution.md
+
+agent_context_blocklist:
+  - metadata.yaml
+  - source_packet.md
+  - source_facts.md
+  - gold_reference.md
+  - perturbed_variant.md
+  - no_solution_variant.md
+  - audit.md
+
+audit:
+  leakage_audit_status: complete
+  gold_reference_audit_status: complete
+  variant_consistency_status: complete
+  audit_decision: approve
+  last_reviewed_by: Codex
+  last_reviewed_date: 2026-05-26

@@ -152,6 +152,16 @@ Pilot set 已完成：
 
 后续模板修订：已根据 `zanbia.md` 的结构增强 Level 2 模板。新标准要求额外包含 `Data Structure Overview`、`Variable Groups`、`secondary outcomes`、`baseline/pre-treatment variables`。现有 pilot Level 2 task 如需完全匹配新标准，应重生成或增补这些模块。
 
+主集扩展：`benchmark/cases/C004_paid_search_effectiveness/agent_task_level2.md` 已按相同 Level 2 Data Card 标准完成。
+
+主集扩展：`benchmark/cases/C010_fertilizer_present_bias/agent_task_level2.md` 已按相同 Level 2 Data Card 标准完成。
+
+主集扩展：`benchmark/cases/C016_hiv_risk_information/agent_task_level2.md` 已按相同 Level 2 Data Card 标准完成。
+
+主集扩展：`benchmark/cases/C019_in_store_travel_distance/agent_task_level2.md` 已按相同 Level 2 Data Card 标准完成。
+
+主集扩展：`benchmark/cases/C020_price_ending_field_experiment/agent_task_level2.md` 已按相同 Level 2 Data Card 标准完成。
+
 ## 验收标准
 
 - [x] 一个懂基本计量/实验设计的人读完后能提出至少一个合理方向。

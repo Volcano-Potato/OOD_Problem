@@ -118,6 +118,16 @@ Pilot set 已完成：
 - 5 个 no-solution variant 都已显式移除可信强识别来源，同时仍保留现实研究价值和“诱导错误回归”的数据外观。
 - `metadata.yaml` 已同步更新 `taxonomy.leakage_risk`、`audit.audit_decision`、各 variant 状态、以及审计完成时间。
 
+主集扩展：`C004` 的 `agent_task_level1.md`、`agent_task_level2.md`、`agent_task_level3.md`、`agent_task_perturbed.md`、`agent_task_no_solution.md`、`perturbed_variant.md`、`no_solution_variant.md` 与 `gold_reference.md` 也已完成同口径审计，并已同步回写 `benchmark/cases/C004_paid_search_effectiveness/audit.md` 与 `benchmark/cases/C004_paid_search_effectiveness/metadata.yaml`。
+
+主集扩展：`C010` 的 `agent_task_level1.md`、`agent_task_level2.md`、`agent_task_level3.md`、`agent_task_perturbed.md`、`agent_task_no_solution.md`、`perturbed_variant.md`、`no_solution_variant.md` 与 `gold_reference.md` 也已完成同口径审计，并已同步回写 `benchmark/cases/C010_fertilizer_present_bias/audit.md` 与 `benchmark/cases/C010_fertilizer_present_bias/metadata.yaml`。
+
+主集扩展：`C016` 的 `agent_task_level1.md`、`agent_task_level2.md`、`agent_task_level3.md`、`agent_task_perturbed.md`、`agent_task_no_solution.md`、`perturbed_variant.md`、`no_solution_variant.md` 与 `gold_reference.md` 也已完成同口径审计，并已同步回写 `benchmark/cases/C016_hiv_risk_information/audit.md` 与 `benchmark/cases/C016_hiv_risk_information/metadata.yaml`。
+
+主集扩展：`C019` 的 `agent_task_level1.md`、`agent_task_level2.md`、`agent_task_level3.md`、`agent_task_perturbed.md`、`agent_task_no_solution.md`、`perturbed_variant.md`、`no_solution_variant.md` 与 `gold_reference.md` 也已完成同口径审计，并已同步回写 `benchmark/cases/C019_in_store_travel_distance/audit.md` 与 `benchmark/cases/C019_in_store_travel_distance/metadata.yaml`。
+
+主集扩展：`C020` 的 `agent_task_level1.md`、`agent_task_level2.md`、`agent_task_level3.md`、`agent_task_perturbed.md`、`agent_task_no_solution.md`、`perturbed_variant.md`、`no_solution_variant.md` 与 `gold_reference.md` 也已完成同口径审计，并已同步回写 `benchmark/cases/C020_price_ending_field_experiment/audit.md` 与 `benchmark/cases/C020_price_ending_field_experiment/metadata.yaml`。
+
 未运行 OpenClaw。
 
 ## 验收标准

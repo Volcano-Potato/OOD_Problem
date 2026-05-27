@@ -20,7 +20,7 @@ Level 1 不能只是两段泛泛背景。它应该借鉴 `zanbia.md` 的优点�
 5. 写机制直觉：至少列出 2-4 条可能路径或替代解释。
 6. 写可用信息边界：宽泛说明可能有行政记录、交易数据、调查、平台日志或实施记录，但不写完整 Data Card。
 7. 不提供完整变量表、assignment details 和识别威胁提示。
-8. 加入 task rule：不能搜索、不能识别原论文、只能用给定材料。
+8. 加入 task rule：要求 Agent 基于给定背景和材料做研究设计规划，不要把 prompt 写成检索禁令。
 
 ## 怎么构造
 
@@ -43,7 +43,7 @@ Level 1 应包含这些模块：
 - `Mechanism Intuition`：2-4 条可能机制或替代解释。
 - `Available Information`：宽泛数据来源或记录类型，但不提供完整变量表。
 - `Information Not Provided`：明确缺失原论文、样本量、地点、完整变量、精确 assignment protocol。
-- `Known Constraints`：不能搜索，不能识别原论文，必须区分 descriptive/causal/mechanism claims。
+- `Known Constraints`：必须区分 descriptive/causal/mechanism claims，并明确哪些结论无法由当前材料支持。
 - `Required Output`：更细的统一输出合同，包括 mechanisms、measurement issues、attrition/compliance、failure modes、claim-evidence table。
 
 ## 研究内容描述应包含
@@ -53,7 +53,7 @@ Level 1 应包含这些模块：
 - 行为机制直觉：可能涉及价格、信息、激励、社会压力、注意力、选择等。
 - 研究目标：X 是否/如何/在多大程度上影响 Y，以及至少一个机制或解释问题。
 - 具体研究问题：主效应、机制、选择/测量/时点问题、政策或管理含义。
-- 基本约束：不能随意增加新实验、不能使用外部文献、只能基于给定材料。
+- 基本约束：不能随意增加新实验；如果材料不足，必须明确承认不足，而不是补造 case-specific 事实。
 
 ## 研究内容描述不应包含
 
@@ -70,8 +70,7 @@ Level 1 应包含这些模块：
 # Anonymous Research Design Task: Level 1
 
 ## Task Rule
-You must not search the web, infer the original paper, or use external literature.
-Use only the information provided below.
+Use the information provided below to design a rigorous empirical strategy.
 If credible causal identification is not possible, say so directly.
 
 ## Research Background
@@ -121,6 +120,16 @@ Pilot set 已完成：
 本轮最初只构造 Level 1 agent-facing 背景任务；未构造 Level 2/3、perturbed、no-solution，也未运行 OpenClaw。
 
 后续模板修订：已根据 `zanbia.md` 的高信息量任务包结构，扩展 Level 1 模板。现有 pilot task 如需完全匹配新标准，应重新生成或增补 `Research Setting`、`Specific Questions To Answer`、`Mechanism Intuition`、`Available Information`、`Information Not Provided` 等模块。
+
+主集扩展：`benchmark/cases/C004_paid_search_effectiveness/agent_task_level1.md` 已按相同 rich Level 1 标准完成。
+
+主集扩展：`benchmark/cases/C010_fertilizer_present_bias/agent_task_level1.md` 已按相同 rich Level 1 标准完成。
+
+主集扩展：`benchmark/cases/C016_hiv_risk_information/agent_task_level1.md` 已按相同 rich Level 1 标准完成。
+
+主集扩展：`benchmark/cases/C019_in_store_travel_distance/agent_task_level1.md` 已按相同 rich Level 1 标准完成。
+
+主集扩展：`benchmark/cases/C020_price_ending_field_experiment/agent_task_level1.md` 已按相同 rich Level 1 标准完成。
 
 ## 验收标准
 

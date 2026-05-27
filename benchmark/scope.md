@@ -34,7 +34,7 @@ OOD-CausalDesignBench evaluates whether OpenClaw / DeepScientist-based scientifi
 | Recalling the original paper | The benchmark is not a memory test. Original titles, authors, locations, and unique phrases are hidden to prevent pretraining or search-based shortcuts. |
 | Reproducing the exact original method | A valid answer may differ from the paper if it satisfies the necessary identification conditions. Evaluation focuses on causal validity, not exact replication. |
 | Literature review quality | The agent is asked to design an empirical strategy, not summarize related work or cite external papers. |
-| Open-ended web search ability | Main runs are closed-book. Retrieval can be tested separately, but it would confound research-design reasoning with search success. |
+| Open-ended web search ability as a standalone target | The benchmark is not primarily a search benchmark. Remote tools may be available by design, but evaluation still focuses on whether the final design claims are warranted by the packet, explicit assumptions, and clearly bounded external evidence. |
 | Paper-writing fluency | Polished prose is not the target. Long, fluent reports can still be failures if their design claims are unsupported. |
 | Code implementation or data analysis execution | The benchmark evaluates research-design planning and claim grounding, not whether the agent can execute Stata/R/Python code on real datasets. |
 | General business knowledge | The task is not to give business advice. It is to formulate credible empirical identification under explicit data and institutional constraints. |
@@ -65,14 +65,15 @@ The secondary units of evaluation are:
 
 ## Core Experimental Setting
 
-The main benchmark uses a closed-book setting:
+The main benchmark uses a locally isolated, remote-tool-enabled setting:
 
-- The agent receives only the anonymized task packet.
-- The agent must not search the web, infer the original paper, or use external literature.
+- The agent receives exactly one anonymized task packet per run.
+- The task packet is the primary evidence source for the final design.
 - The task packet may include research background, data card, institutional details, constraints, and threat hints depending on level.
 - The original paper, gold reference, linchpin detail, acceptable designs, invalid designs, and audit notes are evaluator-only.
+- The agent may use remote web or literature tools, but it may not access local benchmark files beyond the provided packet.
 
-This setting is necessary because the benchmark is intended to evaluate research-design reasoning, not retrieval or memorization.
+This setting is necessary because the benchmark is intended to evaluate research-design reasoning under realistic research-agent conditions without allowing local hidden-answer leakage. The run log must record the exact remote-tool configuration and, when available, actual tool use.
 
 ## Why This Is Not "Guess The Paper"
 

@@ -109,6 +109,16 @@ Pilot set 已完成：
 
 这些 no-solution task 都保留了真实研究价值、清晰 outcome、丰富 covariates 和“很像能跑回归”的结构，但不保留可信强识别来源。未运行 OpenClaw。
 
+主集扩展：`C004` 已新增完成 `benchmark/cases/C004_paid_search_effectiveness/agent_task_no_solution.md` 和 `benchmark/cases/C004_paid_search_effectiveness/no_solution_variant.md`。该 no-solution 版本保留 rich marketing logs、market-time sales 和 segment covariates，但移除了任何可信的外生 ad-availability variation。
+
+主集扩展：`C010` 已新增完成 `benchmark/cases/C010_fertilizer_present_bias/agent_task_no_solution.md` 和 `benchmark/cases/C010_fertilizer_present_bias/no_solution_variant.md`。该 no-solution 版本保留 seasonal panel、price variation、intentions 和 adoption outcomes，但移除了任何可信的 randomized timing variation。
+
+主集扩展：`C016` 已新增完成 `benchmark/cases/C016_hiv_risk_information/agent_task_no_solution.md` 和 `benchmark/cases/C016_hiv_risk_information/no_solution_variant.md`。该 no-solution 版本保留 school-level program exposure、objective and survey outcomes、以及丰富 school/community covariates，但移除了任何可信的 exogenous information-content assignment。
+
+主集扩展：`C019` 已新增完成 `benchmark/cases/C019_in_store_travel_distance/agent_task_no_solution.md` 和 `benchmark/cases/C019_in_store_travel_distance/no_solution_variant.md`。该 no-solution 版本保留 rich route logs、checkout baskets、display exposure 和 shopper covariates，但移除了任何可信的 exogenous route variation。
+
+主集扩展：`C020` 已新增完成 `benchmark/cases/C020_price_ending_field_experiment/agent_task_no_solution.md` 和 `benchmark/cases/C020_price_ending_field_experiment/no_solution_variant.md`。该 no-solution 版本保留 rich item-level price histories、promotion labels、item history 和 sales outcomes，但移除了任何可信的 exogenous ending-format variation。
+
 ## 验收标准
 
 - [x] 正确答案应是“不能做强因果识别”。

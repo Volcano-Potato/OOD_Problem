@@ -44,7 +44,7 @@
 
 ## 完成范围
 
-本轮已完成 frozen pilot set：`C001`、`C002`、`C005`、`C008`、`C014`。Main set 其余 case 可在 pilot 流程验证后按同一模板扩展。
+本轮已完成 frozen pilot set：`C001`、`C002`、`C005`、`C008`、`C014`。随后主集扩展中，`C004`、`C010`、`C016`、`C019` 与 `C020` 的 `source_facts.md` 也已按同一模板完成。Main set 其余 case 可在 pilot 流程验证后按同一模板扩展。
 
 ## 建议结构
 

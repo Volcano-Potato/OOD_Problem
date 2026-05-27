@@ -27,10 +27,10 @@
 ## 具体执行方法
 
 1. 先写报告主论点，不要先堆材料。主论点应回答：Agent 在商科 OOD 因果设计中具体弱在哪里。
-2. 方法部分说明 case construction、information gradient、variants、closed-book setting、annotation protocol。
+2. 方法部分说明 case construction、information gradient、variants、locally isolated but remote-tool-enabled benchmark condition、annotation protocol。
 3. 结果部分先给总体指标，再给分组指标，最后给失败案例。
 4. 每个失败案例都要引用 raw output 和 gold reference。
-5. limitations 必须承认 case 数量、人工标注、closed-book 设置、商科子领域覆盖等限制。
+5. limitations 必须承认 case 数量、人工标注、locally isolated but remote-tool-enabled 设置、商科子领域覆盖等限制。
 6. reproducibility README 按“如何复查一个 case”和“如何复现指标”两条路径写。
 
 ## reproducibility README 必须回答
@@ -79,4 +79,4 @@ report/
 
 - 报告变成流水账，没有中心论点。
 - 只展示失败，不展示评测协议如何保证公平。
-- 没有说明局限性，例如 case 数量、人工标注主观性、closed-book 设置。
+- 没有说明局限性，例如 case 数量、人工标注主观性、locally isolated but remote-tool-enabled 设置。
