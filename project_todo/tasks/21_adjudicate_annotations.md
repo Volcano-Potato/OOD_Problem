@@ -42,10 +42,29 @@ claim_id,labeler1_judgment,labeler2_judgment,final_judgment,reason
 
 ## 验收标准
 
-- [ ] 至少 20% claims 有第二标注。
-- [ ] 报告 simple agreement。
-- [ ] 所有 high-severity disagreement 都有裁决说明。
-- [ ] `adjudicated_labels.csv` 是后续统计唯一数据源。
+- [x] 至少 20% claims 有第二标注。
+- [x] 报告 simple agreement。
+- [x] 所有 high-severity disagreement 都有裁决说明。
+- [x] `adjudicated_labels.csv` 是后续统计唯一数据源。
+
+## 完成记录
+
+- 第二标注样本由固定种子 `20260528` 抽取，并分层覆盖全部 10 个 case。
+- 第二标注样本规模为 `60 / 285 = 21.1%`。
+- 样本分布：
+  - `level2`: `19`
+  - `level3`: `15`
+  - `perturbed`: `22`
+  - `no_solution`: `4`
+- simple agreement：
+  - `human_judgment`: `83.3%`
+  - `error_type`: `83.3%`
+- 共识别 `10` 条需要显式裁决的 disagreement。
+- 最终冻结文件：
+  - `annotations/second_labels.csv`
+  - `annotations/adjudication_notes.md`
+  - `annotations/adjudicated_labels.csv`
+- `annotations/adjudicated_labels.csv` 已完整覆盖 `285` 条 main-run claims，后续 `task22-24` 只应使用该文件。
 
 ## 常见风险
 

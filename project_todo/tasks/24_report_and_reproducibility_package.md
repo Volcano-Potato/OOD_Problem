@@ -69,11 +69,41 @@ report/
 
 ## 验收标准
 
-- [ ] 报告能清楚解释为什么商科因果设计是 OOD 压力测试。
-- [ ] 结果基于 main-set 数据，不只基于单例。
-- [ ] 至少包含 3 张核心图表。
-- [ ] 至少包含 3 个失败案例。
-- [ ] README 能让另一个人理解如何复查输入、输出、标注和指标。
+- [x] 报告能清楚解释为什么商科因果设计是 OOD 压力测试。
+- [x] 结果基于 main-set 数据，不只基于单例。
+- [x] 至少包含 3 张核心图表。
+- [x] 至少包含 3 个失败案例。
+- [x] README 能让另一个人理解如何复查输入、输出、标注和指标。
+
+## 完成记录
+
+- 已生成主报告：
+  - `report/research_report.md`
+- 已生成复现说明：
+  - `report/reproducibility_readme.md`
+- 已生成展示提纲：
+  - `report/presentation_outline.md`
+
+## 报告内容覆盖
+
+- benchmark 为什么把商科因果设计当作 OOD 压力测试
+- case construction 和 agent-facing / evaluator-only 分层
+- `benchmark_isolated` 的 locally isolated but remote-tool-enabled 运行条件
+- claim extraction、annotation、adjudication 流程
+- main-set 指标与分组结果
+- 至少 3 张核心图表
+- failure taxonomy 与 5 个代表性失败案例
+- limitations 与 system recommendations
+
+## 复现说明覆盖
+
+- case 文件位置
+- agent 输入与 batch spec
+- raw output 位置
+- claim extraction 输出位置
+- annotation 与 adjudication 输出位置
+- metric 脚本与重算命令
+- 失败案例对应的 `run_id`
 
 ## 常见风险
 

@@ -57,10 +57,40 @@
 
 ## 验收标准
 
-- [ ] 至少 3 个失败案例。
-- [ ] 每个失败案例有原始输出引用和 gold reference 对照。
-- [ ] 每个失败案例都能映射到一个 failure mode。
-- [ ] 至少一个案例来自 perturbed 或 no-solution variant。
+- [x] 至少 3 个失败案例。
+- [x] 每个失败案例有原始输出引用和 gold reference 对照。
+- [x] 每个失败案例都能映射到一个 failure mode。
+- [x] 至少一个案例来自 perturbed 或 no-solution variant。
+
+## 完成记录
+
+- 已生成正式 failure analysis 文档：
+  - `results/failure_cases.md`
+- 本轮共整理 `5` 个代表性失败案例：
+  - `C001 level2`
+  - `C005 perturbed`
+  - `C014 perturbed`
+  - `C016 level2`
+  - `C020 no_solution`
+- 覆盖的失败家族包括：
+  - unsupported operational concretization
+  - mechanical reuse under broken identification
+  - measurement credulity
+  - mechanism over-interpretation from limited evidence
+  - no-solution causal backsliding
+- 每个案例均包含：
+  - agent-facing evidence context
+  - agent claim
+  - cited evidence
+  - gold / variant note contrast
+  - adjudicated label
+  - system improvement suggestion
+
+## 本轮分析结论
+
+- 当前 OpenClaw 的主要弱点不是格式服从，而是 evidence-boundary discipline。
+- `perturbed` 失败主要体现为未重新计算“在条件被改坏后还剩什么 estimand”。
+- `no_solution` 虽然整体上较少出现支持型 causal claim，但仍会在局部句子层面滑回到直接因果措辞。
 
 ## 常见风险
 

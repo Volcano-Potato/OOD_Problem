@@ -39,6 +39,128 @@
 2 no-solution variants
 ```
 
+## Frozen Main-Run Matrix
+
+The current main run freezes the 10-case main set and uses one canonical batch spec.
+
+### Case List
+
+- `C001_charitable_giving`
+- `C002_consumer_credit`
+- `C004_paid_search_effectiveness`
+- `C005_online_ad_measurement`
+- `C008_retail_tax_salience`
+- `C010_fertilizer_present_bias`
+- `C014_corruption_monitoring`
+- `C016_hiv_risk_information`
+- `C019_in_store_travel_distance`
+- `C020_price_ending_field_experiment`
+
+### Variant Policy
+
+- Run `level2` for all 10 cases.
+- Run `level3` for all 10 cases.
+- Run `perturbed` for all 10 cases.
+- Run `no_solution` for 4 cases chosen to cover different failure modes:
+  - `C001`
+  - `C005`
+  - `C016`
+  - `C020`
+
+### `no_solution` Selection Rationale
+
+The main run does not use `no_solution` for all 10 cases. Instead, it uses a smaller set chosen to maximize failure-mode coverage while keeping total runtime and later annotation burden manageable.
+
+- `C001`
+  - covers contact, engagement, and mechanism-separation failure under endogenous participation
+- `C005`
+  - covers digital-advertising attribution, intent selection, and missing exogenous exposure variation
+- `C016`
+  - covers information-treatment interpretation when credible assignment is removed but outcome structure still looks rich
+- `C020`
+  - covers endogenous pricing, mechanism confounding, and the temptation to overclaim from rich product-level historical data
+
+This 4-case subset is intended to test whether the agent can refuse unsupported causal claims across distinct business-research settings, not to duplicate the full `level2/level3/perturbed` matrix.
+
+### Total Planned Runs
+
+```text
+10 level2
+10 level3
+10 perturbed
+4 no_solution
+= 34 total runs
+```
+
+## Canonical Batch Spec
+
+- spec file: `benchmark/run_configs/main_run_batch_spec.csv`
+- split: `main`
+- agent: `benchmark_isolated`
+- timeout_seconds: `1800`
+- thinking level: `high`
+
+## Exact Execution Checklist
+
+1. Confirm all 10 case directories contain approved `agent_task_level2.md`, `agent_task_level3.md`, and `agent_task_perturbed.md`.
+2. Confirm the 4 selected no-solution cases contain approved `agent_task_no_solution.md`.
+3. Freeze the batch spec and do not edit any task packet during the run.
+4. Launch the batch runner in the background so that the full 34-run job can continue without holding an interactive shell.
+5. Write stdout and stderr to a dedicated operator log.
+6. Let `scripts/postprocess_openclaw_run.py` append each completed run to `outputs/run_manifest.csv`.
+7. If the job stops unexpectedly, resume by creating a fresh batch spec with already-completed rows set to `enabled=false`.
+
+## Canonical Launch Command
+
+```bash
+mkdir -p outputs
+nohup ./scripts/run_batch_isolated.sh benchmark/run_configs/main_run_batch_spec.csv 1800 \
+  > outputs/main_run_batch.log 2>&1 &
+echo $!
+```
+
+## Current Execution Status
+
+- [x] Main case list frozen.
+- [x] Variant policy frozen.
+- [x] Batch spec path frozen.
+- [x] Background launch command frozen.
+- [x] Batch job launched.
+- [x] Batch job finished.
+- [x] Manifest row count matches completed main outputs.
+
+## Operator Launch Record
+
+- launch_date: `2026-05-27`
+- launch_mode: detached background process
+- batch_pid: `98725`
+- batch_log: `outputs/main_run_batch.log`
+- batch_spec: `benchmark/run_configs/main_run_batch_spec.csv`
+- timeout_seconds: `1800`
+- first_run_observed: `C001 level2`
+
+## Aborted-Run Rerun Record
+
+- rerun_date: `2026-05-28`
+- rerun_spec: `benchmark/run_configs/main_run_rerun_aborted_spec.csv`
+- rerun_targets:
+  - `C001 perturbed`
+  - `C001 no_solution`
+- rerun_outcome:
+  - both reruns completed with `status=success`
+  - original aborted runs were retained in the manifest and raw-log directory
+
+## Final Main-Run Tally
+
+- original frozen matrix size: `34`
+- original main batch result:
+  - `32 success`
+  - `2 aborted`
+- post-rerun main total recorded in manifest:
+  - `36 rows`
+  - `34 success`
+  - `2 aborted retained as historical records`
+
 ## 产出
 
 - `outputs/raw_agent_logs/main/`

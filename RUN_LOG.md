@@ -220,7 +220,274 @@ Rerun one cleaned smoke test under the revised task rule, then rerun the 5-case 
   - this indicates the remaining failure mode is shared-pool exhaustion, not missing local throttling
 - Current interpretation:
   - local request pacing is now under control
-  - stable `semantic-scholar` usage still requires an API key or acceptance of occasional fallback to `deepxiv`
+- stable `semantic-scholar` usage still requires an API key or acceptance of occasional fallback to `deepxiv`
+
+## 2026-05-27
+
+### Stage
+
+Task 18 main benchmark launch.
+
+### Completed Work
+
+- Froze the main-run case matrix at 10 cases:
+  - `C001`
+  - `C002`
+  - `C004`
+  - `C005`
+  - `C008`
+  - `C010`
+  - `C014`
+  - `C016`
+  - `C019`
+  - `C020`
+- Froze the variant matrix:
+  - `level2` for all 10 cases
+  - `level3` for all 10 cases
+  - `perturbed` for all 10 cases
+  - `no_solution` for `C001`, `C005`, `C016`, `C020`
+- Wrote the canonical main-run batch spec:
+  - `benchmark/run_configs/main_run_batch_spec.csv`
+- Updated `task18` with the exact launch checklist and the frozen execution matrix.
+- Launched the main benchmark as a detached background process.
+
+### Launch Record
+
+- batch pid: `98725`
+- batch log: `outputs/main_run_batch.log`
+- batch timeout seconds: `1800`
+- first observed run in log: `C001 level2`
+
+## 2026-05-28
+
+### Stage
+
+Task 21 second-label adjudication and label freeze.
+
+### Completed Work
+
+- Generated a reproducible second-label sample from `annotations/annotation_sheet.csv`.
+- Added a dedicated adjudication builder:
+  - `scripts/build_second_labels_and_adjudication.py`
+- Produced the full Task 21 output set:
+  - `annotations/second_labels.csv`
+  - `annotations/adjudication_notes.md`
+  - `annotations/adjudicated_labels.csv`
+- Completed disagreement review and froze the final label source for downstream metrics.
+
+### Adjudication Summary
+
+- total claims in first-pass table: `285`
+- second-label sample size: `60`
+- sample share: `21.1%`
+- case coverage: all 10 cases represented
+- variant coverage:
+  - `level2`: `19`
+  - `level3`: `15`
+  - `perturbed`: `22`
+  - `no_solution`: `4`
+- simple agreement:
+  - `human_judgment`: `83.3%`
+  - `error_type`: `83.3%`
+- explicit disagreements requiring adjudication: `10`
+
+### Final Frozen Label Counts
+
+- `supported`: `213`
+- `partially_supported`: `41`
+- `unsupported`: `24`
+- `contradicted`: `7`
+
+### Current Conclusion
+
+- The benchmark has now moved from run execution into a stable post-run labeling state.
+- `annotations/adjudicated_labels.csv` is now the canonical source for Task 22 metrics.
+- Remaining work is no longer about running OpenClaw; it is about scoring, analysis, and reporting.
+
+### Current Status
+
+- `task18`: complete
+- `task19`: complete
+- `task20`: complete
+- `task21`: complete
+- `task22`: next
+
+## 2026-05-28
+
+### Stage
+
+Task 22 metrics computation and figure generation.
+
+### Completed Work
+
+- Added a reproducible metrics script:
+  - `scripts/compute_benchmark_metrics.py`
+- Generated the canonical Task 22 metric tables:
+  - `results/metrics_summary.csv`
+  - `results/metrics_summary.md`
+  - `results/error_type_counts.csv`
+  - `results/case_level_scores.csv`
+  - `results/run_level_scores.csv`
+  - `results/grouped_metrics.csv`
+- Generated figure source tables and SVG outputs:
+  - `results/figures/information_gradient_scores.csv`
+  - `results/figures/information_gradient_scores.svg`
+  - `results/figures/error_type_distribution.csv`
+  - `results/figures/error_type_distribution.svg`
+  - `results/figures/case_error_heatmap.csv`
+  - `results/figures/case_error_heatmap.svg`
+  - `results/figures/perturbed_downgrade.csv`
+  - `results/figures/perturbed_downgrade.svg`
+
+### Metric Snapshot
+
+- total adjudicated claims: `285`
+- mean claim score: `0.8193`
+- design-evidence inconsistency rate: `0.2526`
+- unsupported design claim rate: `0.0842`
+- contradiction rate: `0.0246`
+- overclaim rate: `0.1439`
+- critical design omission rate (proxy): `0.0421`
+- mechanism confounding rate (proxy): `0.2564`
+- no-solution honesty rate: `1.0000`
+- level 2 mean run score: `0.8213`
+- level 3 mean run score: `0.8350`
+- perturbed mean run score: `0.7380`
+
+### Interpretation
+
+- The benchmark now has a complete metric layer tied to adjudicated labels rather than draft annotations.
+- The strongest visible degradation is from `level3` to `perturbed`, which is consistent with the benchmark's intended broken-identification stress.
+- `no_solution` behavior is conservative under the current heuristic: all 4 no-solution runs avoided supported causal claims.
+- The current weakest schema point is not missing metrics but label granularity: some omission and mechanism failures are still represented through proxy metrics.
+
+### Current Status
+
+- `task18`: complete
+- `task19`: complete
+- `task20`: complete
+- `task21`: complete
+- `task22`: complete
+- `task23`: next
+
+## 2026-05-28
+
+### Stage
+
+Task 23 failure-case analysis.
+
+### Completed Work
+
+- Replaced the placeholder failure-case file with a full qualitative analysis:
+  - `results/failure_cases.md`
+- Selected and documented 5 representative failures across different benchmark families:
+  - `C001 level2`
+  - `C005 perturbed`
+  - `C014 perturbed`
+  - `C016 level2`
+  - `C020 no_solution`
+- Mapped the selected failures into a compact taxonomy:
+  - unsupported operational concretization
+  - mechanical reuse under broken identification
+  - measurement credulity
+  - mechanism over-interpretation from limited evidence
+  - no-solution causal backsliding
+
+### Interpretation
+
+- The benchmark's most important weakness signal is now clear: the agent often fails not because it lacks a candidate method, but because it does not stay within the evidentiary scope of the packet after conditions change.
+- `Perturbed` failures diagnose brittle estimand reuse.
+- `No-solution` failures diagnose last-mile causal backsliding even when the agent mostly knows it should be cautious.
+
+### Current Status
+
+- `task18`: complete
+- `task19`: complete
+- `task20`: complete
+- `task21`: complete
+- `task22`: complete
+- `task23`: complete
+- `task24`: next
+
+## 2026-05-28
+
+### Stage
+
+Task 24 report and reproducibility package.
+
+### Completed Work
+
+- Wrote the main benchmark report:
+  - `report/research_report.md`
+- Wrote the reproducibility walkthrough:
+  - `report/reproducibility_readme.md`
+- Wrote the presentation/story outline:
+  - `report/presentation_outline.md`
+
+### Report Package Summary
+
+- The final report now covers:
+  - benchmark motivation
+  - case construction and schema
+  - run setup
+  - annotation and adjudication
+  - metrics
+  - grouped results
+  - failure cases
+  - limitations
+  - system recommendations
+- The reproducibility guide now answers:
+  - where the case files live
+  - where the agent inputs live
+  - where the raw outputs live
+  - where claims, annotations, and adjudicated labels live
+  - how to recompute metrics
+  - which run IDs correspond to the documented failure cases
+
+### Current Conclusion
+
+- The repository now contains the full benchmark package from case construction through report-ready outputs.
+- The main remaining work is presentation refinement or external write-up polish, not missing benchmark infrastructure.
+
+### Current Status
+
+- `task18`: complete
+- `task19`: complete
+- `task20`: complete
+- `task21`: complete
+- `task22`: complete
+- `task23`: complete
+- `task24`: complete
+
+### Current Status
+
+- `task18`: started
+- batch job: running
+- `task19` and later: not started
+
+### Next Recommended Step
+
+Monitor `outputs/main_run_batch.log` and `outputs/run_manifest.csv` until the main run completes, then move directly to `task19` claim extraction instead of revisiting pilot-schema work.
+
+### Completion Update
+
+- The 34-run frozen main batch completed.
+- Original batch outcome:
+  - `32 success`
+  - `2 aborted`
+- The two aborted runs were:
+  - `C001 perturbed`
+  - `C001 no_solution`
+- Both were rerun on `2026-05-28` under the same isolated pipeline and completed successfully.
+- Main-run files now consist of:
+  - `36` main raw logs total
+  - `36` main manifest rows total
+  - of which `34` are successful benchmark outputs and `2` are retained aborted historical records
+
+### Updated Status
+
+- `task18` run execution: complete
+- `task19`: ready to start
 
 ### Task 17 Isolated Rerun
 
@@ -323,3 +590,90 @@ Rerun one cleaned smoke test under the revised task rule, then rerun the 5-case 
 - Current limitation:
   - content-level contamination labels are still left as `unknown` by default and require human review
   - the next step should be targeted repair of those two cases rather than another full 5-case rerun
+
+## 2026-05-28
+
+### Stage
+
+Main-run claim extraction completed; repository is ready to enter Task 20 annotation.
+
+### Completed Work
+
+- Re-ran the 2 previously aborted main-run records:
+  - `C001 perturbed`
+  - `C001 no_solution`
+- Kept the original aborted rows in `outputs/run_manifest.csv` as historical records and appended successful rerun rows instead of overwriting them.
+- Implemented a reproducible claim-extraction script:
+  - `scripts/extract_agent_claims.py`
+- Generated main-run claim artifacts:
+  - `outputs/parsed_claims/claims_to_annotate.csv`
+  - `outputs/parsed_claims/claim_extraction_skipped.csv`
+  - `outputs/parsed_claims/claim_extraction_summary.md`
+
+### Main-Run Execution State
+
+- Frozen matrix size: `34`
+- Historical main-run records now present in manifest: `36`
+- Successful main-run outputs available for annotation: `34`
+- Historical aborted rows retained: `2`
+
+### Claim Extraction Result
+
+- Successful main runs processed: `34`
+- Runs with extracted claim tables: `34`
+- Runs skipped: `0`
+- Total extracted claims: `285`
+- Minimum claims per run: `6`
+- Maximum claims per run: `11`
+
+### Interpretation
+
+- The current main benchmark no longer has a missing-output blocker.
+- Claim extraction did not require正文 fallback in this round because all successful main runs included a parseable `Claim-Evidence Table`.
+- The repository is now ready to shift from run collection to human judgment and label calibration.
+
+### Current Status
+
+- `task18` run execution: complete
+- `task19`: complete
+- `task20`: complete
+- `task21`: ready to start
+
+## 2026-05-28
+
+### Stage
+
+First-pass human-style annotation completed; repository is ready to move into double-labeling and adjudication.
+
+### Completed Work
+
+- Archived the earlier pilot quick-review file:
+  - `annotations/pilot_quick_claims.csv`
+- Replaced the placeholder annotation protocol with a full guide:
+  - `annotations/annotation_guide.md`
+- Implemented a reproducible first-pass annotation builder:
+  - `scripts/build_first_pass_annotations.py`
+- Generated a fresh main-run annotation sheet:
+  - `annotations/annotation_sheet.csv`
+
+### Annotation Result
+
+- Main-run claims labeled: `285`
+- Calibration-set claims flagged: `20`
+- Judgment counts:
+  - `supported`: `219`
+  - `partially_supported`: `38`
+  - `unsupported`: `21`
+  - `contradicted`: `7`
+- Non-supported severity counts:
+  - `critical`: `12`
+  - `major`: `41`
+  - `minor`: `13`
+
+### Interpretation
+
+- The repository now has a claim-level labeling file suitable for Task 21 double-annotation.
+- The most concentrated high-severity disputes are where expected:
+  - packet-overreach in `C001` and `C002`
+  - mechanism overreach in `C010` and `C016`
+  - invalid causal carryover in `perturbed` and `no_solution` variants

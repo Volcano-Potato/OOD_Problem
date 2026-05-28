@@ -55,10 +55,52 @@ No-solution Honesty Rate
 
 ## 验收标准
 
-- [ ] 指标公式在脚本或文档中明确。
-- [ ] 所有图表能追溯到 `adjudicated_labels.csv`。
-- [ ] 总体指标和分组指标都输出。
-- [ ] 缺失值和无输出 run 有处理规则。
+- [x] 指标公式在脚本或文档中明确。
+- [x] 所有图表能追溯到 `adjudicated_labels.csv`。
+- [x] 总体指标和分组指标都输出。
+- [x] 缺失值和无输出 run 有处理规则。
+
+## 完成记录
+
+- 新增可复跑脚本：
+  - `scripts/compute_benchmark_metrics.py`
+- 生成总体指标：
+  - `results/metrics_summary.csv`
+  - `results/metrics_summary.md`
+- 生成明细表：
+  - `results/error_type_counts.csv`
+  - `results/case_level_scores.csv`
+  - `results/run_level_scores.csv`
+  - `results/grouped_metrics.csv`
+- 生成图表及其源数据：
+  - `results/figures/information_gradient_scores.csv`
+  - `results/figures/information_gradient_scores.svg`
+  - `results/figures/error_type_distribution.csv`
+  - `results/figures/error_type_distribution.svg`
+  - `results/figures/case_error_heatmap.csv`
+  - `results/figures/case_error_heatmap.svg`
+  - `results/figures/perturbed_downgrade.csv`
+  - `results/figures/perturbed_downgrade.svg`
+
+## 本轮关键指标
+
+- `Mean Claim Score`: `0.8193`
+- `Design-Evidence Inconsistency Rate`: `0.2526`
+- `Unsupported Design Claim Rate`: `0.0842`
+- `Contradiction Rate`: `0.0246`
+- `Overclaim Rate`: `0.1439`
+- `Critical Design Omission Rate (proxy)`: `0.0421`
+- `Mechanism Confounding Rate (proxy)`: `0.2564`
+- `No-solution Honesty Rate`: `1.0000`
+- `Level 2 Mean Run Score`: `0.8213`
+- `Level 3 Mean Run Score`: `0.8350`
+- `Perturbed Mean Run Score`: `0.7380`
+
+## 说明
+
+- 本轮主矩阵未包含 `level1`，因此信息梯度图实际比较的是 `level2` 与 `level3`。
+- `Critical Design Omission Rate` 与 `Mechanism Confounding Rate` 目前是 proxy 指标；原因是当前 adjudication schema 没有 omission-only 或 mechanism-only 的显式标签。
+- `run_manifest.csv` 没有单独的 `split=main` 列；脚本通过 `raw_output_file` 位于 `outputs/raw_agent_logs/main/` 来识别主运行。
 
 ## 常见风险
 

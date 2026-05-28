@@ -77,7 +77,7 @@
 
 ## 当前阶段状态
 
-截至 `2026-05-25`，仓库状态如下：
+截至 `2026-05-28`，仓库状态如下：
 
 - `task16` 已完成，OpenClaw benchmark 运行配置已冻结。
 - `task17` 的首轮 5-case Level 2 pilot batch 已执行并完成首轮 review。
@@ -88,14 +88,22 @@
 - 已对 `C001`、`C002` 做 focused rerun；两条 trajectory 仍均为 `actual tool use = none`。
 - `C002` 的中文输出问题在 focused rerun 中未再出现，但 `C001` 与 `C002` 仍都因为 packet-overreach 保持 `suspected`。
 - `benchmark_retrieval` 不再单独设立；正式 benchmark 条件统一为 `benchmark_isolated`。
-- 当前仍未进入正式 main benchmark、claim extraction 批处理、adjudication 或最终指标统计阶段。
+- `task18` main run 已完成，正式主矩阵的成功输出现已齐备。
+- `task19` claim extraction 已完成，`outputs/parsed_claims/claims_to_annotate.csv` 已生成。
+- `task20` first-pass annotation 已完成，`annotations/annotation_sheet.csv` 与 `annotations/annotation_guide.md` 已更新。
+- `task21` second-label adjudication 已完成，`annotations/second_labels.csv`、`annotations/adjudication_notes.md` 与 `annotations/adjudicated_labels.csv` 已生成。
+- `annotations/adjudicated_labels.csv` 现为后续统计与分析的唯一标签来源。
+- `task22` metrics 与 figures 已完成，`results/metrics_summary.csv`、`results/grouped_metrics.csv` 与 `results/figures/*.svg` 已生成。
+- `task23` failure-case analysis 已完成，`results/failure_cases.md` 已生成。
+- `task24` final report package 已完成，`report/research_report.md`、`report/reproducibility_readme.md` 与 `report/presentation_outline.md` 已生成。
+- 当前主线任务已全部完成。
 
 当前的主要问题已经收缩为两类：
 
-- `C001`、`C002` 的 packet-overreach
+- 如何根据课程或论文用途裁剪现有交付物
 - benchmark 运行时是否继续保留带噪声的 `semantic-scholar` MCP
 
-目前已经在全部 agent-facing task packet 的 `Task Rule` 中加入 anti-reconstruction 约束，并完成了 focused rerun；下一步需要直接修 `C001`、`C002` 的 packet wording，而不是继续泛化重跑。
+目前已经在全部 agent-facing task packet 的 `Task Rule` 中加入 anti-reconstruction 约束，并完成了 focused rerun；主线 benchmark pipeline 已完成。后续若继续推进，应转向课程展示版裁剪、论文写作润色，或追加新 case / 新 agent 的扩展实验。
 
 ## 阶段顺序
 

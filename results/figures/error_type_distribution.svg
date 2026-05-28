@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+<rect width="100%" height="100%" fill="white"/>
+<text x="360.0" y="28" text-anchor="middle" font-size="20">Error Type Distribution</text>
+<line x1="70" y1="340" x2="700" y2="340" stroke="#222"/>
+<line x1="70" y1="50" x2="70" y2="340" stroke="#222"/>
+<line x1="65" y1="340.0" x2="70" y2="340.0" stroke="#222"/>
+<text x="60" y="344.0" text-anchor="end" font-size="11">0</text>
+<line x1="65" y1="283.4146341463415" x2="70" y2="283.4146341463415" stroke="#222"/>
+<text x="60" y="287.4146341463415" text-anchor="end" font-size="11">8</text>
+<line x1="65" y1="226.8292682926829" x2="70" y2="226.8292682926829" stroke="#222"/>
+<text x="60" y="230.8292682926829" text-anchor="end" font-size="11">16</text>
+<line x1="65" y1="163.1707317073171" x2="70" y2="163.1707317073171" stroke="#222"/>
+<text x="60" y="167.1707317073171" text-anchor="end" font-size="11">25</text>
+<line x1="65" y1="106.58536585365852" x2="70" y2="106.58536585365852" stroke="#222"/>
+<text x="60" y="110.58536585365852" text-anchor="end" font-size="11">33</text>
+<line x1="65" y1="50.0" x2="70" y2="50.0" stroke="#222"/>
+<text x="60" y="54.0" text-anchor="end" font-size="11">41</text>
+<rect x="146.25" y="50.0" width="101.66666666666667" height="290.0" fill="#B65E5E"/>
+<text x="197.08333333333334" y="372" text-anchor="middle" font-size="12">Overclaim</text>
+<text x="197.08333333333334" y="42.0" text-anchor="middle" font-size="12">41</text>
+<rect x="349.58333333333337" y="170.2439024390244" width="101.66666666666667" height="169.7560975609756" fill="#4F8BC9"/>
+<text x="400.4166666666667" y="372" text-anchor="middle" font-size="12">Unsupported Claim</text>
+<text x="400.4166666666667" y="162.2439024390244" text-anchor="middle" font-size="12">24</text>
+<rect x="552.9166666666667" y="290.4878048780488" width="101.66666666666667" height="49.51219512195122" fill="#8A5FBF"/>
+<text x="603.7500000000001" y="372" text-anchor="middle" font-size="12">Contradiction</text>
+<text x="603.7500000000001" y="282.4878048780488" text-anchor="middle" font-size="12">7</text>
+</svg>

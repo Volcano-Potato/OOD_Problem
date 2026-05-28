@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="460" viewBox="0 0 860 460">
+<rect width="100%" height="100%" fill="white"/>
+<text x="430.0" y="28" text-anchor="middle" font-size="20">Design Downgrade Under Perturbation</text>
+<line x1="70" y1="380" x2="840" y2="380" stroke="#222"/>
+<line x1="70" y1="50" x2="70" y2="380" stroke="#222"/>
+<line x1="65" y1="380.0" x2="70" y2="380.0" stroke="#222"/>
+<text x="60" y="384.0" text-anchor="end" font-size="11">0.0</text>
+<line x1="65" y1="314.0" x2="70" y2="314.0" stroke="#222"/>
+<text x="60" y="318.0" text-anchor="end" font-size="11">0.2</text>
+<line x1="65" y1="248.0" x2="70" y2="248.0" stroke="#222"/>
+<text x="60" y="252.0" text-anchor="end" font-size="11">0.4</text>
+<line x1="65" y1="182.0" x2="70" y2="182.0" stroke="#222"/>
+<text x="60" y="186.0" text-anchor="end" font-size="11">0.6</text>
+<line x1="65" y1="116.0" x2="70" y2="116.0" stroke="#222"/>
+<text x="60" y="120.0" text-anchor="end" font-size="11">0.8</text>
+<line x1="65" y1="50.0" x2="70" y2="50.0" stroke="#222"/>
+<text x="60" y="54.0" text-anchor="end" font-size="11">1.0</text>
+<polyline fill="none" stroke="#2F6B5F" stroke-width="2" points="70.0,144.28099999999998 154.44444444444446,73.56200000000001 238.88888888888889,50.0 323.33333333333337,70.625 407.77777777777777,70.625 492.22222222222223,99.5 576.6666666666667,132.5 661.1111111111111,91.25 745.5555555555555,97.15699999999998 830.0,215.0"/>
+<polyline fill="none" stroke="#B65E5E" stroke-width="2" points="70.0,111.875 154.44444444444446,91.25 238.88888888888889,132.5 323.33333333333337,191.438 407.77777777777777,132.5 492.22222222222223,120.719 576.6666666666667,256.25 661.1111111111111,120.719 745.5555555555555,120.719 830.0,86.66300000000001"/>
+<circle cx="70.0" cy="144.28099999999998" r="4" fill="#2F6B5F"/>
+<circle cx="70.0" cy="111.875" r="4" fill="#B65E5E"/>
+<text x="70.0" y="404" text-anchor="middle" font-size="11">C001</text>
+<circle cx="154.44444444444446" cy="73.56200000000001" r="4" fill="#2F6B5F"/>
+<circle cx="154.44444444444446" cy="91.25" r="4" fill="#B65E5E"/>
+<text x="154.44444444444446" y="404" text-anchor="middle" font-size="11">C002</text>
+<circle cx="238.88888888888889" cy="50.0" r="4" fill="#2F6B5F"/>
+<circle cx="238.88888888888889" cy="132.5" r="4" fill="#B65E5E"/>
+<text x="238.88888888888889" y="404" text-anchor="middle" font-size="11">C004</text>
+<circle cx="323.33333333333337" cy="70.625" r="4" fill="#2F6B5F"/>
+<circle cx="323.33333333333337" cy="191.438" r="4" fill="#B65E5E"/>
+<text x="323.33333333333337" y="404" text-anchor="middle" font-size="11">C005</text>
+<circle cx="407.77777777777777" cy="70.625" r="4" fill="#2F6B5F"/>
+<circle cx="407.77777777777777" cy="132.5" r="4" fill="#B65E5E"/>
+<text x="407.77777777777777" y="404" text-anchor="middle" font-size="11">C008</text>
+<circle cx="492.22222222222223" cy="99.5" r="4" fill="#2F6B5F"/>
+<circle cx="492.22222222222223" cy="120.719" r="4" fill="#B65E5E"/>
+<text x="492.22222222222223" y="404" text-anchor="middle" font-size="11">C010</text>
+<circle cx="576.6666666666667" cy="132.5" r="4" fill="#2F6B5F"/>
+<circle cx="576.6666666666667" cy="256.25" r="4" fill="#B65E5E"/>
+<text x="576.6666666666667" y="404" text-anchor="middle" font-size="11">C014</text>
+<circle cx="661.1111111111111" cy="91.25" r="4" fill="#2F6B5F"/>
+<circle cx="661.1111111111111" cy="120.719" r="4" fill="#B65E5E"/>
+<text x="661.1111111111111" y="404" text-anchor="middle" font-size="11">C016</text>
+<circle cx="745.5555555555555" cy="97.15699999999998" r="4" fill="#2F6B5F"/>
+<circle cx="745.5555555555555" cy="120.719" r="4" fill="#B65E5E"/>
+<text x="745.5555555555555" y="404" text-anchor="middle" font-size="11">C019</text>
+<circle cx="830.0" cy="215.0" r="4" fill="#2F6B5F"/>
+<circle cx="830.0" cy="86.66300000000001" r="4" fill="#B65E5E"/>
+<text x="830.0" y="404" text-anchor="middle" font-size="11">C020</text>
+<rect x="680" y="52" width="12" height="12" fill="#2F6B5F"/>
+<text x="700" y="63" font-size="12">level3</text>
+<rect x="750" y="52" width="12" height="12" fill="#B65E5E"/>
+<text x="770" y="63" font-size="12">perturbed</text>
+</svg>
