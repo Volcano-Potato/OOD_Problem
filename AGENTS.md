@@ -77,7 +77,7 @@
 
 ## 当前阶段状态
 
-截至 `2026-05-28`，仓库状态如下：
+截至 `2026-05-29`，仓库状态如下：
 
 - `task16` 已完成，OpenClaw benchmark 运行配置已冻结。
 - `task17` 的首轮 5-case Level 2 pilot batch 已执行并完成首轮 review。
@@ -96,14 +96,20 @@
 - `task22` metrics 与 figures 已完成，`results/metrics_summary.csv`、`results/grouped_metrics.csv` 与 `results/figures/*.svg` 已生成。
 - `task23` failure-case analysis 已完成，`results/failure_cases.md` 已生成。
 - `task24` final report package 已完成，`report/research_report.md`、`report/reproducibility_readme.md` 与 `report/presentation_outline.md` 已生成。
-- 当前主线任务已全部完成。
+- `task26` 已完成：
+  - 10 条 `level1` main runs 已追加到正式矩阵
+  - claims / annotations / adjudication / metrics 已重算
+  - `results/perturbed_mechanical_reuse.csv` 与 `results/perturbed_pair_audit.md` 已生成
+  - README 与 report 中的过强措辞已收口
+- 当前主线任务与答辩补强任务均已完成。
 
-当前的主要问题已经收缩为两类：
+当前最重要的主结论是：
 
-- 如何根据课程或论文用途裁剪现有交付物
-- benchmark 运行时是否继续保留带噪声的 `semantic-scholar` MCP
+- `level1 -> level2` 有明显提升，而 `level2 -> level3` 基本持平
+- `perturbed` 的配对审计显示 `9/10` case 存在 broken-identification 下的 mechanical reuse
+- `no_solution` 结果应限定表述为 `4/4 tested runs`，而不是无条件 headline rate
 
-目前已经在全部 agent-facing task packet 的 `Task Rule` 中加入 anti-reconstruction 约束，并完成了 focused rerun；主线 benchmark pipeline 已完成。后续若继续推进，应转向课程展示版裁剪、论文写作润色，或追加新 case / 新 agent 的扩展实验。
+目前已经在全部 agent-facing task packet 的 `Task Rule` 中加入 anti-reconstruction 约束，并完成了主矩阵、level1 补跑与 paired perturbed audit。后续若继续推进，应转向课程展示版裁剪、论文写作润色，或追加新 case / 新 agent 的扩展实验。
 
 ## 阶段顺序
 

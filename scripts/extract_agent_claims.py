@@ -142,13 +142,13 @@ def main() -> None:
         "notes",
     ]
     with CLAIMS_CSV.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=claim_fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=claim_fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(claim_rows)
 
     skipped_fieldnames = ["run_id", "case_id", "variant_id", "reason", "raw_output_file"]
     with SKIPPED_CSV.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=skipped_fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=skipped_fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(skipped_rows)
 

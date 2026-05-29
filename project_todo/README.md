@@ -50,6 +50,7 @@
 | 23 | 做失败案例归因分析 | 21-22 | [23_failure_case_analysis.md](tasks/23_failure_case_analysis.md) |
 | 24 | 写研究报告与复现说明 | 22-23 | [24_report_and_reproducibility_package.md](tasks/24_report_and_reproducibility_package.md) |
 | 25 | 构建自动化 batch runner 与运行后处理 | 16-17 | [25_build_batch_runner.md](tasks/25_build_batch_runner.md) |
+| 26 | 补强信息梯度、扰动复用证据与结果措辞 | 18-24 | [26_strengthen_information_gradient_and_perturbation_evidence.md](tasks/26_strengthen_information_gradient_and_perturbation_evidence.md) |
 
 ## 推荐执行顺序
 
@@ -59,6 +60,7 @@
 4. 在 main set 扩展前完成 25，确保 batch orchestration、raw log 和 manifest 回填自动化。
 5. 扩展 main set 到 10 个 case，执行 18-21。
 6. 最后做 22-24，形成结果、失败案例和报告。
+7. 若答辩前需要补强主结果，执行 26，优先补 `level1`、`perturbed` 配对计数与结果措辞收口。
 
 ## 完成定义
 

@@ -1,0 +1,11 @@
+case_id,variant_id,input_file,split,enabled,notes
+C001,level1,benchmark/cases/C001_charitable_giving/agent_task_level1.md,main,true,task26 level1 extension
+C002,level1,benchmark/cases/C002_consumer_credit/agent_task_level1.md,main,true,task26 level1 extension
+C004,level1,benchmark/cases/C004_paid_search_effectiveness/agent_task_level1.md,main,true,task26 level1 extension
+C005,level1,benchmark/cases/C005_online_ad_measurement/agent_task_level1.md,main,true,task26 level1 extension
+C008,level1,benchmark/cases/C008_retail_tax_salience/agent_task_level1.md,main,true,task26 level1 extension
+C010,level1,benchmark/cases/C010_fertilizer_present_bias/agent_task_level1.md,main,true,task26 level1 extension
+C014,level1,benchmark/cases/C014_corruption_monitoring/agent_task_level1.md,main,true,task26 level1 extension
+C016,level1,benchmark/cases/C016_hiv_risk_information/agent_task_level1.md,main,true,task26 level1 extension
+C019,level1,benchmark/cases/C019_in_store_travel_distance/agent_task_level1.md,main,true,task26 level1 extension
+C020,level1,benchmark/cases/C020_price_ending_field_experiment/agent_task_level1.md,main,true,task26 level1 extension

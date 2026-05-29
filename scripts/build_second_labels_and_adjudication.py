@@ -3,6 +3,7 @@
 import csv
 import random
 from collections import Counter, defaultdict
+from math import ceil
 from pathlib import Path
 
 
@@ -13,8 +14,17 @@ ADJUDICATED = ROOT / "annotations" / "adjudicated_labels.csv"
 ADJ_NOTES = ROOT / "annotations" / "adjudication_notes.md"
 
 
-TARGET_SAMPLE_SIZE = 60
+MIN_TARGET_SAMPLE_SIZE = 60
 SAMPLE_SEED = 20260528
+TARGET_SAMPLE_SHARE = 0.21
+MIN_PER_CASE = 6
+MIN_PER_VARIANT = {
+    "level1": 10,
+    "level2": 10,
+    "level3": 10,
+    "perturbed": 10,
+    "no_solution": 4,
+}
 
 
 SECOND_PASS_OVERRIDES = {
@@ -158,6 +168,7 @@ FINAL_ADJUDICATION_OVERRIDES = {
 
 
 def select_sample(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    target_sample_size = max(MIN_TARGET_SAMPLE_SIZE, ceil(len(rows) * TARGET_SAMPLE_SHARE))
     selected = {}
     for row in rows:
         if row["severity"] == "critical" or "calibration_set" in row["notes"]:
@@ -170,10 +181,22 @@ def select_sample(rows: list[dict[str, str]]) -> list[dict[str, str]]:
     random.seed(SAMPLE_SEED)
     for case_id, items in sorted(by_case.items()):
         current = [r for r in selected.values() if r["case_id"] == case_id]
-        need = max(0, 6 - len(current))
+        need = max(0, MIN_PER_CASE - len(current))
         if need:
             pool = [r for r in items if r["claim_id"] not in selected]
-            for row in random.sample(pool, need):
+            for row in random.sample(pool, min(need, len(pool))):
+                selected[row["claim_id"]] = row
+
+    by_variant = defaultdict(list)
+    for row in rows:
+        by_variant[row["variant_id"]].append(row)
+    for variant_id, items in sorted(by_variant.items()):
+        target = min(MIN_PER_VARIANT.get(variant_id, 0), len(items))
+        current = [r for r in selected.values() if r["variant_id"] == variant_id]
+        need = max(0, target - len(current))
+        if need:
+            pool = [r for r in items if r["claim_id"] not in selected]
+            for row in random.sample(pool, min(need, len(pool))):
                 selected[row["claim_id"]] = row
 
     remaining = [r for r in rows if r["claim_id"] not in selected]
@@ -186,7 +209,7 @@ def select_sample(rows: list[dict[str, str]]) -> list[dict[str, str]]:
         )
     )
     for row in remaining:
-        if len(selected) >= TARGET_SAMPLE_SIZE:
+        if len(selected) >= target_sample_size:
             break
         selected[row["claim_id"]] = row
 
@@ -332,6 +355,7 @@ def write_notes(
     disagreements: list[dict[str, str]],
     stats: dict[str, float],
 ) -> None:
+    total_first_pass_rows = len(list(csv.DictReader(FIRST_PASS.open())))
     sample_case = Counter(r["case_id"] for r in sample)
     sample_variant = Counter(r["variant_id"] for r in sample)
     with ADJ_NOTES.open("w") as handle:
@@ -340,10 +364,15 @@ def write_notes(
         handle.write(f"- fixed seed: `{SAMPLE_SEED}`\n")
         handle.write("- include all `critical` first-pass claims\n")
         handle.write("- include all `calibration_set` claims\n")
-        handle.write("- top up to 60 total claims with stratified case coverage (minimum 6 per case)\n\n")
+        handle.write(f"- target sample size: `max({MIN_TARGET_SAMPLE_SIZE}, ceil(total_claims * {TARGET_SAMPLE_SHARE:.2f}))`\n")
+        handle.write(f"- enforce minimum case coverage: `{MIN_PER_CASE}` claims per case when available\n")
+        handle.write("- enforce minimum variant coverage:\n")
+        for variant_id, target in MIN_PER_VARIANT.items():
+            handle.write(f"  - `{variant_id}`: up to `{target}` claims when available\n")
+        handle.write("\n")
         handle.write("## Sample Summary\n\n")
         handle.write(f"- sampled claims: `{len(sample)}`\n")
-        handle.write(f"- share of all claims: `{len(sample)}/{len(list(csv.DictReader(FIRST_PASS.open())))} = {len(sample)/len(list(csv.DictReader(FIRST_PASS.open()))):.1%}`\n")
+        handle.write(f"- share of all claims: `{len(sample)}/{total_first_pass_rows} = {len(sample)/total_first_pass_rows:.1%}`\n")
         handle.write("- sample by case:\n")
         for case_id in sorted(sample_case):
             handle.write(f"  - `{case_id}`: `{sample_case[case_id]}`\n")

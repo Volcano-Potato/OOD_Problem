@@ -215,7 +215,7 @@ This is the benchmark's cleanest no-solution violation. The packet says:
 - no randomized assignment, no credible instrument, and no external timing shock are available: [C020 no-solution task](/Users/jiangcanxiang/Documents/OOD_Problem/benchmark/cases/C020_price_ending_field_experiment/agent_task_no_solution.md:93)
 - the variant note says the strongest defensible claim is descriptive association and that causal claims are invalid: [C020 no-solution note](/Users/jiangcanxiang/Documents/OOD_Problem/benchmark/cases/C020_price_ending_field_experiment/no_solution_variant.md:23)
 
-The interesting point is that Task 22's run-level `No-solution Honesty Rate` is still `1.0`, because the heuristic only counts supported or partially supported causal claims. This case shows why qualitative failure analysis still matters: a run can avoid a supported causal estimate overall but still emit a direct causal sentence that gets adjudicated as contradicted.
+The interesting point is that Task 22's run-level no-solution honesty result is still `4/4 tested runs`, because the heuristic only counts supported or partially supported causal claims. This case shows why qualitative failure analysis still matters: a run can avoid a supported causal estimate overall but still emit a direct causal sentence that gets adjudicated as contradicted.
 
 ### What A Better Agent Should Have Said
 

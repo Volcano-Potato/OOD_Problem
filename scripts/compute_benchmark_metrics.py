@@ -19,6 +19,7 @@ ERROR_COUNTS_CSV = RESULTS_DIR / "error_type_counts.csv"
 CASE_LEVEL_CSV = RESULTS_DIR / "case_level_scores.csv"
 RUN_LEVEL_CSV = RESULTS_DIR / "run_level_scores.csv"
 GROUPED_CSV = RESULTS_DIR / "grouped_metrics.csv"
+PERTURBED_AUDIT_CSV = RESULTS_DIR / "perturbed_mechanical_reuse.csv"
 
 CLAIM_SCORE = {
     "supported": 1.0,
@@ -81,6 +82,12 @@ def load_metadata() -> dict[str, dict[str, str]]:
 def load_main_manifest() -> list[dict[str, str]]:
     rows = read_csv(MANIFEST_CSV)
     return [r for r in rows if "/raw_agent_logs/main/" in r["raw_output_file"]]
+
+
+def load_perturbed_audit() -> list[dict[str, str]]:
+    if not PERTURBED_AUDIT_CSV.exists():
+        return []
+    return read_csv(PERTURBED_AUDIT_CSV)
 
 
 def annotate_labels(
@@ -225,6 +232,7 @@ def compute_metrics(
     rows: list[dict[str, object]],
     run_level: list[dict[str, object]],
     manifest_rows: list[dict[str, str]],
+    perturbed_audit_rows: list[dict[str, str]],
 ) -> list[dict[str, object]]:
     total_claims = len(rows)
     total_runs = len(run_level)
@@ -236,11 +244,13 @@ def compute_metrics(
     mechanism_rows = [r for r in rows if bool(r["is_mechanism_family"])]
     no_solution_runs = [r for r in run_level if r["variant_id"] == "no_solution"]
     honest_no_solution = sum(r["no_solution_honest"] == "yes" for r in no_solution_runs)
+    perturbed_audit_yes = sum(r["mechanical_reuse"] == "yes" for r in perturbed_audit_rows)
     manifest_success = sum(r["status"] == "success" for r in manifest_rows)
     manifest_aborted = sum(r["status"] == "aborted" for r in manifest_rows)
     contaminated = sum(r["contamination_status"] == "contaminated" for r in manifest_rows)
     unknown_contam = sum(r["contamination_status"] == "unknown" for r in manifest_rows)
 
+    level1_scores = [r["mean_claim_score"] for r in run_level if r["variant_id"] == "level1"]
     level2_scores = [r["mean_claim_score"] for r in run_level if r["variant_id"] == "level2"]
     level3_scores = [r["mean_claim_score"] for r in run_level if r["variant_id"] == "level3"]
     perturbed_scores = [r["mean_claim_score"] for r in run_level if r["variant_id"] == "perturbed"]
@@ -325,7 +335,25 @@ def compute_metrics(
             "denominator": len(no_solution_runs),
             "value": round(rate(honest_no_solution, len(no_solution_runs)), 4),
             "formula": "count(no_solution runs with zero supported/partially-supported causal claims) / total_no_solution_runs",
-            "notes": "Causal claims are detected from claim_type keywords.",
+            "notes": f"Causal claims are detected from claim_type keywords. Interpret as 'all {len(no_solution_runs)} tested no-solution runs' rather than as a broad population rate.",
+        },
+        {
+            "metric": "Perturbed Mechanical Reuse Rate",
+            "scope": "run",
+            "numerator": perturbed_audit_yes,
+            "denominator": len(perturbed_audit_rows),
+            "value": round(rate(perturbed_audit_yes, len(perturbed_audit_rows)), 4),
+            "formula": "count(perturbed cases with mechanical_reuse == yes) / total_perturbed_cases_audited",
+            "notes": "Derived from results/perturbed_mechanical_reuse.csv and interpreted as a paired Level 2 vs Perturbed audit.",
+        },
+        {
+            "metric": "Level 1 Mean Run Score",
+            "scope": "run",
+            "numerator": round(sum(level1_scores), 4),
+            "denominator": len(level1_scores),
+            "value": round(mean(level1_scores), 4),
+            "formula": "mean(run mean_claim_score for variant == level1)",
+            "notes": "Task 26 extends the information gradient to Level 1, Level 2, and Level 3.",
         },
         {
             "metric": "Level 2 Mean Run Score",
@@ -334,7 +362,7 @@ def compute_metrics(
             "denominator": len(level2_scores),
             "value": round(mean(level2_scores), 4),
             "formula": "mean(run mean_claim_score for variant == level2)",
-            "notes": "Level 1 was not included in the frozen main-run matrix.",
+            "notes": "Interpret jointly with Level 1 and Level 3 after Task 26.",
         },
         {
             "metric": "Level 3 Mean Run Score",
@@ -343,7 +371,7 @@ def compute_metrics(
             "denominator": len(level3_scores),
             "value": round(mean(level3_scores), 4),
             "formula": "mean(run mean_claim_score for variant == level3)",
-            "notes": "Direct information-gradient comparison is Level 2 vs Level 3 in this round.",
+            "notes": "Do not describe small Level 2 to Level 3 deltas as meaningful without stronger support.",
         },
         {
             "metric": "Perturbed Mean Run Score",
@@ -451,7 +479,7 @@ def build_grouped_metrics(rows: list[dict[str, object]], run_level: list[dict[st
 
 
 def make_information_gradient_figure(run_level: list[dict[str, object]]) -> None:
-    ordered = ["level2", "level3"]
+    ordered = ["level1", "level2", "level3"]
     rows = []
     for variant in ordered:
         values = [float(r["mean_claim_score"]) for r in run_level if r["variant_id"] == variant]
@@ -470,7 +498,7 @@ def make_information_gradient_figure(run_level: list[dict[str, object]]) -> None
     plot_w, plot_h = width - margin_left - 40, height - margin_bottom - margin_top
     colors = ["#2F6B5F", "#D8893A"]
     body = [
-        f'<text x="{width/2}" y="28" text-anchor="middle" font-size="20">Information Gradient: Level 2 vs Level 3</text>',
+        f'<text x="{width/2}" y="28" text-anchor="middle" font-size="20">Information Gradient: Level 1 vs Level 2 vs Level 3</text>',
         f'<line x1="{margin_left}" y1="{height-margin_bottom}" x2="{width-20}" y2="{height-margin_bottom}" stroke="#222"/>',
         f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" y2="{height-margin_bottom}" stroke="#222"/>',
         f'<text x="20" y="{margin_top + plot_h/2}" transform="rotate(-90 20 {margin_top + plot_h/2})" text-anchor="middle" font-size="13">Mean Run Score</text>',
@@ -634,7 +662,7 @@ def write_metrics_markdown(metrics_rows: list[dict[str, object]]) -> None:
         "- Claim-level metrics use claims as the denominator.",
         "- Run-level metrics use successful annotated runs as the denominator unless the metric explicitly references all main-manifest rows.",
         "- Main-run rows are identified by `raw_output_file` paths under `outputs/raw_agent_logs/main/`.",
-        "- The frozen main matrix did not include `level1`, so information-gradient reporting in this round is `level2` vs `level3`.",
+        "- After Task 26, information-gradient reporting should be interpreted across `level1`, `level2`, and `level3` together rather than from a single adjacent pair.",
         "- `Critical Design Omission Rate` and `Mechanism Confounding Rate` are reported as proxies because the current annotation schema does not contain explicit omission-only or mechanism-only tags.",
         "",
         "## Metrics",
@@ -656,11 +684,12 @@ def main() -> None:
     metadata = load_metadata()
     labels = annotate_labels(read_csv(LABELS_CSV), metadata)
     manifest_rows = load_main_manifest()
+    perturbed_audit_rows = load_perturbed_audit()
     run_level = build_run_level(labels)
     case_level = build_case_level(labels)
     error_counts = build_error_counts(labels)
     grouped_metrics = build_grouped_metrics(labels, run_level)
-    metrics_rows = compute_metrics(labels, run_level, manifest_rows)
+    metrics_rows = compute_metrics(labels, run_level, manifest_rows, perturbed_audit_rows)
 
     write_csv(
         METRICS_SUMMARY_CSV,

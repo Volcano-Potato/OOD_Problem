@@ -370,6 +370,57 @@ Task 22 metrics computation and figure generation.
 - `task22`: complete
 - `task23`: next
 
+## 2026-05-29
+
+### Stage
+
+Task 26 information-gradient and perturbation-evidence strengthening patch.
+
+### Completed Work
+
+- Added a dedicated Task 26 `level1` batch spec:
+  - `benchmark/run_configs/main_run_level1_batch_spec.csv`
+- Ran 10 additional `level1` main runs under `benchmark_isolated`.
+- Extended the extraction pipeline to 44 successful main runs and regenerated:
+  - `outputs/parsed_claims/claims_to_annotate.csv`
+  - `outputs/parsed_claims/claim_extraction_summary.md`
+- Rebuilt first-pass annotations, second labels, and adjudicated labels to include `level1`.
+- Added a paired perturbed audit:
+  - `results/perturbed_mechanical_reuse.csv`
+  - `results/perturbed_pair_audit.md`
+- Recomputed metrics and figures with full `level1 -> level2 -> level3` information gradient.
+- Updated `README.md` and `report/research_report.md` to remove overclaiming wording around no-solution honesty and `level3 > level2`.
+
+### Task 26 Snapshot
+
+- `level1` runs added: `10`
+- successful annotated main runs: `44`
+- total adjudicated claims: `370`
+- second-label sample: `78 / 370 = 21.1%`
+- `level1` mean run score: `0.6902`
+- `level2` mean run score: `0.8363`
+- `level3` mean run score: `0.8421`
+- `perturbed` mean run score: `0.7634`
+- `perturbed` mechanical reuse: `9 / 10`
+- no-solution honesty: `4 / 4` tested runs under the current heuristic
+
+### Interpretation
+
+- The flagship information-gradient result is now complete: the large gain is from `level1` to `level2`, not from `level2` to `level3`.
+- Structured data and design information matter, but extra explicit threat hints did not produce a meaningful further improvement in this round.
+- The paired perturbation audit now gives a direct RQ5-style answer rather than only a drop in mean score.
+
+### Current Status
+
+- `task18`: complete
+- `task19`: updated by Task 26
+- `task20`: updated by Task 26
+- `task21`: updated by Task 26
+- `task22`: updated by Task 26
+- `task23`: complete
+- `task24`: complete
+- `task26`: complete
+
 ## 2026-05-28
 
 ### Stage

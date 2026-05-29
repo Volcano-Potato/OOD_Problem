@@ -31,18 +31,20 @@ If you only want the shortest path through the repository:
 
 ## Key Results
 
-Headline numbers from the frozen main benchmark:
+Headline numbers from the current main benchmark:
 
-- successful annotated main runs: `34`
-- total adjudicated claims: `285`
-- Mean Claim Score: `0.8193`
-- Design-Evidence Inconsistency Rate: `0.2526`
-- Overclaim Rate: `0.1439`
-- Unsupported Design Claim Rate: `0.0842`
-- No-solution Honesty Rate: `1.0000`
-- `level2` mean run score: `0.8213`
-- `level3` mean run score: `0.8350`
-- `perturbed` mean run score: `0.7380`
+- successful annotated main runs: `44`
+- total adjudicated claims: `370`
+- Mean Claim Score: `0.8014`
+- Design-Evidence Inconsistency Rate: `0.2676`
+- Overclaim Rate: `0.1378`
+- Unsupported Design Claim Rate: `0.1108`
+- all `4/4` tested `no_solution` runs avoided supported causal claims under the current heuristic
+- `perturbed` mechanical reuse: `9/10`
+- `level1` mean run score: `0.6902`
+- `level2` mean run score: `0.8363`
+- `level3` mean run score: `0.8421`
+- `perturbed` mean run score: `0.7634`
 
 Main conclusion:
 
@@ -55,6 +57,7 @@ Core output files:
 - [results/figures/information_gradient_scores.svg](results/figures/information_gradient_scores.svg)
 - [results/figures/error_type_distribution.svg](results/figures/error_type_distribution.svg)
 - [results/figures/perturbed_downgrade.svg](results/figures/perturbed_downgrade.svg)
+- [results/perturbed_pair_audit.md](results/perturbed_pair_audit.md)
 
 ## What This Repository Contains
 
@@ -80,10 +83,10 @@ The final benchmark package is documented in:
 
 - 10 main-set cases
 - 8 business/economics domains
-- 34 successful annotated main runs
-- 285 adjudicated claims
+- 44 successful annotated main runs
+- 370 adjudicated claims
 - agent-facing vs evaluator-only separation
-- `level2`, `level3`, `perturbed`, `no_solution`
+- `level1`, `level2`, `level3`, `perturbed`, `no_solution`
 - locally isolated but remote-tool-enabled OpenClaw run condition
 
 ## Benchmark Design
@@ -123,7 +126,8 @@ See:
 ### Core benchmark pressures
 
 1. Information gradient
-   - `level2` gives the main design problem plus data structure.
+   - `level1` gives only the core research setting and objective.
+   - `level2` adds the main data structure.
    - `level3` adds institutional detail and explicit threats.
 2. Perturbation
    - `perturbed` removes one critical identifying condition while preserving the setting.
@@ -145,12 +149,13 @@ The frozen main set contains 10 cases across:
 
 The frozen main-run matrix contains:
 
+- 10 `level1` runs
 - 10 `level2` runs
 - 10 `level3` runs
 - 10 `perturbed` runs
 - 4 `no_solution` runs
 
-Successful annotated main runs: `34`
+Successful annotated main runs: `44`
 
 ## Repository Layout
 
@@ -331,6 +336,13 @@ The benchmark suggests five recurring failure families:
 - no-solution causal backsliding
 
 The strongest general pattern is that the agent is often able to produce a plausible research-design report, but less reliable at keeping its claim strength aligned with what the packet truly supports.
+
+The most important Task 26 update is that the information gradient is no longer flat by construction:
+
+- `level1 -> level2` shows a large improvement (`0.6902 -> 0.8363`)
+- `level2 -> level3` is nearly flat (`0.8363 -> 0.8421`)
+
+That makes the benchmark story sharper: structured data and design information matter, but additional explicit threat hints did not produce a meaningful further gain in this round.
 
 ## Failure Taxonomy
 

@@ -99,14 +99,15 @@ case_id,variant_id,level,run_id,claim_id,claim_type,agent_claim,cited_evidence,v
 
 ### 本轮结果
 
-- 成功 main runs processed: `34`
-- runs with extracted claim tables: `34`
+- 成功 main runs processed: `44`
+- runs with extracted claim tables: `44`
 - skipped runs: `0`
-- total extracted claims: `285`
+- total extracted claims: `370`
 - min claims per run: `6`
 - max claims per run: `11`
 
 ### 说明
 
 - 历史上 `C001 perturbed` 和 `C001 no_solution` 的两条 aborted records 没有进入本轮 claim extraction；Task 18 中的成功补跑版本已覆盖这两个 case-variant。
+- `task26` 已将 10 条 `level1` main runs 追加进主矩阵，因此当前 extraction 覆盖 `level1`、`level2`、`level3`、`perturbed` 与 `no_solution`。
 - 本任务只做结构化抽取，不在 CSV 中写 judgment、error_type 或 severity；这些留给 Task 20。

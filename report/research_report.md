@@ -22,12 +22,13 @@ The final main set contains 10 cases spanning:
 Each case is built from an evaluator-only layer and an agent-facing layer.
 
 - Evaluator-only files include `source_packet.md`, `source_facts.md`, `gold_reference.md`, `audit.md`, and variant construction notes.
-- Agent-facing files include `agent_task_level2.md`, `agent_task_level3.md`, `agent_task_perturbed.md`, and selected `agent_task_no_solution.md`.
+- Agent-facing files include `agent_task_level1.md`, `agent_task_level2.md`, `agent_task_level3.md`, `agent_task_perturbed.md`, and selected `agent_task_no_solution.md`.
 
 The benchmark uses three core pressures:
 
 1. Information gradient
-   - `level2` gives background plus data structure.
+   - `level1` gives only the core research setting and objective.
+   - `level2` adds background plus data structure.
    - `level3` adds institutional details and threats.
 2. Perturbation
    - `perturbed` variants remove one critical identification condition while keeping the rest of the setting similar.
@@ -71,8 +72,9 @@ The isolation logic was implemented through external orchestration scripts rathe
 - [run_batch_isolated.sh](/Users/jiangcanxiang/Documents/OOD_Problem/scripts/run_batch_isolated.sh)
 - [postprocess_openclaw_run.py](/Users/jiangcanxiang/Documents/OOD_Problem/scripts/postprocess_openclaw_run.py)
 
-The frozen main matrix contained 34 successful annotated runs:
+After the Task 26 extension, the main matrix contained 44 successful annotated runs:
 
+- 10 `level1`
 - 10 `level2`
 - 10 `level3`
 - 10 `perturbed`
@@ -92,17 +94,17 @@ The evaluation pipeline after running the agent was:
 
 Final annotation totals:
 
-- total claims: `285`
-- second-label sample: `60`
-- simple agreement on `human_judgment`: `83.3%`
-- simple agreement on `error_type`: `83.3%`
-- explicit adjudicated disagreements: `10`
+- total claims: `370`
+- second-label sample: `78`
+- simple agreement on `human_judgment`: `97.4%`
+- simple agreement on `error_type`: `97.4%`
+- explicit adjudicated disagreements: `2`
 
 Final label counts:
 
-- `supported`: `213`
-- `partially_supported`: `41`
-- `unsupported`: `24`
+- `supported`: `271`
+- `partially_supported`: `51`
+- `unsupported`: `41`
 - `contradicted`: `7`
 
 ## 6. Metrics
@@ -111,16 +113,17 @@ All main metrics are derived from [results/metrics_summary.csv](/Users/jiangcanx
 
 The most important headline numbers are:
 
-- Mean Claim Score: `0.8193`
-- Design-Evidence Inconsistency Rate: `0.2526`
-- Unsupported Design Claim Rate: `0.0842`
-- Contradiction Rate: `0.0246`
-- Overclaim Rate: `0.1439`
-- Critical Design Omission Rate (proxy): `0.0421`
-- Mechanism Confounding Rate (proxy): `0.2564`
-- No-solution Honesty Rate: `1.0000`
+- Mean Claim Score: `0.8014`
+- Design-Evidence Inconsistency Rate: `0.2676`
+- Unsupported Design Claim Rate: `0.1108`
+- Contradiction Rate: `0.0189`
+- Overclaim Rate: `0.1378`
+- Critical Design Omission Rate (proxy): `0.0432`
+- Mechanism Confounding Rate (proxy): `0.2914`
+- All `4/4` tested `no_solution` runs avoided supported causal claims under the current heuristic.
+- `perturbed` mechanical reuse: `9/10`
 
-Because the frozen main matrix did not include `level1`, the information-gradient comparison in this round is `level2` vs `level3`.
+After Task 26, the information-gradient comparison is no longer limited to `level2` vs `level3`; it now spans `level1`, `level2`, and `level3`.
 
 ## 7. Results
 
@@ -140,17 +143,23 @@ Core figure:
 
 Run-level means:
 
-- `level2`: `0.8213`
-- `level3`: `0.8350`
+- `level1`: `0.6902`
+- `level2`: `0.8363`
+- `level3`: `0.8421`
 
-The gain from `level2` to `level3` is positive but modest. More information helps, but not dramatically. This suggests that the dominant weakness is not simply “missing context.” It is how the agent interprets and constrains claims once context is present.
+The key pattern is not “more information always helps.” It is more specific:
+
+- the jump from `level1` to `level2` is large
+- the jump from `level2` to `level3` is minimal
+
+This means that structured data and design information matter, but additional explicit threat hints did not produce a meaningful further improvement in this round. The dominant weakness is therefore not simply “lack of context.” It is how the agent interprets and constrains claims once context is present.
 
 ### 7.3 Perturbation Sensitivity
 
 Core figure:
 - [perturbed_downgrade.svg](/Users/jiangcanxiang/Documents/OOD_Problem/results/figures/perturbed_downgrade.svg)
 
-Average `perturbed` run score is `0.7380`, clearly below both `level2` and `level3`. This is one of the most important benchmark findings: when a single critical identifying condition is removed, the agent often does not fully re-evaluate which estimand remains defensible.
+Average `perturbed` run score is `0.7634`, clearly below both `level2` and `level3`. The paired perturbation audit sharpens this result: `9/10` perturbed cases show mechanical reuse under broken identification. In other words, the agent often does not fully re-evaluate which estimand remains defensible after one critical identifying condition is removed.
 
 The strongest perturbed collapses occur in:
 
@@ -166,26 +175,26 @@ Grouped outputs are in [grouped_metrics.csv](/Users/jiangcanxiang/Documents/OOD_
 The weakest domains in this round are:
 
 - `political_econ`
-  - mean claim score: `0.6607`
-  - inconsistency rate: `0.4286`
+  - mean claim score: `0.6974`
+  - inconsistency rate: `0.3684`
 - `health`
-  - mean claim score: `0.7639`
-  - inconsistency rate: `0.3611`
+  - mean claim score: `0.7209`
+  - inconsistency rate: `0.3721`
 - `development`
-  - mean claim score: `0.7885`
-  - inconsistency rate: `0.3077`
+  - mean claim score: `0.7778`
+  - inconsistency rate: `0.3333`
 
 By key failure mode, the hardest category is:
 
 - `measurement_error`
-  - mean claim score: `0.7188`
-  - inconsistency rate: `0.3906`
+  - mean claim score: `0.7099`
+  - inconsistency rate: `0.3704`
 
 This is consistent with the qualitative finding that the agent struggles when measurement quality is part of identification rather than a minor caveat.
 
 ### 7.5 No-solution Behavior
 
-The run-level `No-solution Honesty Rate` is `1.0000`, which means all four no-solution runs avoided supported or partially supported causal claims under the current heuristic.
+The run-level no-solution honesty result should be stated cautiously: all `4/4` tested `no_solution` runs avoided supported or partially supported causal claims under the current heuristic.
 
 That is encouraging, but it is not the whole story. One of the strongest qualitative lessons from Task 23 is that a run can still emit a direct causal sentence that gets adjudicated as `contradicted`, even if the run-level heuristic marks it broadly cautious. The no-solution result is therefore better interpreted as:
 

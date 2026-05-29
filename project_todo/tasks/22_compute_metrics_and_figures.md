@@ -84,21 +84,24 @@ No-solution Honesty Rate
 
 ## 本轮关键指标
 
-- `Mean Claim Score`: `0.8193`
-- `Design-Evidence Inconsistency Rate`: `0.2526`
-- `Unsupported Design Claim Rate`: `0.0842`
-- `Contradiction Rate`: `0.0246`
-- `Overclaim Rate`: `0.1439`
-- `Critical Design Omission Rate (proxy)`: `0.0421`
-- `Mechanism Confounding Rate (proxy)`: `0.2564`
-- `No-solution Honesty Rate`: `1.0000`
-- `Level 2 Mean Run Score`: `0.8213`
-- `Level 3 Mean Run Score`: `0.8350`
-- `Perturbed Mean Run Score`: `0.7380`
+- `Mean Claim Score`: `0.8014`
+- `Design-Evidence Inconsistency Rate`: `0.2676`
+- `Unsupported Design Claim Rate`: `0.1108`
+- `Contradiction Rate`: `0.0189`
+- `Overclaim Rate`: `0.1378`
+- `Critical Design Omission Rate (proxy)`: `0.0432`
+- `Mechanism Confounding Rate (proxy)`: `0.2914`
+- `No-solution Honesty Rate`: `1.0000` (`4/4` tested no-solution runs)
+- `Perturbed Mechanical Reuse Rate`: `0.9000` (`9/10`)
+- `Level 1 Mean Run Score`: `0.6902`
+- `Level 2 Mean Run Score`: `0.8363`
+- `Level 3 Mean Run Score`: `0.8421`
+- `Perturbed Mean Run Score`: `0.7634`
 
 ## 说明
 
-- 本轮主矩阵未包含 `level1`，因此信息梯度图实际比较的是 `level2` 与 `level3`。
+- `task26` 已将 `level1` 接入正式主矩阵，因此信息梯度图现在比较 `level1`、`level2` 与 `level3`。
+- `level2 -> level3` 的差异在本轮非常小，不应被表述成强提升。
 - `Critical Design Omission Rate` 与 `Mechanism Confounding Rate` 目前是 proxy 指标；原因是当前 adjudication schema 没有 omission-only 或 mechanism-only 的显式标签。
 - `run_manifest.csv` 没有单独的 `split=main` 列；脚本通过 `raw_output_file` 位于 `outputs/raw_agent_logs/main/` 来识别主运行。
 

@@ -50,21 +50,22 @@ claim_id,labeler1_judgment,labeler2_judgment,final_judgment,reason
 ## 完成记录
 
 - 第二标注样本由固定种子 `20260528` 抽取，并分层覆盖全部 10 个 case。
-- 第二标注样本规模为 `60 / 285 = 21.1%`。
+- 第二标注样本规模为 `78 / 370 = 21.1%`。
 - 样本分布：
+  - `level1`: `24`
   - `level2`: `19`
-  - `level3`: `15`
-  - `perturbed`: `22`
+  - `level3`: `16`
+  - `perturbed`: `15`
   - `no_solution`: `4`
 - simple agreement：
-  - `human_judgment`: `83.3%`
-  - `error_type`: `83.3%`
-- 共识别 `10` 条需要显式裁决的 disagreement。
+  - `human_judgment`: `97.4%`
+  - `error_type`: `97.4%`
+- 共识别 `2` 条需要显式裁决的 disagreement。
 - 最终冻结文件：
   - `annotations/second_labels.csv`
   - `annotations/adjudication_notes.md`
   - `annotations/adjudicated_labels.csv`
-- `annotations/adjudicated_labels.csv` 已完整覆盖 `285` 条 main-run claims，后续 `task22-24` 只应使用该文件。
+- `annotations/adjudicated_labels.csv` 已完整覆盖 `370` 条 main-run claims，后续 `task22-24` 与 `task26` 收尾都只应使用该文件。
 
 ## 常见风险
 

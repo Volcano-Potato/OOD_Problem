@@ -80,23 +80,24 @@
 
 ### 本轮结果
 
-- first-pass annotated claims: `285`
+- first-pass annotated claims: `370`
 - calibration-set claims flagged in `notes`: `20`
 - judgment distribution:
-  - `supported`: `219`
-  - `partially_supported`: `38`
-  - `unsupported`: `21`
+  - `supported`: `272`
+  - `partially_supported`: `50`
+  - `unsupported`: `41`
   - `contradicted`: `7`
 - error-type distribution:
-  - `Overclaim`: `38`
-  - `Unsupported Claim`: `21`
+  - `Overclaim`: `50`
+  - `Unsupported Claim`: `41`
   - `Contradiction`: `7`
 - non-supported severity distribution:
-  - `critical`: `12`
-  - `major`: `41`
-  - `minor`: `13`
+  - `critical`: `16`
+  - `major`: `61`
+  - `minor`: `21`
 
 ### 说明
 
 - 这份 `annotation_sheet.csv` 是 `codex_first_pass`，用于 Task 21 的复标和裁决，不是最终冻结标签。
 - 当前 sheet 只覆盖 main-run claim table，不再混入 pilot quick spot-check 行。
+- `task26` 已将新增 `level1` claims 一并接入 first-pass 标注，因此当前 sheet 覆盖 44 条成功 main runs。
