@@ -9,6 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_CSV = ROOT / "results" / "perturbed_mechanical_reuse.csv"
 OUTPUT_MD = ROOT / "results" / "perturbed_pair_audit.md"
+OUTPUT_V1_CSV = ROOT / "results" / "perturbed_mechanical_reuse_v1.csv"
+OUTPUT_V1_MD = ROOT / "results" / "perturbed_pair_audit_v1.md"
 
 
 ROWS = [
@@ -114,21 +116,124 @@ ROWS = [
     },
 ]
 
+ROWS_V1 = [
+    {
+        "case_id": "C001",
+        "level2_run_id": "RUN_20260527_210840_01_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_163414_01_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "pre-contact state is no longer researcher-assigned; households self-select into pre-contact availability",
+        "level2_logic": "use variation in contact and avoidance frictions to separate social pressure from underlying willingness",
+        "perturbed_behavior": "agent abandons point identification and replaces the base decomposition with descriptive four-way stratification plus a bounded revealed-preference exercise",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The final memo explicitly says the perturbation is fatal to the base causal design and downgrades claims to descriptive or bound-based statements rather than preserving the original decomposition.",
+    },
+    {
+        "case_id": "C002",
+        "level2_run_id": "RUN_20260527_215707_05_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_164250_02_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "borrowers are no longer cleanly blind to later terms at take-up",
+        "level2_logic": "separate adverse selection from repayment incentives using staged timing variation",
+        "perturbed_behavior": "agent rejects clean channel separation and keeps only a narrower within-borrower realized-terms design under strong added assumptions",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The output no longer claims that selection and incentive effects remain separately identified; the surviving fixed-effects design targets a different, weaker incentive-margin estimand.",
+    },
+    {
+        "case_id": "C004",
+        "level2_run_id": "RUN_20260527_223907_09_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_165312_03_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "ad-availability variation is manager-chosen rather than exogenous",
+        "level2_logic": "use exogenous ad-availability variation to identify incremental downstream sales effects",
+        "perturbed_behavior": "agent discards all causal candidates and recommends descriptive correlational benchmarking only",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The memo fully abandons the broken exogeneity logic instead of trying to salvage causal ad-availability effects with surface-level threat language.",
+    },
+    {
+        "case_id": "C005",
+        "level2_run_id": "RUN_20260527_224724_11_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_170002_04_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "untreated opportunity-side logs are removed",
+        "level2_logic": "compare exposed and unexposed units within the same opportunity set to identify exposed-user lift",
+        "perturbed_behavior": "agent centers the ITT but still retains an IV/LATE estimate of actual exposure as a supplementary causal quantity",
+        "mechanical_reuse": "yes",
+        "audit_rationale": "The final memo does downgrade the headline estimand, but it still preserves a causal actual-exposure LATE despite the packet removing the clean opportunity-side support that made the base exposed-user logic credible.",
+    },
+    {
+        "case_id": "C008",
+        "level2_run_id": "RUN_20260527_230420_15_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_170747_05_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "untreated comparison stores/products are no longer available in the original clean form",
+        "level2_logic": "use relative tax-visibility contrasts with untreated comparisons to isolate salience effects",
+        "perturbed_behavior": "agent recommends descriptive pre-post analysis, but still keeps a within-store DiD and salience-gradient story as a secondary causal attempt",
+        "mechanical_reuse": "yes",
+        "audit_rationale": "The clean untreated comparison is gone, yet the memo still leans on treated-versus-untreated within-store comparisons and salience-pattern interpretation rather than fully dropping the base comparison design.",
+    },
+    {
+        "case_id": "C010",
+        "level2_run_id": "RUN_20260527_231632_18_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_171514_06_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "later offer is known in advance, weakening timing-based procrastination separation",
+        "level2_logic": "use timing contrast between early small intervention and later known alternatives to diagnose present-bias/procrastination",
+        "perturbed_behavior": "agent narrows the estimand to the ITT of the announced schedule bundle and explicitly rejects procrastination identification",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The output stops short of reusing the base procrastination story and clearly states that timing and anticipation are now fused.",
+    },
+    {
+        "case_id": "C014",
+        "level2_run_id": "RUN_20260527_232816_21_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_172257_07_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "independent outcome measurement is removed; only official reports remain",
+        "level2_logic": "compare treatment effects on independently measured corruption-related outcomes",
+        "perturbed_behavior": "agent narrows the remaining causal claim to reporting-side ITT and explicitly refuses corruption claims",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The memo treats administrative reports as the only credible outcome target left and does not keep the base corruption-reduction interpretation.",
+    },
+    {
+        "case_id": "C016",
+        "level2_run_id": "RUN_20260527_234026_24_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_173157_08_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "objective downstream outcome is removed, leaving selected self-reports",
+        "level2_logic": "contrast targeted information with generic curriculum and interpret downstream effects using objective outcomes",
+        "perturbed_behavior": "agent abandons point identification and replaces the base interpretation with bounds and descriptive self-report analysis",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The final memo absorbs the measurement breakdown and no longer treats self-reports as if they identified actual behavioral change.",
+    },
+    {
+        "case_id": "C019",
+        "level2_run_id": "RUN_20260527_235916_28_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_174004_09_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "clean pre-trip basket capture is removed",
+        "level2_logic": "combine pre-trip intent measurement with route variation to isolate route-induced incremental spending",
+        "perturbed_behavior": "agent abandons causal route-length designs and keeps only descriptive correlation decomposition",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The memo fully downgrades to non-causal route-spending associations and does not preserve the base incremental-spending identification logic.",
+    },
+    {
+        "case_id": "C020",
+        "level2_run_id": "RUN_20260528_001055_31_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260531_174815_10_openclaw_deepseekv4pro_researchagentv1",
+        "broken_condition": "price ending is bundled with markdown/sale framing",
+        "level2_logic": "hold underlying price constant while varying terminal-digit format to separate formatting from bargaining cues",
+        "perturbed_behavior": "agent abandons the standalone format-effect target and reframes the task around descriptive bundle analysis plus an alternative bundle estimand",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The output no longer claims that ending-format effects can be separated from promotion effects; the remaining bundle discussion changes the estimand rather than reusing the base mechanism separation.",
+    },
+]
 
-def write_csv() -> None:
-    OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = list(ROWS[0].keys())
-    with OUTPUT_CSV.open("w", newline="") as handle:
+
+def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = list(rows[0].keys())
+    with path.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
-        writer.writerows(ROWS)
+        writer.writerows(rows)
 
 
-def write_markdown() -> None:
-    yes_count = sum(row["mechanical_reuse"] == "yes" for row in ROWS)
-    total = len(ROWS)
+def write_markdown(path: Path, rows: list[dict[str, str]], title: str) -> None:
+    yes_count = sum(row["mechanical_reuse"] == "yes" for row in rows)
+    total = len(rows)
     lines = [
-        "# Perturbed Pair Audit",
+        title,
         "",
         f"- Mechanical reuse headline: `{yes_count}/{total}` perturbed cases show mechanical reuse under broken identification.",
         "- Counting rule: `yes` means the key identifying condition is explicitly broken in the perturbed packet, but the agent still retains the base estimand, base identification logic, or only surface-level threat wording.",
@@ -136,16 +241,19 @@ def write_markdown() -> None:
         "| Case | Broken Condition | Mechanical Reuse | Rationale |",
         "|---|---|---|---|",
     ]
-    for row in ROWS:
+    for row in rows:
         lines.append(
             f"| `{row['case_id']}` | {row['broken_condition']} | `{row['mechanical_reuse']}` | {row['audit_rationale']} |"
         )
-    OUTPUT_MD.write_text("\n".join(lines) + "\n")
+    path.write_text("\n".join(lines) + "\n")
 
 
 def main() -> None:
-    write_csv()
-    write_markdown()
+    write_csv(OUTPUT_CSV, ROWS)
+    write_markdown(OUTPUT_MD, ROWS, "# Perturbed Pair Audit")
+    if ROWS_V1:
+        write_csv(OUTPUT_V1_CSV, ROWS_V1)
+        write_markdown(OUTPUT_V1_MD, ROWS_V1, "# Perturbed Pair Audit (research_agent_v1)")
 
 
 if __name__ == "__main__":

@@ -119,8 +119,8 @@
 
 - [x] 5 个 pilot outputs 都保存完整。
 - [x] 至少发现并处理一轮格式或任务包问题。
-- [ ] 后续 main run 不需要大幅改变 schema。
-- [ ] 如果 Agent 大量不遵守格式，要修订输出合同后重跑 pilot。
+- [x] 后续 main run 不需要大幅改变 schema。
+- [x] Agent 未出现大面积格式不遵守，因此无需因输出合同问题重跑 pilot。
 
 ## Isolated Rerun 结论
 

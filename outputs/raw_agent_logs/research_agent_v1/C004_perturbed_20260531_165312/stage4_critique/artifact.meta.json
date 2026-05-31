@@ -1,0 +1,10 @@
+{
+  "verdict_distribution": {
+    "defensible": 0,
+    "defensible_with_caveats": 1,
+    "not_defensible": 3
+  },
+  "recommended_primary": "Descriptive Correlational Benchmarking",
+  "recommend_descriptive_fallback": true,
+  "perturbed_condition_dependency_detected": true
+}

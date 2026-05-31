@@ -20,6 +20,7 @@ CASE_LEVEL_CSV = RESULTS_DIR / "case_level_scores.csv"
 RUN_LEVEL_CSV = RESULTS_DIR / "run_level_scores.csv"
 GROUPED_CSV = RESULTS_DIR / "grouped_metrics.csv"
 PERTURBED_AUDIT_CSV = RESULTS_DIR / "perturbed_mechanical_reuse.csv"
+DEFAULT_AGENT_VARIANT = "benchmark_isolated"
 
 CLAIM_SCORE = {
     "supported": 1.0,
@@ -56,6 +57,34 @@ def write_csv(path: Path, rows: list[dict[str, object]], fieldnames: list[str]) 
             writer.writerow(row)
 
 
+def normalize_agent_variant(value: str | None) -> str:
+    return value or DEFAULT_AGENT_VARIANT
+
+
+def metric_suffix(agent_variant: str) -> str:
+    return agent_variant.lower().replace("-", "_")
+
+
+def filter_by_agent_variant(rows: list[dict[str, object]], agent_variant: str) -> list[dict[str, object]]:
+    return [row for row in rows if str(row.get("agent_variant")) == agent_variant]
+
+
+def research_metrics_summary_paths(agent_variant: str) -> tuple[Path, Path]:
+    suffix = metric_suffix(agent_variant)
+    return (
+        RESULTS_DIR / f"metrics_summary_{suffix}.csv",
+        RESULTS_DIR / f"metrics_summary_{suffix}.md",
+    )
+
+
+def perturbed_audit_path_for_variant(agent_variant: str) -> Path:
+    if agent_variant == DEFAULT_AGENT_VARIANT:
+        return PERTURBED_AUDIT_CSV
+    if agent_variant == "research_agent_v1":
+        return RESULTS_DIR / "perturbed_mechanical_reuse_v1.csv"
+    return RESULTS_DIR / f"perturbed_mechanical_reuse_{metric_suffix(agent_variant)}.csv"
+
+
 def load_metadata() -> dict[str, dict[str, str]]:
     out: dict[str, dict[str, str]] = {}
     for path in sorted((ROOT / "benchmark" / "cases").glob("C*/metadata.yaml")):
@@ -81,13 +110,20 @@ def load_metadata() -> dict[str, dict[str, str]]:
 
 def load_main_manifest() -> list[dict[str, str]]:
     rows = read_csv(MANIFEST_CSV)
-    return [r for r in rows if "/raw_agent_logs/main/" in r["raw_output_file"]]
+    main_rows = []
+    for row in rows:
+        if "/raw_agent_logs/main/" not in row["raw_output_file"]:
+            continue
+        row["agent_variant"] = normalize_agent_variant(row.get("agent_variant"))
+        main_rows.append(row)
+    return main_rows
 
 
-def load_perturbed_audit() -> list[dict[str, str]]:
-    if not PERTURBED_AUDIT_CSV.exists():
+def load_perturbed_audit(agent_variant: str = DEFAULT_AGENT_VARIANT) -> list[dict[str, str]]:
+    path = perturbed_audit_path_for_variant(agent_variant)
+    if not path.exists():
         return []
-    return read_csv(PERTURBED_AUDIT_CSV)
+    return read_csv(path)
 
 
 def annotate_labels(
@@ -103,6 +139,7 @@ def annotate_labels(
             {
                 **row,
                 **meta,
+                "agent_variant": normalize_agent_variant(row.get("agent_variant")),
                 "claim_score": score,
                 "is_error": row["final_error_type"] != "none",
                 "is_unsupported": row["final_error_type"] == "Unsupported Claim",
@@ -174,6 +211,7 @@ def build_run_level(rows: list[dict[str, object]]) -> list[dict[str, object]]:
                 "run_id": run_id,
                 "case_id": first["case_id"],
                 "variant_id": first["variant_id"],
+                "agent_variant": first["agent_variant"],
                 "domain": first["domain"],
                 "design_family": first["design_family"],
                 "key_failure_mode": first["key_failure_mode"],
@@ -442,10 +480,15 @@ def build_grouped_metrics(rows: list[dict[str, object]], run_level: list[dict[st
         ("design_family", aggregate_group(rows, ["design_family"])),
         ("key_failure_mode", aggregate_group(rows, ["key_failure_mode"])),
         ("variant_id", aggregate_group(rows, ["variant_id"])),
+        ("agent_variant", aggregate_group(rows, ["agent_variant"])),
+        ("agent_variant_x_variant_id", aggregate_group(rows, ["agent_variant", "variant_id"])),
     ]
     for group_field, records in claim_groups:
         for record in records:
-            key_value = record[group_field]
+            if group_field == "agent_variant_x_variant_id":
+                key_value = f"{record['agent_variant']}::{record['variant_id']}"
+            else:
+                key_value = record[group_field]
             out.append(
                 {
                     "group_type": group_field,
@@ -460,8 +503,9 @@ def build_grouped_metrics(rows: list[dict[str, object]], run_level: list[dict[st
 
     run_groups: dict[str, list[dict[str, object]]] = defaultdict(list)
     for row in run_level:
-        for field in ("domain", "design_family", "key_failure_mode", "variant_id"):
+        for field in ("domain", "design_family", "key_failure_mode", "variant_id", "agent_variant"):
             run_groups[f"{field}:{row[field]}"].append(row)
+        run_groups[f"agent_variant_x_variant_id:{row['agent_variant']}::{row['variant_id']}"].append(row)
     for composite_key, records in sorted(run_groups.items()):
         field, value = composite_key.split(":", 1)
         out.append(
@@ -651,30 +695,64 @@ def make_perturbed_downgrade_figure(run_level: list[dict[str, object]]) -> None:
     write_svg(FIGURES_DIR / "perturbed_downgrade.svg", width, height, body)
 
 
-def write_metrics_markdown(metrics_rows: list[dict[str, object]]) -> None:
+def write_metrics_markdown(
+    metrics_rows: list[dict[str, object]],
+    output_path: Path,
+    agent_variant: str,
+) -> None:
+    if agent_variant == DEFAULT_AGENT_VARIANT:
+        intro = (
+            "Canonical metrics are derived from `annotations/adjudicated_labels.csv` filtered to "
+            f"`agent_variant == \"{DEFAULT_AGENT_VARIANT}\"`, with main-run execution counts cross-checked against `outputs/run_manifest.csv`."
+        )
+    else:
+        intro = (
+            "Research-agent metrics are derived from `annotations/adjudicated_labels.csv` filtered to "
+            f"`agent_variant == \"{agent_variant}\"`, with main-run execution counts cross-checked against `outputs/run_manifest.csv`."
+        )
     lines = [
         "# Metrics Summary",
         "",
-        "All Task 22 metrics are derived from `annotations/adjudicated_labels.csv`, with main-run execution counts cross-checked against `outputs/run_manifest.csv`.",
+        intro,
         "",
         "## Counting Rules",
         "",
         "- Claim-level metrics use claims as the denominator.",
         "- Run-level metrics use successful annotated runs as the denominator unless the metric explicitly references all main-manifest rows.",
         "- Main-run rows are identified by `raw_output_file` paths under `outputs/raw_agent_logs/main/`.",
+        f"- This file summarizes only rows with `agent_variant == \"{agent_variant}\"`.",
         "- After Task 26, information-gradient reporting should be interpreted across `level1`, `level2`, and `level3` together rather than from a single adjacent pair.",
         "- `Critical Design Omission Rate` and `Mechanism Confounding Rate` are reported as proxies because the current annotation schema does not contain explicit omission-only or mechanism-only tags.",
         "",
-        "## Metrics",
-        "",
-        "| Metric | Scope | Value | Formula | Notes |",
-        "|---|---|---:|---|---|",
     ]
+    if agent_variant == DEFAULT_AGENT_VARIANT:
+        lines.extend(
+            [
+                "## Bottleneck Crosswalk",
+                "",
+                "This benchmark is best interpreted as a focused execution-quality probe rather than a full reproduction of *The Ideation Bottleneck* six-dimension rubric. The detailed mapping from Bottleneck dimensions to benchmark evidence is documented in [results/bottleneck_crosswalk.md](/Users/jiangcanxiang/Documents/OOD_Problem/results/bottleneck_crosswalk.md).",
+                "",
+                "The short version is:",
+                "",
+                "- `Identification Strategy` and `Mechanism and External Validity` are the benchmark's strongest direct measurement areas.",
+                "- `Econometric Methodology` and `Data Quality` are only partially proxied through claim-level errors and selected failure cases.",
+                "- `Robustness and Sensitivity` and `Writing and Presentation` are intentionally secondary in this benchmark.",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "## Metrics",
+            "",
+            "| Metric | Scope | Value | Formula | Notes |",
+            "|---|---|---:|---|---|",
+        ]
+    )
     for row in metrics_rows:
         lines.append(
             f"| {row['metric']} | {row['scope']} | {row['value']} | {row['formula']} | {row['notes']} |"
         )
-    METRICS_SUMMARY_MD.write_text("\n".join(lines) + "\n")
+    output_path.write_text("\n".join(lines) + "\n")
 
 
 def main() -> None:
@@ -682,14 +760,23 @@ def main() -> None:
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
     metadata = load_metadata()
-    labels = annotate_labels(read_csv(LABELS_CSV), metadata)
-    manifest_rows = load_main_manifest()
-    perturbed_audit_rows = load_perturbed_audit()
-    run_level = build_run_level(labels)
-    case_level = build_case_level(labels)
-    error_counts = build_error_counts(labels)
-    grouped_metrics = build_grouped_metrics(labels, run_level)
-    metrics_rows = compute_metrics(labels, run_level, manifest_rows, perturbed_audit_rows)
+    labels_all = annotate_labels(read_csv(LABELS_CSV), metadata)
+    manifest_rows_all = load_main_manifest()
+    run_level_all = build_run_level(labels_all)
+
+    baseline_labels = filter_by_agent_variant(labels_all, DEFAULT_AGENT_VARIANT)
+    baseline_manifest_rows = filter_by_agent_variant(manifest_rows_all, DEFAULT_AGENT_VARIANT)
+    baseline_perturbed_audit_rows = load_perturbed_audit(DEFAULT_AGENT_VARIANT)
+    baseline_run_level = build_run_level(baseline_labels)
+    case_level = build_case_level(baseline_labels)
+    error_counts = build_error_counts(baseline_labels)
+    grouped_metrics = build_grouped_metrics(labels_all, run_level_all)
+    metrics_rows = compute_metrics(
+        baseline_labels,
+        baseline_run_level,
+        baseline_manifest_rows,
+        baseline_perturbed_audit_rows,
+    )
 
     write_csv(
         METRICS_SUMMARY_CSV,
@@ -719,11 +806,12 @@ def main() -> None:
     )
     write_csv(
         RUN_LEVEL_CSV,
-        run_level,
+        baseline_run_level,
         [
             "run_id",
             "case_id",
             "variant_id",
+            "agent_variant",
             "domain",
             "design_family",
             "key_failure_mode",
@@ -745,11 +833,37 @@ def main() -> None:
         ["group_type", "group_value", "scope", "n_units", "mean_claim_score", "inconsistency_rate", "critical_issue_rate"],
     )
 
-    make_information_gradient_figure(run_level)
+    make_information_gradient_figure(baseline_run_level)
     make_error_type_figure(error_counts)
-    make_case_error_heatmap(labels)
-    make_perturbed_downgrade_figure(run_level)
-    write_metrics_markdown(metrics_rows)
+    make_case_error_heatmap(baseline_labels)
+    make_perturbed_downgrade_figure(baseline_run_level)
+    write_metrics_markdown(metrics_rows, METRICS_SUMMARY_MD, DEFAULT_AGENT_VARIANT)
+
+    other_variants = sorted(
+        {
+            str(row["agent_variant"])
+            for row in labels_all
+            if str(row["agent_variant"]) != DEFAULT_AGENT_VARIANT
+        }
+    )
+    for agent_variant in other_variants:
+        variant_labels = filter_by_agent_variant(labels_all, agent_variant)
+        variant_manifest_rows = filter_by_agent_variant(manifest_rows_all, agent_variant)
+        variant_run_level = build_run_level(variant_labels)
+        variant_perturbed_audit_rows = load_perturbed_audit(agent_variant)
+        variant_metrics_rows = compute_metrics(
+            variant_labels,
+            variant_run_level,
+            variant_manifest_rows,
+            variant_perturbed_audit_rows,
+        )
+        summary_csv, summary_md = research_metrics_summary_paths(agent_variant)
+        write_csv(
+            summary_csv,
+            variant_metrics_rows,
+            ["metric", "scope", "numerator", "denominator", "value", "formula", "notes"],
+        )
+        write_metrics_markdown(variant_metrics_rows, summary_md, agent_variant)
 
 
 if __name__ == "__main__":

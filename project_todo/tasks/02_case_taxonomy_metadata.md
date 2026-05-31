@@ -57,10 +57,10 @@ case_id,paper_key,domain,design_family,key_failure_mode,difficulty,variant_plan,
 
 ## 验收标准
 
-- [ ] 每个字段都有定义，不只是字段名。
-- [ ] 枚举值足够覆盖已有候选论文。
-- [ ] `case_registry.csv` 可以直接被后续脚本读取。
-- [ ] 能支持后续按 domain、design_family、failure_mode 分组统计。
+- [x] 每个字段都有定义，不只是字段名。
+- [x] 枚举值足够覆盖已有候选论文。
+- [x] `case_registry.csv` 可以直接被后续脚本读取。
+- [x] 能支持后续按 domain、design_family、failure_mode 分组统计。
 
 ## 常见风险
 

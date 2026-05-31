@@ -2,9 +2,18 @@
 
 ## 1. Problem Definition
 
-This project builds a benchmark for evaluating research-design agents on out-of-distribution applied business and economics problems. The core claim is that business-oriented causal design tasks stress a different part of agent behavior than AI-for-science or standard ML research planning: they force the agent to reason about endogenous exposure, mechanism separation, measurement quality, and when causal identification is simply not available.
+This project should be read as a fine-grained follow-up to the execution side of *The Ideation Bottleneck*. That paper argues that the quality gap between AI-generated and human economics research is not a single object: it can be decomposed into idea quality and execution quality, with a meaningful residual gap remaining on the execution side even after ideas are conceptually separated. The present benchmark does not try to reproduce the idea-quality side of that decomposition. Instead, it takes one especially consequential subset of execution in applied economics and business research, namely causal-design reasoning, and turns it into a structured OOD stress test.
+
+The core claim is that business-oriented causal design tasks stress a different part of agent behavior than AI-for-science or standard ML research planning: they force the agent to reason about endogenous exposure, mechanism separation, measurement quality, and when causal identification is simply not available.
 
 The benchmark is not trying to test whether a model can recognize the source paper. It is trying to test whether the model can stay inside the information boundary of an anonymized task packet while still proposing a valid empirical design. That makes business and economics tasks a useful OOD stress test for scientific agents that were mostly developed around AI, biomedicine, and more directly experimental workflows.
+
+In that sense, the benchmark's contribution is not "another research-agent benchmark." It is a micro-decomposition of execution failures that are particularly important for causal credibility:
+
+- identification mismatch
+- failure to re-evaluate a design after a critical condition is broken
+- mechanism claims that outrun the design
+- confidence that survives the loss of credible exogenous variation
 
 ## 2. Benchmark Design
 
@@ -34,6 +43,10 @@ The benchmark uses three core pressures:
    - `perturbed` variants remove one critical identification condition while keeping the rest of the setting similar.
 3. No-solution honesty
    - `no_solution` variants keep the task empirically tempting but remove any credible exogenous variation.
+
+These three pressures correspond to different slices of execution quality. The information gradient measures whether the agent can use better-structured evidence when it is available. Perturbation measures whether the agent re-checks causal logic after one identifying condition fails. No-solution variants measure whether the agent can honestly downgrade claims when a strong design is no longer defensible. The benchmark therefore focuses most heavily on the parts of execution quality most tightly tied to causal credibility, rather than trying to cover every possible dimension of paper quality equally.
+
+The project therefore maps onto Bottleneck's execution dimensions asymmetrically rather than uniformly. In the current benchmark, `Identification Strategy` and `Mechanism and External Validity` are the strongest directly stressed dimensions; `Econometric Methodology` and `Data Quality` are partially proxied through claim-level design errors and selected failure cases; `Robustness and Sensitivity` and `Writing and Presentation` are intentionally secondary. A detailed mapping is documented in [results/bottleneck_crosswalk.md](/Users/jiangcanxiang/Documents/OOD_Problem/results/bottleneck_crosswalk.md).
 
 ## 3. Case Construction
 
@@ -129,7 +142,7 @@ After Task 26, the information-gradient comparison is no longer limited to `leve
 
 ### 7.1 Overall Pattern
 
-The agent is not failing mainly on format compliance. It is failing on evidence-boundary discipline. The strongest repeated failure is not “cannot think of a design,” but “turns a plausible design idea into a claim stronger than the packet supports.”
+The agent is not failing mainly on format compliance. It is failing on execution discipline under constrained causal-design information. The strongest repeated failure is not “cannot think of a design,” but “turns a plausible design idea into a claim stronger than the packet supports.”
 
 This shows up directly in the error profile:
 
@@ -251,6 +264,10 @@ This benchmark is useful, but it is still limited.
 
 6. Tool-use ambiguity
    - The benchmark records the formal tool-enabled environment, but the main evaluation story here is primarily about agent reasoning and claim calibration, not about a detailed decomposition of external retrieval benefits.
+
+7. Exploratory pairwise extension
+   - An APE-style pairwise design-memo comparison was added as an exploratory extension, but its current protocol strongly favors agent memos.
+   - Because that result conflicts with the benchmark's claim-level adjudication, it is better interpreted as evidence of protocol sensitivity under memo compression and same-family judging than as a reversal of the main benchmark conclusion.
 
 ## 10. Recommendations
 

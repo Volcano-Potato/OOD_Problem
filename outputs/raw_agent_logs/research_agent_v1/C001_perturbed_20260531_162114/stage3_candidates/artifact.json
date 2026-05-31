@@ -1,0 +1,42 @@
+{
+  "candidates": [
+    {
+      "name": "Partial Identification via Contact-Behavior Bounds",
+      "estimand": "Bounds on the fraction of giving attributable to social pressure versus genuine willingness, leveraging the necessary condition that contact must occur before giving.",
+      "identifying_variation": "Observed variation in household pre-contact avoidance choices combined with variation in contact and contribution outcomes across households that do and do not receive advance notice.",
+      "critical_assumption": "Monotonicity of selection into contact: households that would avoid contact under advance-notice conditions would also avoid contact under no-notice conditions (no 'defiers' who seek contact only when they have a chance to opt out).",
+      "packet_support": "The packet describes a three-stage structure (pre-contact choice → contact → contribution) where contact is a necessary intermediate step; households can signal a preference to avoid the visit; contact occurrence is observed alongside contribution outcomes. This structure supports bounding exercises using the relationship between avoidance and giving.",
+      "fragility": "Monotonicity may fail if advance notice mobilizes some households to give who would otherwise be absent (generating defiers); bounds may be too wide to distinguish pressure from willingness in practice given the single-observation-per-unit structure; packet provides no auxiliary data (e.g., survey measures of altruism) to tighten bounds.",
+      "is_fallback": false
+    },
+    {
+      "name": "Route-and-Solicitor Stratified Observational Comparison",
+      "estimand": "Conditional association between pre-contact choice status and giving outcomes, controlling for route, neighborhood, timing, and solicitor fixed effects.",
+      "identifying_variation": "Within-route, within-solicitor variation in household pre-contact choices (opt-in to advance notice, signal avoidance, or neither) and subsequent contact and contribution outcomes.",
+      "critical_assumption": "Conditional on route, neighborhood, timing window, and solicitor identifiers, a household's pre-contact choice is as-good-as-random with respect to unobserved determinants of giving (selection on observables).",
+      "packet_support": "Baseline controls and design variables listed in the packet include route, building, neighborhood, area indicators, contact timing, visit window, and solicitor/team identifiers. The multi-stage data structure (planned route → pre-contact choice → contact → contribution) is observed for each unit.",
+      "fragility": "Selection on observables is almost certainly violated: unobserved household characteristics (altruism, income, social-desirability bias, prior relationship with the cause) simultaneously drive pre-contact choices and giving propensity. The packet explicitly states pre-contact conditions are chosen by households rather than assigned, making this design correlational at best for the pre-contact-choice-to-giving pathway.",
+      "is_fallback": false
+    },
+    {
+      "name": "Solicitor-Induced Contact Instrumental Variables",
+      "estimand": "Local average treatment effect (LATE) of in-person contact on contribution, among households whose contact status is influenced by which solicitor visits them.",
+      "identifying_variation": "Cross-solicitor variation in contact rates within the same route or neighborhood, used as an instrument for whether contact occurs.",
+      "critical_assumption": "Solicitor assignment is as-good-as-random within routes and affects giving only through the contact channel (exclusion restriction). Solicitor characteristics affect the probability of contact but not contribution amounts directly.",
+      "packet_support": "The packet lists solicitor or team identifiers as baseline control/design variables. Contact occurrence and contribution outcomes are observed. The staged structure (route plan → pre-contact choice → visit/contact → contribution) makes contact a measurable intermediate step.",
+      "fragility": "The exclusion restriction is likely violated: solicitor skill, persistence, or personal characteristics may directly affect contribution amounts conditional on contact (e.g., more persuasive solicitors generate both more contact and larger gifts). The packet explicitly warns that 'solicitor behavior may change across routes or conditions,' suggesting solicitor effects are not cleanly separable. Solicitor assignment is not described as random; the organization may assign better solicitors to higher-potential routes. This design cannot separate pressure from willingness within the contact effect.",
+      "is_fallback": false
+    },
+    {
+      "name": "Descriptive Decomposition of Solicitation Patterns",
+      "estimand": "Unadjusted associations among pre-contact choice, contact occurrence, contribution probability, and contribution size, with decomposition of overall giving rates by pre-contact choice group.",
+      "identifying_variation": "All observed variation in the data — cross-household, cross-route, cross-solicitor — used purely to describe patterns without asserting causal identification.",
+      "critical_assumption": "No causal identifying assumption is required. The analysis treats all observed associations as descriptive and explicitly refrains from causal interpretation of pre-contact-choice-to-giving pathways.",
+      "packet_support": "The full data structure (contact occurrence, contribution yes/no, contribution amount, contribution size bins, pre-contact choices, route identifiers, solicitor identifiers, timing) supports rich descriptive tabulation and visualization. The packet provides explicit outcome variables and baseline controls for stratification.",
+      "fragility": "This design cannot answer the core research question of separating social pressure from genuine willingness; it can only document that the two mechanisms are observationally entangled. The packet's research objective — 'estimate whether voluntary contributions reflect genuine willingness, social pressure, or both' — remains unaddressed. This is a fallback when causal designs are not defensible.",
+      "is_fallback": true
+    }
+  ],
+  "recommended_primary": "Partial Identification via Contact-Behavior Bounds",
+  "notes": "The perturbed condition — households self-select into pre-contact status — fundamentally breaks random-assignment-based identification. No candidate can credibly point-identify the separation of social pressure from genuine willingness without strong, untestable assumptions. The partial identification candidate is recommended as primary because it is the most honest about what can and cannot be learned: it explicitly acknowledges that only bounds are attainable and makes its monotonicity assumption transparent. The solicitor-IV candidate provides limited leverage for the contact→giving margin but cannot separate pressure from willingness. The descriptive fallback is included because the packet's instructions require a fallback when credible causal identification is not defensible, which is the case here."
+}

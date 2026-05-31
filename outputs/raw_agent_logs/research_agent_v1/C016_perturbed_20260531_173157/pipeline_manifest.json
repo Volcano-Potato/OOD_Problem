@@ -1,0 +1,36 @@
+{
+  "case_id": "C016",
+  "variant_id": "perturbed",
+  "agent_variant": "research_agent_v1",
+  "input_packet_sha256": "d01213b1bc1a98902975ec9b6b34b679b9f61bf1a0e0199241d6a0624f53a330",
+  "stages": {
+    "stage3_candidates": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage3_candidates/artifact.json",
+      "duration_sec": 148.944,
+      "validation": "n_candidates=4",
+      "stderr_path": "stage3_candidates/stderr.log"
+    },
+    "stage4_critique": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage4_critique/artifact.md",
+      "duration_sec": 154.89,
+      "validation": "meta_path=stage4_critique/artifact.meta.json",
+      "stderr_path": "stage4_critique/stderr.log"
+    },
+    "stage5_final": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage5_final/artifact.md",
+      "duration_sec": 182.799,
+      "validation": "recommend_descriptive_fallback=False",
+      "stderr_path": "stage5_final/stderr.log"
+    }
+  },
+  "pipeline_failed": false,
+  "created_at": "2026-05-31T17:31:57.437787",
+  "source_input_file": "benchmark/cases/C016_hiv_risk_information/agent_task_perturbed.md",
+  "completed_at": "2026-05-31T17:40:04.073299"
+}

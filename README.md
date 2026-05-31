@@ -2,7 +2,21 @@
 
 Private benchmark workspace for diagnosing research-agent weaknesses on out-of-distribution business and economics causal-design tasks.
 
-This repository was built around a concrete question:
+This repository is best understood as a follow-up to the execution side of *The Ideation Bottleneck*.
+
+That paper argues that the AI-human gap in economics research should be decomposed into:
+
+- idea quality
+- execution quality
+
+This project does not try to re-measure idea quality. Instead, it treats OOD business/economics causal-design tasks as a controlled probe for the execution residual, with particular emphasis on:
+
+- causal identification
+- mechanism reasoning
+- measurement credibility
+- claim calibration when strong causal design is unavailable
+
+The concrete question here is:
 
 > When a research agent is given an anonymized applied business/economics research-design task, where does it actually fail?
 
@@ -48,7 +62,16 @@ Headline numbers from the current main benchmark:
 
 Main conclusion:
 
-> The dominant weakness is not formatting or lack of candidate methods. It is failure to keep claims aligned with what the task packet actually justifies.
+> The benchmark's main signal is an execution weakness, not an ideation weakness: once a plausible design direction is on the table, the agent often fails to keep identification logic, measurement assumptions, and final claims aligned with what the packet actually justifies.
+
+Extension result after the frozen baseline:
+
+- first intervention arm: `research_agent_v1`
+- evaluation subset: `10` `perturbed` cases
+- baseline `perturbed` mechanical reuse: `9/10`
+- `research_agent_v1` `perturbed` mechanical reuse: `2/10`
+
+This intervention result should be read as a targeted follow-up experiment, not as a replacement for the frozen baseline headline.
 
 Core output files:
 
@@ -58,6 +81,8 @@ Core output files:
 - [results/figures/error_type_distribution.svg](results/figures/error_type_distribution.svg)
 - [results/figures/perturbed_downgrade.svg](results/figures/perturbed_downgrade.svg)
 - [results/perturbed_pair_audit.md](results/perturbed_pair_audit.md)
+- [results/perturbed_pair_audit_v1.md](results/perturbed_pair_audit_v1.md)
+- [results/research_agent_v1_vs_baseline.md](results/research_agent_v1_vs_baseline.md)
 
 ## What This Repository Contains
 
@@ -91,7 +116,7 @@ The final benchmark package is documented in:
 
 ## Benchmark Design
 
-The benchmark evaluates research-design agents on anonymized business/economics cases rather than asking them to summarize known papers.
+The benchmark evaluates research-design agents on anonymized business/economics cases rather than asking them to summarize known papers. In Bottleneck terms, it is a fine-grained execution diagnostic, not a full paper-quality tournament and not an idea-quality scorer.
 
 ### Main design principles
 
@@ -134,6 +159,12 @@ See:
 3. No-solution honesty
    - `no_solution` keeps the task empirically tempting while removing any credible identification source.
 
+These pressures are meant to stress the parts of execution most consequential for causal credibility:
+
+- whether the agent recognizes what variation actually identifies the estimand
+- whether it notices when a key design condition has been removed
+- whether it downgrades from causal to descriptive language when identification collapses
+
 ## Current Main-Set Scope
 
 The frozen main set contains 10 cases across:
@@ -156,6 +187,34 @@ The frozen main-run matrix contains:
 - 4 `no_solution` runs
 
 Successful annotated main runs: `44`
+
+## Current Status
+
+The repository now has two result layers:
+
+- frozen benchmark baseline
+  - main benchmark complete through `task26`
+  - primary headline files remain:
+    - [results/metrics_summary.md](results/metrics_summary.md)
+    - [results/failure_cases.md](results/failure_cases.md)
+    - [results/perturbed_pair_audit.md](results/perturbed_pair_audit.md)
+- post-benchmark extensions
+  - `task27-29` complete
+  - `task30` complete as a first intervention study on `perturbed` cases
+  - `task31` complete as a light threat-recognition audit on baseline `level2`
+  - primary task30 files:
+    - [results/perturbed_mechanical_reuse_v1.csv](results/perturbed_mechanical_reuse_v1.csv)
+    - [results/perturbed_pair_audit_v1.md](results/perturbed_pair_audit_v1.md)
+    - [results/research_agent_v1_vs_baseline.md](results/research_agent_v1_vs_baseline.md)
+  - primary task31 files:
+    - [results/threat_recognition_audit.csv](results/threat_recognition_audit.csv)
+    - [results/threat_recognition_summary.md](results/threat_recognition_summary.md)
+
+Important interpretation rule:
+
+- baseline headline metrics are frozen and should still be treated as the main benchmark result
+- `research_agent_v1` claim-level summary metrics are not yet fully publication-stable because the override system was originally tuned to the baseline run IDs
+- for `task30`, the paired manual `perturbed` audit is the primary evidence source
 
 ## Repository Layout
 
@@ -237,6 +296,21 @@ The orchestration is script-driven, not agent-driven:
 4. adjudicate disagreements
 5. compute metrics
 6. analyze representative failures
+
+## Research Positioning
+
+The simplest way to place this repository in the literature is:
+
+- *The Ideation Bottleneck* provides the top-level decomposition: idea versus execution
+- this benchmark operationalizes a narrow but important part of the execution side
+- the resulting evidence is about OOD causal-design reasoning, not about generic writing quality or paper retrieval
+
+That is why the benchmark emphasizes:
+
+- `level1 -> level2 -> level3` information gain
+- `perturbed` broken-identification stress tests
+- `no_solution` claim-calibration tests
+- claim-level adjudication instead of only holistic scoring
 
 Associated scripts:
 

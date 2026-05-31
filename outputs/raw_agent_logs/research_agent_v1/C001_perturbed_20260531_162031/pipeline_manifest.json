@@ -1,0 +1,15 @@
+{
+  "case_id": "C001",
+  "variant_id": "perturbed",
+  "agent_variant": "research_agent_v1",
+  "input_packet_sha256": "7f943c1895429138983e4ae2589cf1fcbe36322ffa00f229096517dd62ccb2a3",
+  "stages": {
+    "pipeline_error": {
+      "status": "failed",
+      "message": "stage3_candidates failed after retry: OpenClaw stage failed with exit code 127: /Users/jiangcanxiang/Documents/OOD_Problem/scripts/run_isolated_packet.sh: line 40: openclaw: command not found"
+    }
+  },
+  "pipeline_failed": true,
+  "created_at": "2026-05-31T16:20:31.690195",
+  "completed_at": "2026-05-31T16:20:31.713845"
+}

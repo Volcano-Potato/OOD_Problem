@@ -77,7 +77,7 @@
 
 ## 当前阶段状态
 
-截至 `2026-05-29`，仓库状态如下：
+截至 `2026-05-31`，仓库状态如下：
 
 - `task16` 已完成，OpenClaw benchmark 运行配置已冻结。
 - `task17` 的首轮 5-case Level 2 pilot batch 已执行并完成首轮 review。
@@ -101,15 +101,70 @@
   - claims / annotations / adjudication / metrics 已重算
   - `results/perturbed_mechanical_reuse.csv` 与 `results/perturbed_pair_audit.md` 已生成
   - README 与 report 中的过强措辞已收口
-- 当前主线任务与答辩补强任务均已完成。
+- 主线 benchmark 到此冻结：
+  - 若按正式 benchmark 主线口径，完成点仍是 `task26`
+  - 主 headline 仍以 baseline `benchmark_isolated` 结果为准
+- `task27` 已完成：
+  - Bottleneck framing 已写入 `README.md`、`report/research_report.md`、`report/presentation_outline.md`
+- `task28` 已完成：
+  - `results/bottleneck_crosswalk.md` 已生成并接入 report / metrics summary
+- `task29` 已完成：
+  - APE-style pairwise design-memo extension 已生成
+  - 但该层结果仍应视为 exploratory extension，而不是主结论 headline
+- `task30` 已完成到首轮 intervention study：
+  - 已实现 `research_agent_v1` 三阶段外部编排：
+    - `Stage 3` candidate generation
+    - `Stage 4` independent critique
+    - `Stage 5` final reconcile memo
+  - 已完成 `10` 条 `perturbed` case 的正式 batch rerun
+  - 已生成：
+    - `results/perturbed_mechanical_reuse_v1.csv`
+    - `results/perturbed_pair_audit_v1.md`
+    - `results/metrics_summary_research_agent_v1.csv`
+    - `results/metrics_summary_research_agent_v1.md`
+    - `results/research_agent_v1_vs_baseline.md`
+  - 当前最重要的 intervention 结果是：
+    - baseline `perturbed mechanical reuse = 9/10`
+    - `research_agent_v1 perturbed mechanical reuse = 2/10`
+  - 解释上应把这视为 `task30` 的主结果
+  - 但 `research_agent_v1` 的一般 claim-level headline metrics 仍应暂作 provisional，因为现有 override 体系主要是围绕 baseline 冻结 run IDs 构建
+- `task31` 已完成：
+  - 已新增轻量 threat-recognition audit：
+    - `results/threat_recognition_audit.csv`
+    - `results/threat_recognition_summary.md`
+  - 范围限定为 baseline `level2` 主集 `10` 条输出
+  - 结果为：
+    - average threat hits per case = `1.9/2`
+    - overall threat hit rate = `19/20 = 95.0%`
+    - `9/10` case 为 `2/2`
+    - `1/10` case 为 `1/2`
+  - 解释上，这意味着 baseline `level2` 的主要问题更像是后续 claim calibration / overreach，而不是简单 threat blindness
+- `task32` 尚未开始。
 
 当前最重要的主结论是：
 
 - `level1 -> level2` 有明显提升，而 `level2 -> level3` 基本持平
 - `perturbed` 的配对审计显示 `9/10` case 存在 broken-identification 下的 mechanical reuse
 - `no_solution` 结果应限定表述为 `4/4 tested runs`，而不是无条件 headline rate
+- `task30` 的扩展性结论是：
+  - critic-and-reconcile intervention 在 `10` 条 `perturbed` case 上把 mechanical reuse 从 `9/10` 降到了 `2/10`
+- `task31` 的扩展性结论是：
+  - baseline `level2` threat-recognition audit 为 `19/20`
+  - 因而主线弱点更像是 threat-to-claim alignment，而不是 threat recognition 缺失
 
-目前已经在全部 agent-facing task packet 的 `Task Rule` 中加入 anti-reconstruction 约束，并完成了主矩阵、level1 补跑与 paired perturbed audit。后续若继续推进，应转向课程展示版裁剪、论文写作润色，或追加新 case / 新 agent 的扩展实验。
+目前已经在全部 agent-facing task packet 的 `Task Rule` 中加入 anti-reconstruction 约束，并完成了主矩阵、level1 补跑、paired perturbed audit、首轮 `research_agent_v1` intervention study，以及 baseline `level2` threat-recognition audit。后续若继续推进，应转向：
+
+- 课程展示版裁剪或论文写作润色
+- `task32` no-solution 扩展
+- 或进一步扩展新的 agent arm / 新 case
+
+## 后续扩展方向参考
+
+当前仓库的正式 benchmark 配置与主线结论已基本冻结；以下内容仅作为后续扩展与改版时的方向性参考，而不是立即执行的结构调整要求。
+
+可将 ETH / UZH 的 `Project APE` 与 `The Ideation Bottleneck` 论文视为方法论参照。对本项目最有启发的，不是“自动生成论文”本身，而是把研究设计过程拆解为可审计、可比较、可复核的多个环节：尽量基于真实外部证据而非闭门补全；强调输出后的 review、复现与错误筛查；并尽量避免让同一生成过程承担自评职责。若未来扩展 benchmark，可更多考虑把“提出研究想法”“选择识别策略”“执行设计细化”“反思局限与稳健性”区分为可观察的不同能力维度。
+
+`The Ideation Bottleneck` 的核心启发是，AI 经济学研究与人类研究之间的主要差距更可能出现在 `idea quality`，而不只是执行细节。因此，本项目后续若新增 case、评分维度或 review 规则，应优先增强对以下能力的识别：是否真正提出了新颖且合适的问题设定；是否避免对熟悉模板或标准识别设计的机械复用；是否能在证据受限条件下给出有判断力的 research design，而不是仅复述常见 econometrics recipe。当前已观察到的 `perturbed` mechanical reuse 问题，可继续沿这一方向深化为后续版本的重要设计抓手。
 
 ## 阶段顺序
 
@@ -128,3 +183,5 @@
 ## 提交与 Pull Request 规范
 
 现有提交历史以简短的祈使句为主，例如 `Build pilot benchmark task packets`、`Add high-level case construction workflow`。后续也保持这一风格，例如 `Add C015 retail pricing case` 或 `Refine annotation guide labels`。PR 需要说明受影响的 case ID，概述 schema 或任务包的改动，标明是否做过 leakage risk 审查，并在目录结构变化时附上关键路径示例。
+
+另外，后续每次完成一个实际任务阶段或形成新的可引用结果时，都应同步更新 `RUN_LOG.md`。不要把日志记录留到多个任务之后再补写；`RUN_LOG.md` 应始终近似反映仓库的最新真实状态。

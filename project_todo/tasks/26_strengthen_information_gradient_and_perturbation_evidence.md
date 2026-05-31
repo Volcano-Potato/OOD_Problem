@@ -183,14 +183,14 @@
 
 ## 验收标准
 
-- [ ] 10 个 main-set cases 的 `level1` 均已正式运行并落盘。
-- [ ] 新增 `level1` runs 已完成 claim extraction。
-- [ ] 新增 `level1` claims 已纳入 annotation、second-label sample 和 adjudication。
-- [ ] 信息梯度图已更新为 `level1 -> level2 -> level3`。
-- [ ] 已产出 `perturbed` 的逐 case 配对审计结果。
-- [ ] 已给出明确 headline 数：`X/10 mechanical reuse`。
-- [ ] `README.md`、`report/research_report.md`、`results/metrics_summary.md` 中的相关 overclaim 措辞已收口。
-- [ ] 所有新增或更新文件通过 `git diff --check`。
+- [x] 10 个 main-set cases 的 `level1` 均已正式运行并落盘。
+- [x] 新增 `level1` runs 已完成 claim extraction。
+- [x] 新增 `level1` claims 已纳入 annotation、second-label sample 和 adjudication。
+- [x] 信息梯度图已更新为 `level1 -> level2 -> level3`。
+- [x] 已产出 `perturbed` 的逐 case 配对审计结果。
+- [x] 已给出明确 headline 数：`X/10 mechanical reuse`。
+- [x] `README.md`、`report/research_report.md`、`results/metrics_summary.md` 中的相关 overclaim 措辞已收口。
+- [x] 所有新增或更新文件通过 `git diff --check`。
 
 ## 可选 extension
 

@@ -11,6 +11,7 @@ OUTPUT_DIR = ROOT / "outputs" / "parsed_claims"
 CLAIMS_CSV = OUTPUT_DIR / "claims_to_annotate.csv"
 SKIPPED_CSV = OUTPUT_DIR / "claim_extraction_skipped.csv"
 SUMMARY_MD = OUTPUT_DIR / "claim_extraction_summary.md"
+DEFAULT_AGENT_VARIANT = "benchmark_isolated"
 
 
 def normalize_header(text: str) -> str:
@@ -75,6 +76,7 @@ def load_success_main_rows() -> list[dict[str, str]]:
                 continue
             if "/main/" not in row.get("raw_output_file", ""):
                 continue
+            row["agent_variant"] = row.get("agent_variant", "") or DEFAULT_AGENT_VARIANT
             rows.append(row)
     return rows
 
@@ -111,6 +113,7 @@ def main() -> None:
                     "case_id": row["case_id"],
                     "variant_id": row["variant_id"],
                     "level": row["level"],
+                    "agent_variant": row["agent_variant"],
                     "run_id": row["run_id"],
                     "claim_id": f"{row['run_id']}_CL{idx:03d}",
                     "claim_type": claim.get("claim_type", "").strip(),
@@ -129,6 +132,7 @@ def main() -> None:
         "case_id",
         "variant_id",
         "level",
+        "agent_variant",
         "run_id",
         "claim_id",
         "claim_type",

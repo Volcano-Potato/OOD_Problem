@@ -72,10 +72,10 @@
 
 ## 验收标准
 
-- [ ] 能用 1-2 句话解释 benchmark 的研究对象和研究问题。
-- [ ] 明确写出至少 4 个 evaluated capabilities。
-- [ ] 明确写出至少 4 个 out-of-scope 项，避免后续被质疑“为什么不测检索/写作/复现原论文”。
-- [ ] 核心失败类型必须和后续标注体系一致：Unsupported Claim、Overclaim、Mis-citation、Contradiction。
+- [x] 能用 1-2 句话解释 benchmark 的研究对象和研究问题。
+- [x] 明确写出至少 4 个 evaluated capabilities。
+- [x] 明确写出至少 4 个 out-of-scope 项，避免后续被质疑“为什么不测检索/写作/复现原论文”。
+- [x] 核心失败类型必须和后续标注体系一致：Unsupported Claim、Overclaim、Mis-citation、Contradiction。
 
 ## 常见风险
 

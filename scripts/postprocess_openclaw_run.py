@@ -9,6 +9,34 @@ import sys
 from pathlib import Path
 
 
+DEFAULT_AGENT_VARIANT = "benchmark_isolated"
+MANIFEST_FIELDNAMES = [
+    "run_id",
+    "case_id",
+    "variant_id",
+    "level",
+    "agent_name",
+    "agent_variant",
+    "model",
+    "model_provider",
+    "openclaw_build_or_version",
+    "temperature",
+    "top_p",
+    "max_tokens",
+    "seed",
+    "tools_enabled",
+    "closed_book",
+    "channel",
+    "timestamp",
+    "input_file",
+    "raw_output_file",
+    "status",
+    "contamination_status",
+    "contamination_reason",
+    "notes",
+]
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Postprocess one OpenClaw benchmark_isolated run into raw log + manifest entry."
@@ -28,6 +56,7 @@ def parse_args():
     parser.add_argument("--thinking-level", required=True)
     parser.add_argument("--agent-id", default="benchmark_isolated")
     parser.add_argument("--agent-name", default="openclaw")
+    parser.add_argument("--agent-variant", default=DEFAULT_AGENT_VARIANT)
     parser.add_argument("--channel", default="cli")
     parser.add_argument(
         "--tools-enabled",
@@ -166,6 +195,7 @@ def write_raw_log(
     level: str,
     agent_name: str,
     agent_id: str,
+    agent_variant: str,
     model: str,
     provider: str,
     build: str,
@@ -196,6 +226,7 @@ def write_raw_log(
 - `level`: {level}
 - `agent_name`: {agent_name}
 - `agent_id`: {agent_id}
+- `agent_variant`: {agent_variant}
 - `model`: {model}
 - `model_provider`: {provider}
 - `openclaw_build_or_version`: {build}
@@ -235,21 +266,26 @@ def write_raw_log(
     out_path.write_text(text)
 
 
-def append_manifest_row(manifest_path: Path, row: list[str]):
+def append_manifest_row(manifest_path: Path, row: dict[str, str]):
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     existing = set()
+    header = MANIFEST_FIELDNAMES
     if manifest_path.exists():
         with manifest_path.open(newline="") as fh:
-            reader = csv.reader(fh)
-            next(reader, None)
+            reader = csv.DictReader(fh)
+            if reader.fieldnames:
+                header = reader.fieldnames
             for current in reader:
-                if current:
-                    existing.add(current[0])
-    if row[0] in existing:
-        raise SystemExit(f"run_id already exists in manifest: {row[0]}")
+                run_id = current.get("run_id")
+                if run_id:
+                    existing.add(run_id)
+    if row["run_id"] in existing:
+        raise SystemExit(f"run_id already exists in manifest: {row['run_id']}")
     with manifest_path.open("a", newline="") as fh:
-        writer = csv.writer(fh)
-        writer.writerow(row)
+        writer = csv.DictWriter(fh, fieldnames=header, lineterminator="\n")
+        if fh.tell() == 0:
+            writer.writeheader()
+        writer.writerow({key: row.get(key, "") for key in header})
 
 
 def main():
@@ -296,12 +332,11 @@ def main():
             build = harness["version"]
     duration_ms = meta.get("durationMs", "unknown")
 
-    raw_output_rel = (
-        Path("outputs")
-        / "raw_agent_logs"
-        / args.split
-        / f"{args.case_id}_{args.variant_id}_{args.agent_name}_{args.run_id}.md"
-    )
+    if args.agent_variant == DEFAULT_AGENT_VARIANT:
+        raw_output_name = f"{args.case_id}_{args.variant_id}_{args.agent_name}_{args.run_id}.md"
+    else:
+        raw_output_name = f"{args.case_id}_{args.variant_id}__{args.agent_variant}__{args.run_id}.md"
+    raw_output_rel = Path("outputs") / "raw_agent_logs" / args.split / raw_output_name
     raw_output_path = repo_root / raw_output_rel
     raw_output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -309,7 +344,8 @@ def main():
         f"workspace={workspace_dir or 'unknown'}; "
         f"thinking={args.thinking_level}; "
         f"actual_tool_use={actual_tool_use}; "
-        f"agent={args.agent_id}"
+        f"agent={args.agent_id}; "
+        f"agent_variant={args.agent_variant}"
     )
 
     write_raw_log(
@@ -320,6 +356,7 @@ def main():
         level=args.level,
         agent_name=args.agent_name,
         agent_id=args.agent_id,
+        agent_variant=args.agent_variant,
         model=model,
         provider=provider,
         build=build,
@@ -352,30 +389,31 @@ def main():
     if stderr_excerpt:
         notes_parts.append("stderr captured")
 
-    row = [
-        args.run_id,
-        args.case_id,
-        args.variant_id,
-        args.level,
-        args.agent_name,
-        model,
-        provider,
-        build,
-        "not_supported",
-        "not_supported",
-        "not_supported",
-        "not_supported",
-        args.tools_enabled,
-        "false",
-        args.channel,
-        args.timestamp,
-        args.input_file,
-        raw_output_rel.as_posix(),
-        status,
-        contamination_status,
-        contamination_reason,
-        "; ".join(notes_parts),
-    ]
+    row = {
+        "run_id": args.run_id,
+        "case_id": args.case_id,
+        "variant_id": args.variant_id,
+        "level": args.level,
+        "agent_name": args.agent_name,
+        "agent_variant": args.agent_variant,
+        "model": model,
+        "model_provider": provider,
+        "openclaw_build_or_version": build,
+        "temperature": "not_supported",
+        "top_p": "not_supported",
+        "max_tokens": "not_supported",
+        "seed": "not_supported",
+        "tools_enabled": args.tools_enabled,
+        "closed_book": "false",
+        "channel": args.channel,
+        "timestamp": args.timestamp,
+        "input_file": args.input_file,
+        "raw_output_file": raw_output_rel.as_posix(),
+        "status": status,
+        "contamination_status": contamination_status,
+        "contamination_reason": contamination_reason,
+        "notes": "; ".join(notes_parts),
+    }
     append_manifest_row(manifest_path, row)
 
     summary = {

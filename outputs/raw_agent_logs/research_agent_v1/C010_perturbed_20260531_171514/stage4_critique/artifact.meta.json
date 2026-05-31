@@ -1,0 +1,10 @@
+{
+  "verdict_distribution": {
+    "defensible": 1,
+    "defensible_with_caveats": 1,
+    "not_defensible": 2
+  },
+  "recommended_primary": "Descriptive Adoption Profile",
+  "recommend_descriptive_fallback": true,
+  "perturbed_condition_dependency_detected": true
+}

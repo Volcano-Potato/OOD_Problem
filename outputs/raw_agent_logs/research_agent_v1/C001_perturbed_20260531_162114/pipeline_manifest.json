@@ -1,0 +1,32 @@
+{
+  "case_id": "C001",
+  "variant_id": "perturbed",
+  "agent_variant": "research_agent_v1",
+  "input_packet_sha256": "7f943c1895429138983e4ae2589cf1fcbe36322ffa00f229096517dd62ccb2a3",
+  "stages": {
+    "stage3_candidates": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage3_candidates/artifact.json",
+      "duration_sec": 132.269,
+      "validation": "n_candidates=4"
+    },
+    "stage4_critique": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage4_critique/artifact.md",
+      "duration_sec": 125.629,
+      "validation": "meta_path=stage4_critique/artifact.meta.json"
+    },
+    "stage5_final": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage5_final/artifact.md",
+      "duration_sec": 187.538,
+      "validation": "recommend_descriptive_fallback=False"
+    }
+  },
+  "pipeline_failed": false,
+  "created_at": "2026-05-31T16:21:14.140781",
+  "completed_at": "2026-05-31T16:28:39.581822"
+}

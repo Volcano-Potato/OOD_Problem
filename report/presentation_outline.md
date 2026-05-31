@@ -3,27 +3,28 @@
 ## Slide 1: Title
 
 - OOD-CausalDesignBench
-- Evaluating Research-Design Agents on OOD Business and Economics Causal Tasks
+- Micro-decomposing the execution side of research-agent failure on OOD business and economics causal tasks
 
 ## Slide 2: Motivation
 
-- Most research agents are evaluated in AI or science-heavy settings.
+- *The Ideation Bottleneck* separates economics-research quality into idea quality and execution quality.
+- This project follows the execution side only.
 - Business and economics tasks stress endogenous exposure, mechanism separation, measurement credibility, and no-solution honesty.
 - These are strong OOD pressures for general-purpose scientific agents.
 
 ## Slide 3: Core Question
 
-- What exactly is a research agent weak at in anonymized business/economics causal-design tasks?
+- After holding the research idea side fixed, what exactly does a research agent fail at on anonymized business/economics causal-design tasks?
 - Not paper retrieval
 - Not formatting
-- Specifically: evidence-bounded design reasoning
+- Specifically: evidence-bounded execution of causal-design reasoning
 
 ## Slide 4: Benchmark Structure
 
 - 10 main-set cases
 - 8 domains
 - agent-facing vs evaluator-only separation
-- `level2`, `level3`, `perturbed`, `no_solution`
+- `level1`, `level2`, `level3`, `perturbed`, `no_solution`
 
 Visual:
 - simple pipeline figure from case construction to adjudicated labels
@@ -42,8 +43,8 @@ Key message:
 
 ## Slide 6: Evaluation Pipeline
 
-- main run: 34 successful annotated runs
-- claim extraction: 285 claims
+- main run: 44 successful annotated runs
+- claim extraction: 370 claims
 - first-pass annotation
 - 21.1% second-label sample
 - adjudication
@@ -51,11 +52,11 @@ Key message:
 
 ## Slide 7: Headline Metrics
 
-- Mean Claim Score: `0.8193`
-- Design-Evidence Inconsistency Rate: `0.2526`
-- Overclaim Rate: `0.1439`
-- Unsupported Design Claim Rate: `0.0842`
-- No-solution Honesty Rate: `1.0000`
+- Mean Claim Score: `0.8014`
+- Design-Evidence Inconsistency Rate: `0.2676`
+- Overclaim Rate: `0.1378`
+- Unsupported Design Claim Rate: `0.1108`
+- `4/4` tested no-solution runs avoided supported causal claims
 
 Visual:
 - summary metric table
@@ -66,8 +67,9 @@ Visual:
 - [information_gradient_scores.svg](/Users/jiangcanxiang/Documents/OOD_Problem/results/figures/information_gradient_scores.svg)
 
 Takeaway:
-- `level3` is only slightly better than `level2`
-- more context helps a little, but not enough to eliminate boundary violations
+- large jump from `level1` to `level2`
+- almost no further gain from `level2` to `level3`
+- structured data information helps; extra explicit threat hints do not meaningfully close the execution gap
 
 ## Slide 9: Perturbation Sensitivity
 
@@ -76,6 +78,7 @@ Visual:
 
 Takeaway:
 - performance drops most when one key identification condition is removed
+- paired audit result: `9/10` show mechanical reuse
 - strongest evidence that the agent struggles to recompute what remains identified
 
 ## Slide 10: Error-Type Distribution
@@ -137,8 +140,8 @@ Message:
 ## Slide 16: Main Conclusion
 
 - The agent is often capable of producing a plausible-looking design report.
-- Its main weakness is not missing methods; it is failure to keep claims aligned with what the packet justifies.
-- Business/economics causal-design tasks are therefore an effective OOD stress test.
+- Its main weakness is not missing methods; it is failure to keep identification logic, measurement assumptions, and final claims aligned with what the packet justifies.
+- Business/economics causal-design tasks are therefore an effective OOD execution stress test.
 
 ## Slide 17: System Recommendations
 
@@ -151,10 +154,10 @@ Message:
 ## Slide 18: Limitations and Next Steps
 
 - only 10 cases
-- `no_solution` coverage still sparse
+- `no_solution` coverage still sparse (`4` tested runs)
 - some metrics are proxies because label space is coarse
 - run condition is locally isolated but remote-tool enabled
 - future work:
-  - more cases
-  - richer mechanism-specific labels
-  - direct comparison across models and tool policies
+  - Bottleneck execution crosswalk
+  - APE-style pairwise design-memo comparison
+  - targeted design-critic intervention on perturbed cases

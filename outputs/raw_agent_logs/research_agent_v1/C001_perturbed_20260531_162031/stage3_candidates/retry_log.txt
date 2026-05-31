@@ -1,0 +1,2 @@
+attempt=1: OpenClaw stage failed with exit code 127: /Users/jiangcanxiang/Documents/OOD_Problem/scripts/run_isolated_packet.sh: line 40: openclaw: command not found
+attempt=2: OpenClaw stage failed with exit code 127: /Users/jiangcanxiang/Documents/OOD_Problem/scripts/run_isolated_packet.sh: line 40: openclaw: command not found

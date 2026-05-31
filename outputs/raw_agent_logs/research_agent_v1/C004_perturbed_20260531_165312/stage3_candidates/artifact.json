@@ -1,0 +1,42 @@
+{
+  "candidates": [
+    {
+      "name": "Staggered Difference-in-Differences",
+      "estimand": "Average treatment effect on the treated (ATT) of paid-search suspension on downstream sales, estimated from staggered timing of suspension across markets.",
+      "identifying_variation": "Differential timing of paid-search availability reduction or suspension across markets, exploiting the panel structure with pre-period and intervention-period repeated observations.",
+      "critical_assumption": "Parallel trends: markets that suspend paid-search would have followed sales trajectories parallel to markets that do not, absent the suspension. This requires that manager decisions to suspend are not driven by market-specific time-varying demand shocks.",
+      "packet_support": "Repeated market-by-time observations before and during the campaign; pre-period historical sales patterns; market fixed characteristics; seasonality controls and time indicators; staggered suspension by campaign managers across market areas.",
+      "fragility": "Campaign managers select markets based on operational judgments, expected demand, or budget considerations. If expected demand drives both suspension decisions and future sales, parallel trends is violated and the ATT is biased. Pre-trend tests can detect some violations but not those arising from forward-looking selection on anticipated shocks contemporaneous with treatment.",
+      "is_fallback": false
+    },
+    {
+      "name": "Synthetic Control Method",
+      "estimand": "Market-specific treatment effect of paid-search suspension on sales, aggregated across treated markets, estimated by comparing each treated market to a weighted synthetic counterfactual constructed from untreated markets.",
+      "identifying_variation": "Pre-period sales trajectories and baseline market characteristics used to construct a convex combination of untreated donor markets that reproduces the treated market's pre-intervention path.",
+      "critical_assumption": "The synthetic control reproduces the counterfactual post-suspension sales path the treated market would have followed had paid-search remained active. This requires that the pre-period fit captures all relevant determinants of the counterfactual, including any unobserved factors driving the manager's suspension decision.",
+      "packet_support": "Multiple market areas with repeated observations before and during the campaign; historical sales patterns; baseline market characteristics available as matching covariates; multiple untreated markets available as donor pool.",
+      "fragility": "If managers suspend paid-search in markets experiencing idiosyncratic demand declines or anticipating future weakness, the synthetic control constructed from markets not facing those same pressures will overstate the treatment effect. Sparse donor pools or limited pre-period observations weaken the fit. No formal inference without multiple treated units or permutation methods.",
+      "is_fallback": false
+    },
+    {
+      "name": "Selection-on-Observables with Pre-Trend Adjustment",
+      "estimand": "Conditional average treatment effect of paid-search availability on sales, estimated from residual variation after controlling for observed market characteristics, historical sales, and pre-period trends.",
+      "identifying_variation": "Cross-market and within-market variation in paid-search availability that remains after conditioning on historical market-level sales, market fixed characteristics, seasonality controls, and time indicators.",
+      "critical_assumption": "Unconfoundedness (selection on observables): after conditioning on historical sales, market fixed characteristics, seasonality, and pre-period trends, the suspension decision is independent of potential outcomes. No unobserved time-varying confounders jointly determine suspension and sales.",
+      "packet_support": "Historical market-level sales; market fixed characteristics; seasonality controls; time indicators; panel structure enabling within-market differencing; segment-level covariates on prior familiarity, recency, and frequency.",
+      "fragility": "Managers use private forward-looking demand expectations and operational judgments when deciding where to suspend. These expectations are not in the observed covariate set. Conditioning on observables cannot recover causal effects if unobserved expected demand shocks drive both the suspension decision and subsequent sales.",
+      "is_fallback": false
+    },
+    {
+      "name": "Descriptive Correlational Benchmarking",
+      "estimand": "Conditional and unconditional associations between paid-search availability and downstream sales, described across markets, time periods, and user-history segments without causal interpretation.",
+      "identifying_variation": "All observed cross-market and within-market variation in paid-search availability and sales outcomes during the campaign window, including pre-post comparisons within suspended markets and cross-sectional contrasts between suspended and active markets.",
+      "critical_assumption": "No causal identifying assumptions are required. The analysis reports what the data show rather than what causes what.",
+      "packet_support": "All data structures described in the packet: market-by-time sales, treatment indicators, user-history segments, baseline controls, and pre-period observations. Can produce rich descriptive summaries including raw difference-in-means, pre-post changes, and segment-level patterns.",
+      "fragility": "Cannot support any causal claim about whether paid-search drives incremental purchases versus intercepting existing demand. All observed associations confound treatment effects with selection, demand heterogeneity, and substitution patterns. Descriptive patterns may be misleading if interpreted causally by readers.",
+      "is_fallback": true
+    }
+  ],
+  "recommended_primary": "Staggered Difference-in-Differences",
+  "notes": "All quasi-experimental candidates share a common fragility: campaign managers choose suspension markets based on expected demand and operational judgments, creating selection on unobservables that plausibly violates parallel trends, synthetic control fit, and unconfoundedness. The staggered DiD is recommended as the primary candidate because it uses the richest identifying structure available in the packet (panel with pre-trend diagnostics, event-study specification, and fixed effects), but its causal credibility hinges on whether the researcher can defend—through institutional knowledge, pre-trend tests, and falsification exercises—that the manager's decision rule is orthogonal to market-specific time-varying demand shocks. No candidate achieves strong causal identification under the perturbed condition without additional design elements not present in the packet."
+}

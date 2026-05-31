@@ -20,6 +20,7 @@
 | D. Main run 与标注 | 18-21 | main outputs、claim table、annotation guide、adjudicated labels |
 | E. 统计与分析 | 22-23 | metrics、失败案例、图表 |
 | F. 报告与交付 | 24 | research report、reproducibility package、展示材料 |
+| G. 结果补强、Agent 干预与外部对齐 | 25-38 | batch runner、信息梯度补强、Bottleneck/APE 对齐、agent loop ablation、可选扩展 |
 
 ## 任务清单
 
@@ -51,6 +52,18 @@
 | 24 | 写研究报告与复现说明 | 22-23 | [24_report_and_reproducibility_package.md](tasks/24_report_and_reproducibility_package.md) |
 | 25 | 构建自动化 batch runner 与运行后处理 | 16-17 | [25_build_batch_runner.md](tasks/25_build_batch_runner.md) |
 | 26 | 补强信息梯度、扰动复用证据与结果措辞 | 18-24 | [26_strengthen_information_gradient_and_perturbation_evidence.md](tasks/26_strengthen_information_gradient_and_perturbation_evidence.md) |
+| 27 | 用 Bottleneck 重写项目定位与主叙事 | 24,26 | [27_reframe_project_with_bottleneck.md](tasks/27_reframe_project_with_bottleneck.md) |
+| 28 | 构建 Bottleneck execution-dimension crosswalk | 24,26,27 | [28_build_bottleneck_execution_crosswalk.md](tasks/28_build_bottleneck_execution_crosswalk.md) |
+| 29 | 增加 APE-style pairwise design-memo evaluation | 24,26-28 | [29_run_pairwise_design_memo_evaluation.md](tasks/29_run_pairwise_design_memo_evaluation.md) |
+| 30 | 在 perturbed cases 上测试 design-critic intervention | 26 | [30_test_design_critic_intervention_on_perturbed.md](tasks/30_test_design_critic_intervention_on_perturbed.md) |
+| 31 | 为 RQ1 增加 threat-recognition 量化 | 24,26 | [31_quantify_threat_recognition_for_rq1.md](tasks/31_quantify_threat_recognition_for_rq1.md) |
+| 32 | 将 no-solution 从 4 条扩到主集全覆盖 | 18-26 | [32_expand_no_solution_to_full_main_set.md](tasks/32_expand_no_solution_to_full_main_set.md) |
+| 33 | 构建 v2 的 retrieval stage 与 search gate | 30 | [33_build_v2_retrieval_stage_and_search_gate.md](tasks/33_build_v2_retrieval_stage_and_search_gate.md) |
+| 34 | 执行 v2 retrieval-augmented perturbed batch | 33 | [34_run_v2_retrieval_augmented_perturbed_batch.md](tasks/34_run_v2_retrieval_augmented_perturbed_batch.md) |
+| 35 | 分析 v2 相对 v1 的 retrieval effect | 34 | [35_analyze_v2_vs_v1_retrieval_effect.md](tasks/35_analyze_v2_vs_v1_retrieval_effect.md) |
+| 36 | 构建 v3 的 planner 与 debate loop | 35 | [36_build_v3_planner_and_debate_loop.md](tasks/36_build_v3_planner_and_debate_loop.md) |
+| 37 | 执行 v3 planner-debate perturbed batch | 36 | [37_run_v3_planner_debate_perturbed_batch.md](tasks/37_run_v3_planner_debate_perturbed_batch.md) |
+| 38 | 汇总 v3 与 v1/v2 的 ablation 对比 | 37 | [38_analyze_v3_vs_v1_v2_ablation.md](tasks/38_analyze_v3_vs_v1_v2_ablation.md) |
 
 ## 推荐执行顺序
 
@@ -61,6 +74,36 @@
 5. 扩展 main set 到 10 个 case，执行 18-21。
 6. 最后做 22-24，形成结果、失败案例和报告。
 7. 若答辩前需要补强主结果，执行 26，优先补 `level1`、`perturbed` 配对计数与结果措辞收口。
+8. 若希望把项目进一步对齐 Bottleneck / APE 的研究姿态，按 27 → 28 → 29 的顺序做补强。
+9. `task27-29` 已完成；若继续推进扩展实验，先执行 `task30`，再做 `task31-32`。
+10. 若继续把 `research_agent_redesign_plan.md` 落到 v2 / v3，按 `33 -> 34 -> 35 -> 36 -> 37 -> 38` 执行，保持 clean ablation。
+
+## 当前执行状态
+
+- 主线 benchmark：已完成到 `task26`
+- 扩展对齐：
+  - `task27` complete
+  - `task28` complete
+  - `task29` complete as exploratory extension
+- intervention 扩展：
+  - `task30` complete as first intervention study
+    - `research_agent_v1` 已完成 `10` 条 `perturbed` batch rerun
+    - paired audit headline: `9/10 -> 2/10`
+  - `task31` complete
+    - baseline `level2` threat-recognition audit headline: `19/20`
+    - `9/10` cases scored `2/2`
+  - `task32` not started
+  - `task33-38` planned
+    - `task33-35`: v2 retrieval ablation
+    - `task36-38`: v3 planner/debate ablation
+
+当前最合理的后续顺序是：
+
+1. 若要继续做 agent redesign，先执行 `task33 -> 34 -> 35`
+2. 只有在 `task35` 认为 v2 值得继续时，再做 `task36 -> 37 -> 38`
+3. `task32` no-solution 扩展保持为独立 coverage extension，不与 v2/v3 ablation 混跑
+4. 如有需要，再补 `research_agent_v1` 的 run-specific annotation overrides，使其 claim-level headline metrics 也达到可稳定引用状态
+5. 如有需要，再把 `task31` 的轻量 audit 扩到 intervention arm，做 baseline vs `research_agent_v1` 的 threat-recognition appendix
 
 ## 完成定义
 

@@ -1,0 +1,42 @@
+{
+  "candidates": [
+    {
+      "name": "ITT Schedule Effect",
+      "estimand": "Average causal effect of being randomized to an early-announced early-offer schedule versus an early-announced late-offer schedule on seasonal input adoption.",
+      "identifying_variation": "Researcher-controlled random assignment of producers to offer arms that differ in timing, convenience, and economic value, with all schedules announced at the start of the decision period.",
+      "critical_assumption": "Randomization is successfully implemented and produces groups that are exchangeable in expectation; no differential attrition across arms; SUTVA holds (no interference between producers assigned to different schedules).",
+      "packet_support": "Stage 2 explicitly states producers are randomly assigned to offer arms differing in timing and form of purchase opportunities. Stage 3 confirms every producer is informed early about their schedule. The outcome is measured as actual purchase or use.",
+      "fragility": "This identifies the total causal effect of the announced schedule bundle (timing + anticipation + convenience + economic value), not the pure timing channel. The research objective asks whether early timing changes adoption and whether the pattern supports a procrastination mechanism, but the ITT cannot decompose the bundle into its constituent mechanisms. The treatment is compound. SUTVA may also be violated if producers in nearby communities discuss offer timing, as noted in the data card spillover field.",
+      "is_fallback": false
+    },
+    {
+      "name": "Anticipatory Plans Contrast",
+      "estimand": "Causal effect of announced schedule assignment on stated early-season adoption plans and stated timing preferences, measured after schedule announcement but before any purchase window opens.",
+      "identifying_variation": "Random assignment to offer arms combined with measurement of stated plans at a point when every producer knows their assigned schedule but no purchase window has yet become available.",
+      "critical_assumption": "Stated plans measured after the early announcement capture the pure anticipatory response to schedule knowledge, and any difference in stated plans between arms is attributable solely to the information about future offer timing rather than to actual purchase constraints or differential economic value.",
+      "packet_support": "Secondary outcomes include stated intention to adopt and stated timing preferences. Stage 3 confirms all producers are informed early. The data card lists stated plans as a secondary outcome distinct from actual adoption.",
+      "fragility": "Stated plans are not revealed-preference actions. They may reflect social desirability bias, rational expectations about future constraints, or cheap talk rather than genuine intentions. Even if plans differ by arm, this cannot distinguish between rational planning (producers correctly anticipating that a later window reduces follow-through for logistical reasons) and behavioral procrastination (time-inconsistent preferences). The gap between stated plans and actual adoption may itself be contaminated by anticipation, making the plan-adoption gap uninterpretable as a clean measure of procrastination.",
+      "is_fallback": false
+    },
+    {
+      "name": "Panel Within-Producer Schedule Variation",
+      "estimand": "Within-producer effect of facing an early-announced early-offer schedule versus an early-announced late-offer schedule on seasonal adoption, identified from producers observed across multiple seasons with varying schedule assignments.",
+      "identifying_variation": "Within-producer variation in assigned (announced) offer schedules across two or more seasons, combined with producer fixed effects to absorb time-invariant producer characteristics.",
+      "critical_assumption": "Schedule assignments are independently re-randomized across seasons for producers who appear in multiple rounds, and there are no carryover effects — adoption in one season does not affect adoption in the next season through learning, habit formation, or input stockpiling, and the prior season's announced schedule does not influence current-season behavior.",
+      "packet_support": "The data card notes that some producers may appear across more than one season or intervention round, creating a potential panel structure. Baseline controls include prior adoption history.",
+      "fragility": "The panel is only partial (some producers, not all), introducing selection concerns about which producers appear in multiple rounds. Carryover effects are highly plausible: producers who used the input in a prior season may learn about its returns and behave differently regardless of current schedule, violating the no-carryover assumption. Re-randomization across seasons is not guaranteed by the packet — it is only a possibility. The within-producer variation may be too thin to support precise estimation if most producers appear in only one season. Like the ITT, this still identifies only the total schedule effect, not the pure timing mechanism.",
+      "is_fallback": false
+    },
+    {
+      "name": "Descriptive Adoption Profile",
+      "estimand": "Descriptive difference in mean seasonal input adoption between producers assigned to different announced offer schedules, without causal attribution to any specific mechanism (timing, anticipation, convenience, or economic value).",
+      "identifying_variation": "Cross-sectional comparison of mean adoption rates across randomized schedule arms, interpreted purely descriptively as an association between announced schedule characteristics and observed adoption.",
+      "critical_assumption": "Randomization ensures baseline comparability of groups, so the descriptive contrast is unbiased for the reduced-form difference in outcomes across arms, even though no mechanism is identified.",
+      "packet_support": "The full data structure supports clean measurement of adoption by assigned arm. Randomization guarantees the descriptive contrast is not confounded by baseline producer characteristics.",
+      "fragility": "No mechanism claim is defensible. The adoption difference between arms is a black-box combination of timing, anticipation, convenience, and economic value. The packet's core research objective — whether early timing per se changes adoption and whether procrastination explains the pattern — cannot be answered. All that can be reported is that producers assigned to schedule A adopted at rate X and producers assigned to schedule B adopted at rate Y. This is a fallback when the research question demands mechanism evidence the design cannot provide.",
+      "is_fallback": true
+    }
+  ],
+  "recommended_primary": "ITT Schedule Effect",
+  "notes": "The perturbed condition — all producers learn their schedule early — fundamentally contaminates the timing mechanism. In the original design logic, later offer arms would test whether procrastination causes lower adoption because producers in late arms would not know about the late offer until it arrives, making any delay a revealed behavioral choice. Under the perturbed condition, the late-arm assignment is anticipated, so any adoption difference conflates the mechanical effect of timing with the behavioral effect of knowing timing in advance. The ITT of schedule assignment is cleanly identified by randomization and is the strongest defensible causal claim, but it answers 'does the announced schedule matter?' rather than 'does early timing per se drive adoption through a procrastination channel?' The Anticipatory Plans Contrast and Panel candidates attempt to make partial progress on mechanism but each faces severe fragility. The Descriptive fallback is the honest option if the researcher insists on not overclaiming."
+}

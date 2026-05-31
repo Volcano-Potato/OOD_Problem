@@ -728,3 +728,337 @@ First-pass human-style annotation completed; repository is ready to move into do
   - packet-overreach in `C001` and `C002`
   - mechanism overreach in `C010` and `C016`
   - invalid causal carryover in `perturbed` and `no_solution` variants
+
+## 2026-05-30
+
+### Stage
+
+Post-benchmark strengthening work shifted from raw evaluation completion to external framing and method-positioning alignment.
+
+The main benchmark itself remained unchanged; the work focused on making the project more clearly legible as a research contribution relative to *The Ideation Bottleneck* and Project APE.
+
+### Task 27: Bottleneck Reframing
+
+- Reframed the repository as a fine-grained follow-up to the **execution** side of *The Ideation Bottleneck* rather than as a generic OpenClaw benchmark.
+- Updated:
+  - `README.md`
+  - `report/research_report.md`
+  - `report/presentation_outline.md`
+- The new canonical framing is:
+  - Bottleneck provides the `idea vs execution` decomposition.
+  - This project does **not** attempt to re-score idea quality.
+  - Instead, it probes the execution residual through OOD business/economics causal-design tasks.
+- The emphasized benchmark targets are now explicitly:
+  - identification discipline
+  - mechanism reasoning
+  - measurement credibility
+  - claim calibration under broken or missing identification
+
+### Task 28: Bottleneck Execution Crosswalk
+
+- Added a dedicated crosswalk artifact:
+  - `results/bottleneck_crosswalk.md`
+- Also linked the crosswalk into:
+  - `results/metrics_summary.md`
+  - `report/research_report.md`
+- The crosswalk explicitly distinguishes:
+  - **directly stressed dimensions**
+    - `Identification Strategy`
+    - `Mechanism and External Validity`
+  - **partial proxy dimensions**
+    - `Econometric Methodology`
+    - `Data Quality`
+  - **intentionally secondary dimensions**
+    - `Robustness and Sensitivity`
+    - `Writing and Presentation`
+- Interpretation consequence:
+  - the benchmark is now more clearly positioned as a focused execution-quality probe for causal-design reasoning, not a full paper-quality evaluator
+
+### Task 29: APE-Style Pairwise Design-Memo Extension
+
+- Added a fixed pairwise-evaluation prompt:
+  - `benchmark/prompts/pairwise_design_judge_prompt.md`
+- Added reproducible scripts:
+  - `scripts/build_pairwise_design_memos.py`
+  - `scripts/run_pairwise_design_eval.py`
+- Generated matched memo artifacts:
+  - `outputs/pairwise_design_memos/`
+- Generated pairwise outputs:
+  - `results/pairwise_design_memo_eval.csv`
+  - `results/pairwise_design_memo_eval.md`
+
+### Pairwise Protocol
+
+- subset: all `10` main-set `level2` cases
+- comparison unit: matched anonymized **design memos**, not full papers
+- fixed judge model: `deepseek-v4-pro`
+- A/B order: deterministic per-case randomization from hashed `case_id`
+
+### Pairwise Outcome
+
+- final pairwise result:
+  - agent loses to published design memo: `0/10`
+  - agent wins: `10/10`
+  - ties: `0/10`
+- dimension-level counts:
+  - identification winner = published memo in `0/10`
+  - mechanism winner = published memo in `1/10`
+  - defensibility winner = published memo in `0/10`
+
+### Interpretation Of Pairwise Outcome
+
+- This result conflicts sharply with the benchmark's main claim-level adjudication and failure-case analysis.
+- Therefore the pairwise layer should **not** be treated as headline evidence.
+- The most plausible explanation is protocol sensitivity:
+  - memo compression changes the informational balance between published-design summaries and agent outputs
+  - the fixed judge appears to reward explicit assumptions, bounds, and caution language in the agent memo
+  - the current pairwise layer also uses a same-family judge relative to the benchmarked model family
+- The repository therefore retains this layer as an **exploratory extension artifact**, not as a primary benchmark result.
+
+### Additional Planning Work
+
+- Added follow-on strengthening tasks to `project_todo/tasks/`:
+  - `27_reframe_project_with_bottleneck.md`
+  - `28_build_bottleneck_execution_crosswalk.md`
+  - `29_run_pairwise_design_memo_evaluation.md`
+  - `30_test_design_critic_intervention_on_perturbed.md`
+  - `31_quantify_threat_recognition_for_rq1.md`
+  - `32_expand_no_solution_to_full_main_set.md`
+- Updated `project_todo/README.md` so that post-main-run strengthening work now has a dedicated phase.
+
+### Current Status
+
+- `task27`: complete
+- `task28`: complete
+- `task29`: complete as an exploratory extension
+- Historical status as of this entry: `task30-32` not started
+
+### Current Recommendation
+
+- Treat the benchmark's main evidence as:
+  - adjudicated claim-level metrics
+  - information gradient
+  - paired perturbed audit
+  - failure-case analysis
+- Treat the pairwise design-memo layer as:
+  - a successfully implemented APE-style extension
+  - but currently too protocol-sensitive to serve as a main result without further judge diversification or memo redesign
+
+## 2026-05-31
+
+### Stage
+
+Work moved from post-benchmark framing extensions into the first actual intervention experiment.
+
+The goal was to turn `task30` from a planning document into a runnable and auditable perturbation-repair study, while keeping the frozen baseline benchmark intact.
+
+### Task 30: research_agent_v1 Intervention Infrastructure
+
+- Added a new external-orchestration intervention arm:
+  - `research_agent_v1`
+- This arm reuses the existing `benchmark_isolated` single-packet runner, but inserts a 3-stage loop:
+  - `Stage 3`: candidate design generation
+  - `Stage 4`: independent critique
+  - `Stage 5`: final reconcile memo
+
+### New Prompt And Runner Assets
+
+- Added prompt templates:
+  - `benchmark/prompts/research_agent_v1/stage3_candidates.md`
+  - `benchmark/prompts/research_agent_v1/stage4_critique.md`
+  - `benchmark/prompts/research_agent_v1/stage5_final.md`
+- Added orchestration and bridge scripts:
+  - `scripts/run_research_agent_v1.py`
+  - `scripts/postprocess_research_agent_v1_run.py`
+  - `scripts/run_research_agent_v1_batch.sh`
+- Added batch spec:
+  - `benchmark/run_configs/perturbed_intervention_batch_spec.csv`
+
+### Evaluation-Chain Prep And Schema Extension
+
+- Extended the postprocessing and scoring pipeline to carry an explicit `agent_variant` field end-to-end.
+- Updated:
+  - `scripts/postprocess_openclaw_run.py`
+  - `scripts/extract_agent_claims.py`
+  - `scripts/build_first_pass_annotations.py`
+  - `scripts/build_second_labels_and_adjudication.py`
+  - `scripts/compute_benchmark_metrics.py`
+  - `scripts/build_perturbed_pair_audit.py`
+- Added one-off manifest backfill utility:
+  - `scripts/backfill_manifest_agent_variant.py`
+- Result:
+  - baseline rows remain `benchmark_isolated`
+  - intervention rows can now be tracked as `research_agent_v1`
+  - arm-specific metrics can be emitted without overwriting canonical benchmark outputs
+
+### Smoke Test And Formal Batch
+
+- Completed a successful single-case smoke test on:
+  - `C001_perturbed`
+- Then ran the full `10`-case perturbed intervention batch for:
+  - `C001`
+  - `C002`
+  - `C004`
+  - `C005`
+  - `C008`
+  - `C010`
+  - `C014`
+  - `C016`
+  - `C019`
+  - `C020`
+- The formal manifest now contains:
+  - `10` successful `research_agent_v1` main rows
+- The provisional smoke-only bridged `C001` row was removed before final downstream analysis to avoid duplicate counting.
+
+### New Task 30 Artifacts
+
+- Multi-stage raw runs:
+  - `outputs/raw_agent_logs/research_agent_v1/`
+- Formal bridged main raw logs:
+  - `outputs/raw_agent_logs/main/*__research_agent_v1__*.md`
+- New intervention-specific results:
+  - `results/perturbed_mechanical_reuse_v1.csv`
+  - `results/perturbed_pair_audit_v1.md`
+  - `results/metrics_summary_research_agent_v1.csv`
+  - `results/metrics_summary_research_agent_v1.md`
+  - `results/research_agent_v1_vs_baseline.md`
+
+### H1 Outcome
+
+- Baseline paired perturbed audit:
+  - mechanical reuse = `9/10`
+- `research_agent_v1` paired perturbed audit:
+  - mechanical reuse = `2/10`
+- Case-level transition:
+  - improved from `yes -> no` on `C001`, `C002`, `C004`, `C010`, `C014`, `C016`, `C020`
+  - remained `yes` on `C005`, `C008`
+  - remained `no` on `C019`
+
+### Interpretation Of Task 30 Result
+
+- The critic-and-reconcile loop substantially reduced broken-identification mechanical reuse on the perturbed subset.
+- The intervention appears to work mainly by forcing explicit downgrade to:
+  - descriptive analyses
+  - bounded claims
+  - retargeted weaker estimands
+- Residual failures are concentrated where the final memo still preserves a secondary causal candidate from the base design:
+  - `C005`: supplementary actual-exposure `IV/LATE`
+  - `C008`: secondary within-store `DiD` plus salience-gradient logic
+
+### Plan-vs-Implementation Note
+
+- `research_agent_v1` should be read as the implemented `v1` arm from `report/research_agent_redesign_plan.md`, not as a verbatim reproduction of every engineering detail in that document.
+- What matched the plan:
+  - the `10`-case `perturbed`-only scope
+  - the `Stage 3 -> Stage 4 -> Stage 5` candidate / critique / reconcile loop
+  - the H1 evaluation logic centered on paired `mechanical reuse`
+- What was simplified in implementation:
+  - the run reused the existing `benchmark_isolated` OpenClaw configuration rather than creating separate `benchmark_research_agent` and `benchmark_design_critic` base agents
+  - role separation was implemented through stage-specific prompts plus an external orchestrator, not through two distinct underlying agent configs
+- What was explicitly not part of this run:
+  - `v2` literature-scan retrieval
+  - `v3` planner or multi-round debate
+- Actual tool use remained `none` across the official `10`-case batch, so the result should be interpreted as a critic-augmented packet-grounded intervention, not as a retrieval-heavy research-agent result.
+
+### Annotation And Metrics Caveat
+
+- The intervention arm now cleanly enters the shared extraction / annotation / adjudication / metrics chain.
+- However, the existing claim-level override system was originally calibrated to frozen baseline run IDs.
+- Therefore:
+  - the manual paired perturbed audit is the primary evidence source for `task30`
+  - `results/metrics_summary_research_agent_v1.csv` is structurally correct and its `Perturbed Mechanical Reuse Rate = 0.2` is usable
+  - other intervention claim-level headline values should still be treated as provisional until run-specific override coverage is expanded for `research_agent_v1`
+
+### Bug Fix During Task 30
+
+- A real regression surfaced during downstream processing:
+  - adding a new arm caused `build_second_labels_and_adjudication.py` to resample and rewrite frozen baseline second-pass / adjudication outputs
+- Fixed by preserving existing variant-level adjudication artifacts when the claim set for that variant is unchanged.
+- This restored the frozen baseline canonical metrics:
+  - `Mean Claim Score = 0.8014`
+  - `Design-Evidence Inconsistency Rate = 0.2676`
+  - `Overclaim Rate = 0.1378`
+  - `Unsupported Design Claim Rate = 0.1108`
+  - `Perturbed Mechanical Reuse Rate = 0.9`
+
+### Validation
+
+- Added and passed regression coverage for the new arm-aware pipeline:
+  - `tests/test_agent_variant_pipeline.py`
+  - `tests/test_research_agent_v1_smoke.py`
+  - `tests/test_research_agent_v1_postprocess.py`
+- Verified:
+  - `python3 -m unittest tests/test_agent_variant_pipeline.py tests/test_research_agent_v1_smoke.py tests/test_research_agent_v1_postprocess.py`
+  - `git diff --check`
+
+### Task 31: Threat-Recognition Audit For RQ1
+
+- Implemented a lightweight quantitative threat-recognition audit on the frozen baseline `level2` outputs only.
+- Scope:
+  - `10` main-set `level2` runs
+  - `2` pre-defined threats per case
+  - no `level3` runs
+  - no `research_agent_v1` intervention rows in this pass
+- Added:
+  - `scripts/build_threat_recognition_audit.py`
+  - `results/threat_recognition_audit.csv`
+  - `results/threat_recognition_summary.md`
+  - `docs/superpowers/specs/2026-05-31-task31-threat-recognition-design.md`
+  - `tests/test_threat_recognition_audit.py`
+
+### Threat-Recognition Counting Rule
+
+- A threat counts as a hit only if:
+  - the `level2` output explicitly identifies the threat
+  - and the output gives a concrete design response, assumption, limitation, or non-claim that addresses it
+- Mere generic caution language does not count.
+
+### Threat-Recognition Outcome
+
+- average threat hits per case: `1.9/2`
+- overall threat hit rate: `19/20 = 95.0%`
+- case distribution:
+  - `9/10` cases scored `2/2`
+  - `1/10` case scored `1/2`
+  - `0/10` cases scored `0/2`
+- the single partial-recognition miss is:
+  - `C005`
+    - the output correctly recognizes endogenous actual exposure
+    - but does not recover the benchmark's narrower requirement of a comparable exposure-opportunity control group
+
+### Interpretation Of Task 31 Result
+
+- On baseline `level2`, the agent usually recognizes the benchmark's core threats.
+- This means the project's main weakness is not simple threat blindness at `level2`.
+- Instead, the dominant residual problems are more often:
+  - packet overreach
+  - overclaiming
+  - mechanism over-interpretation
+  - failure to keep later claims aligned with already-recognized threat structure
+- This also helps interpret `task30`:
+  - the critic intervention improves downstream design discipline under perturbation
+  - but the baseline already recognized many `level2` threats before that intervention
+
+### Current Status
+
+- `task30`: intervention infrastructure complete
+- `task30`: 10-case perturbed batch complete
+- `task30`: H1 paired audit complete
+- `task30`: write-up artifact complete
+- `task31`: complete
+- `task32`: not started
+- `task33-38`: planned as the next `research_agent_redesign_plan.md` execution branch
+
+### Next-Phase Task Scaffolding
+
+- Added a new fine-grained v2 / v3 task breakdown under `project_todo/tasks/`:
+  - `task33`: build v2 retrieval stage and search gate
+  - `task34`: run v2 retrieval-augmented `10`-case `perturbed` batch
+  - `task35`: analyze v2 vs v1 retrieval effect
+  - `task36`: build v3 planner and debate loop
+  - `task37`: run v3 planner-debate `10`-case `perturbed` batch
+  - `task38`: summarize v3 vs v1/v2 ablation
+- Updated `project_todo/README.md` so the execution order now treats:
+  - `task33 -> 34 -> 35` as the v2 branch
+  - `task36 -> 37 -> 38` as the v3 branch
+- `task32` remains a separate `no_solution` coverage extension and is intentionally not bundled into the v2 / v3 ablation path.

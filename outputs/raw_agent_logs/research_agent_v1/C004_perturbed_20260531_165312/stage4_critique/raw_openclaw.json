@@ -1,0 +1,400 @@
+{
+  "payloads": [
+    {
+      "text": "## Independent Critique: Stage 3 Candidates vs. Perturbed Packet C004\n\n### Perturbation Recap\n\nThe packet's perturbed condition explicitly replaces exogenous or pre-committed assignment with manager discretion: *\"campaign managers choose which markets to reduce or suspend based on operational judgments, expected demand, or budget considerations.\"* This is not a minor weakening — it introduces forward-looking, private-information selection directly into the treatment assignment mechanism. Every causal candidate must survive scrutiny under this condition.\n\n---\n\n### Candidate 1: Staggered Difference-in-Differences\n\n**Threat 1 — Forward-looking selection on anticipated demand shocks.** The packet states managers choose suspension markets based on \"expected demand.\" If a manager anticipates a market-specific downturn and suspends paid-search there, the post-suspension sales decline reflects both the treatment effect AND the anticipated demand shock. Parallel trends is violated because treatment timing is correlated with future potential outcomes. Pre-trend tests only detect pre-existing divergence; they are silent on shocks contemporaneous with treatment that the manager foresaw but the econometrician did not.\n\n**Threat 2 — Endogenous treatment timing with heterogeneous effects.** The packet provides no commitment device, no phased roll-out rule, and no quasi-random variation in timing. Under recent staggered-DiD decompositions (Goodman-Bacon 2021; Sun & Abraham 2021; Callaway & Sant'Anna 2021), when treatment adoption timing correlates with unit-specific trend differentials and effects are heterogeneous across cohorts or over time, the two-way fixed-effects estimator recovers a contaminated weighted average that can have the wrong sign. The packet's institutional details — manager discretion tied to demand and budget — are precisely the conditions that produce such contamination.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** Yes, directly. The original unperturbed design would have relied on exogenous or pre-committed assignment, under which parallel trends might be defensible. The perturbation removes this and introduces forward-looking selection by managers using private demand information. Parallel trends is no longer credible.\n\n**Verdict:** `not_defensible`\n\n---\n\n### Candidate 2: Synthetic Control Method\n\n**Threat 1 — Idiosyncratic selection pressures cannot be synthesized from untreated donors.** If managers suspend paid-search in markets experiencing (or anticipating) unique demand weakness, no convex combination of untreated markets — which by construction did not face those same pressures — can reproduce the treated market's counterfactual sales path. The synthetic control will systematically attribute a demand-driven decline to the treatment, inflating the estimated effect. This is not a minor bias; it is a structural failure of the donor pool.\n\n**Threat 2 — Sparse donor pool and limited pre-period under packet ambiguity.** The packet says \"multiple market areas\" without specifying numbers. SCM requires a sufficiently large donor pool with a sufficiently long pre-period to achieve a good pre-intervention fit. If only a handful of markets are suspended, and the remaining untreated markets are few or systematically different, the pre-period fit will be poor or the post-period counterfactual will be unreliable. The perturbation makes systematic difference likely because manager selection targets specific markets for reasons correlated with outcomes.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** Yes. SCM relies on selection being driven by factors that can be captured through pre-period outcomes and observed covariates. The perturbation introduces forward-looking demand expectations — time-varying, unobserved, and market-specific — that cannot be reconstructed from donor markets that lacked those same expectations.\n\n**Verdict:** `not_defensible`\n\n---\n\n### Candidate 3: Selection-on-Observables with Pre-Trend Adjustment\n\n**Threat 1 — Explicitly named unobserved confounders in the packet.** The perturbation states that managers use \"expected demand\" and \"operational judgments\" when deciding where to suspend. Neither appears in the observed covariate set (historical sales, market fixed characteristics, seasonality controls, time indicators, segment summaries). Expected demand is forward-looking and inherently unobserved by the researcher. Operational judgments are private managerial information. The unconfoundedness assumption is violated by construction — the packet names the unobserved confounders.\n\n**Threat 2 — Pre-trend adjustment cannot substitute for forward-looking information.** Including pre-period sales trends as controls can absorb divergent historical trajectories but cannot capture information the manager possesses about future market conditions that has not yet materialized in any observed variable. If a manager suspends paid-search in a market because they anticipate a local competitor entering next quarter, that rationale is not in pre-trends, not in historical sales, and not in market fixed characteristics. It is private, forward-looking, and jointly determines both treatment and future outcomes.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** Yes. Selection-on-observables requires that all confounders are observed and conditioned on. The perturbation explicitly introduces private, forward-looking confounders (expected demand, operational judgments) that are absent from the data card. No conditioning strategy can recover identification when treatment decisions incorporate information about future outcomes that the researcher cannot access.\n\n**Verdict:** `not_defensible`\n\n---\n\n### Candidate 4: Descriptive Correlational Benchmarking\n\n**Threat 1 — Patterns confound treatment effects with selection, demand heterogeneity, and substitution.** The packet documents that users substitute across unpaid search, direct navigation, neighboring markets, and other channels. A simple pre-post comparison in suspended markets will reflect not only any causal effect of paid-search removal but also demand seasonality, substitution to other channels, and the manager's reason for suspension. Even as description, the raw associations have no clear structural interpretation without a model of the manager's selection rule and user substitution behavior.\n\n**Threat 2 — Segment-level heterogeneity is uninterpretable under non-random assignment.** The packet asks about differences across \"less active and already active users.\" Under non-random assignment, any observed difference in paid-search associations across segments conflates (a) genuine differential treatment effects, (b) differential manager selection of which markets to treat — correlated with market segment composition, and (c) differential substitution elasticities across segments. A descriptive analysis cannot disentangle these, and presenting segment-level contrasts may actively mislead if readers impose causal interpretations.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** No. This candidate explicitly disclaims causal identification and does not rely on exogenous assignment, parallel trends, unconfoundedness, or any quasi-experimental identifying assumption. The perturbation weakens what can be learned (the descriptive patterns become harder to interpret meaningfully), but it does not break the descriptive method itself.\n\n**Verdict:** `defensible_with_caveats` — The descriptive approach is valid as a fallback precisely because it makes no causal claims requiring exogenous assignment. However, it requires stringent caveats: (a) all associations confound treatment effects with selection, demand heterogeneity, and substitution; (b) segment-level descriptive contrasts have no clear interpretation; (c) no finding can distinguish incremental purchases from demand interception; (d) the direction of any observed association cannot be attributed to paid-search without a model of why managers suspended it.\n\n---\n\n### Overall Assessment\n\nAll three quasi-experimental candidates (`Staggered Difference-in-Differences`, `Synthetic Control Method`, `Selection-on-Observables with Pre-Trend Adjustment`) depend on identifying conditions that the perturbation explicitly breaks: exogenous or unconfounded assignment. The perturbation replaces experimental or quasi-experimental variation with manager discretion driven by forward-looking demand expectations — private information that is unobserved, time-varying, and jointly determines both treatment and outcomes. No amount of pre-trend testing, covariate adjustment, or synthetic matching can recover identification when the selection mechanism itself incorporates information about future potential outcomes that the researcher cannot access.\n\nOnly the descriptive fallback survives, and only with strong caveats. A descriptive fallback is recommended.\n\n---\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 1,\n    \"not_defensible\": 3\n  },\n  \"recommended_primary\": \"Descriptive Correlational Benchmarking\",\n  \"recommend_descriptive_fallback\": true,\n  \"perturbed_condition_dependency_detected\": true\n}\n```",
+      "mediaUrl": null
+    }
+  ],
+  "meta": {
+    "durationMs": 92174,
+    "agentMeta": {
+      "sessionId": "isolated_20260531_165532_20803",
+      "sessionFile": "/Users/jiangcanxiang/.openclaw/agents/benchmark_isolated/sessions/isolated_20260531_165532_20803.jsonl",
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "contextTokens": 1000000,
+      "agentHarnessId": "pi",
+      "usage": {
+        "input": 2747,
+        "output": 3597,
+        "cacheRead": 13184,
+        "total": 19528
+      },
+      "lastCallUsage": {
+        "input": 2747,
+        "output": 3597,
+        "cacheRead": 13184,
+        "cacheWrite": 0,
+        "total": 19528
+      },
+      "promptTokens": 15931
+    },
+    "aborted": false,
+    "systemPromptReport": {
+      "source": "run",
+      "generatedAt": 1780217740950,
+      "sessionId": "isolated_20260531_165532_20803",
+      "sessionKey": "agent:benchmark_isolated:explicit:isolated_20260531_165532_20803",
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "workspaceDir": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated",
+      "bootstrapMaxChars": 12000,
+      "bootstrapTotalMaxChars": 60000,
+      "bootstrapTruncation": {
+        "warningMode": "once",
+        "warningShown": false,
+        "truncatedFiles": 0,
+        "nearLimitFiles": 0,
+        "totalNearLimit": false
+      },
+      "sandbox": {
+        "mode": "off",
+        "sandboxed": false
+      },
+      "systemPrompt": {
+        "chars": 20884,
+        "projectContextChars": 353,
+        "nonProjectContextChars": 20531
+      },
+      "injectedWorkspaceFiles": [
+        {
+          "name": "AGENTS.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/AGENTS.md",
+          "missing": false,
+          "rawChars": 220,
+          "injectedChars": 220,
+          "truncated": false
+        },
+        {
+          "name": "SOUL.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/SOUL.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "TOOLS.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/TOOLS.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "IDENTITY.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/IDENTITY.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "USER.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/USER.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "HEARTBEAT.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/HEARTBEAT.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "BOOTSTRAP.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/BOOTSTRAP.md",
+          "missing": true,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        }
+      ],
+      "skills": {
+        "promptChars": 10697,
+        "entries": [
+          {
+            "name": "agent-browser",
+            "blockChars": 714
+          },
+          {
+            "name": "browser-automation",
+            "blockChars": 324
+          },
+          {
+            "name": "find-skills",
+            "blockChars": 475
+          },
+          {
+            "name": "gemini",
+            "blockChars": 221
+          },
+          {
+            "name": "healthcheck",
+            "blockChars": 280
+          },
+          {
+            "name": "node-connect",
+            "blockChars": 281
+          },
+          {
+            "name": "qqbot-channel",
+            "blockChars": 282
+          },
+          {
+            "name": "qqbot-media",
+            "blockChars": 216
+          },
+          {
+            "name": "qqbot-remind",
+            "blockChars": 210
+          },
+          {
+            "name": "session-logs",
+            "blockChars": 253
+          },
+          {
+            "name": "skill-creator",
+            "blockChars": 266
+          },
+          {
+            "name": "taskflow",
+            "blockChars": 281
+          },
+          {
+            "name": "taskflow-inbox-triage",
+            "blockChars": 291
+          },
+          {
+            "name": "tavily",
+            "blockChars": 199
+          },
+          {
+            "name": "tavily-best-practices",
+            "blockChars": 450
+          },
+          {
+            "name": "tavily-cli",
+            "blockChars": 989
+          },
+          {
+            "name": "tavily-crawl",
+            "blockChars": 713
+          },
+          {
+            "name": "tavily-dynamic-search",
+            "blockChars": 825
+          },
+          {
+            "name": "tavily-extract",
+            "blockChars": 661
+          },
+          {
+            "name": "tavily-map",
+            "blockChars": 685
+          },
+          {
+            "name": "tavily-research",
+            "blockChars": 689
+          },
+          {
+            "name": "tavily-search",
+            "blockChars": 706
+          },
+          {
+            "name": "weather",
+            "blockChars": 251
+          }
+        ]
+      },
+      "tools": {
+        "listChars": 0,
+        "schemaChars": 6359,
+        "entries": [
+          {
+            "name": "session_status",
+            "summaryChars": 456,
+            "schemaChars": 89,
+            "propertiesCount": 2
+          },
+          {
+            "name": "web_search",
+            "summaryChars": 83,
+            "schemaChars": 1209,
+            "propertiesCount": 12
+          },
+          {
+            "name": "web_fetch",
+            "summaryChars": 129,
+            "schemaChars": 374,
+            "propertiesCount": 3
+          },
+          {
+            "name": "deepxiv__get_full_paper",
+            "summaryChars": 335,
+            "schemaChars": 138,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_brief",
+            "summaryChars": 394,
+            "schemaChars": 139,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_metadata",
+            "summaryChars": 206,
+            "schemaChars": 142,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_preview",
+            "summaryChars": 217,
+            "schemaChars": 141,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_section",
+            "summaryChars": 247,
+            "schemaChars": 212,
+            "propertiesCount": 2
+          },
+          {
+            "name": "deepxiv__get_pmc_full",
+            "summaryChars": 281,
+            "schemaChars": 130,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_pmc_metadata",
+            "summaryChars": 200,
+            "schemaChars": 134,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__search_papers",
+            "summaryChars": 920,
+            "schemaChars": 929,
+            "propertiesCount": 11
+          },
+          {
+            "name": "semantic-scholar__clear_tracked_papers",
+            "summaryChars": 288,
+            "schemaChars": 33,
+            "propertiesCount": 0
+          },
+          {
+            "name": "semantic-scholar__consolidate_authors",
+            "summaryChars": 1079,
+            "schemaChars": 165,
+            "propertiesCount": 2
+          },
+          {
+            "name": "semantic-scholar__export_bibtex",
+            "summaryChars": 1243,
+            "schemaChars": 413,
+            "propertiesCount": 6
+          },
+          {
+            "name": "semantic-scholar__find_duplicate_authors",
+            "summaryChars": 1044,
+            "schemaChars": 219,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_author_details",
+            "summaryChars": 1207,
+            "schemaChars": 185,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_author_top_papers",
+            "summaryChars": 1220,
+            "schemaChars": 204,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_paper_citations",
+            "summaryChars": 1499,
+            "schemaChars": 193,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_paper_details",
+            "summaryChars": 1305,
+            "schemaChars": 134,
+            "propertiesCount": 2
+          },
+          {
+            "name": "semantic-scholar__get_paper_references",
+            "summaryChars": 1358,
+            "schemaChars": 125,
+            "propertiesCount": 2
+          },
+          {
+            "name": "semantic-scholar__get_recommendations",
+            "summaryChars": 1705,
+            "schemaChars": 174,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_related_papers",
+            "summaryChars": 2129,
+            "schemaChars": 277,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__list_tracked_papers",
+            "summaryChars": 595,
+            "schemaChars": 107,
+            "propertiesCount": 1
+          },
+          {
+            "name": "semantic-scholar__search_authors",
+            "summaryChars": 1100,
+            "schemaChars": 119,
+            "propertiesCount": 2
+          },
+          {
+            "name": "semantic-scholar__search_papers",
+            "summaryChars": 1585,
+            "schemaChars": 374,
+            "propertiesCount": 5
+          }
+        ]
+      }
+    },
+    "finalPromptText": "# Stage 4: Independent Critique\n\nYou are acting as an independent design critic.\n\nYou are given:\n\n- the original perturbed task packet\n- a JSON list of candidate identification strategies from another agent\n\nYour job is to critique the candidates, especially whether they depend on a condition that the perturbed packet has weakened or removed.\n\n## Instructions\n\n1. For each candidate, identify at least 2 packet-grounded threats.\n2. Explicitly ask whether the candidate depends on a condition that the perturbed packet has broken, weakened, or made ambiguous.\n3. For each candidate, assign one verdict:\n   - `defensible`\n   - `defensible_with_caveats`\n   - `not_defensible`\n4. If no candidate is defensible, recommend a descriptive fallback.\n5. Keep the critique grounded in the provided packet and candidate JSON.\n6. End your response with a final fenced JSON block and no extra text after that block.\n\n## Required Final JSON Block\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 0,\n    \"not_defensible\": 0\n  },\n  \"recommended_primary\": null,\n  \"recommend_descriptive_fallback\": false,\n  \"perturbed_condition_dependency_detected\": false\n}\n```\n\n## Original Packet\n\n<!-- visibility: agent-facing -->\n<!-- case_id: C004 -->\n<!-- variant: perturbed -->\n\n# Anonymous Research Design Task: Perturbed Variant\n\n## Task Rule\n\nUse the information provided below to design a rigorous empirical strategy for this anonymized applied business/economics research problem. Your goal is to produce a defensible research design, not to write a literature review.\n\nDo not assume that a known paper has already solved the task. Ground your reasoning in the background, data description, institutional details, and constraints provided in this packet.\n\nDo not fill in packet-absent operational details, institutional features, or named design devices as if they were known facts. If multiple concrete implementations fit the packet, describe them generically or label them explicitly as illustrative examples rather than assumptions.\n\nIf credible causal identification is not possible from the provided information, do not invent an identification strategy. State the strongest defensible descriptive or correlational analysis instead.\n\n## Research Background\n\nA consumer-facing firm wants to know whether paid placements in query-driven digital traffic generate incremental purchases or mainly intercept users who would have reached the firm anyway. Managers still care about whether effects differ across less active and already active users.\n\n## Research Setting\n\nThe firm records repeated downstream sales outcomes across multiple market areas during a campaign. Campaign managers can choose to reduce or suspend paid-search availability in some markets while keeping it active elsewhere. Users differ in prior familiarity and can still reach the firm through unpaid or direct channels.\n\n## Research Objective\n\nAssess whether changes in paid-search availability affect downstream purchases and whether any measured effect can be interpreted causally.\n\n## Specific Questions To Answer\n\n1. Can the researcher still estimate a credible causal effect of paid-search availability on downstream sales?\n2. How should the researcher separate genuine ad effects from underlying market demand differences?\n3. What happens to the interpretation of user-segment heterogeneity if treatment assignment is no longer clearly exogenous?\n4. Which claims, if any, remain defensible under the available variation?\n\n## Data Structure Overview\n\n- Stage 1: The researcher observes historical sales patterns and baseline market characteristics for multiple market areas.\n- Stage 2: During the campaign, some markets have paid-search availability reduced or suspended while others remain active.\n- Stage 3: The researcher records downstream sales or purchase outcomes over time for all markets.\n- Stage 4: Outcomes can also be summarized for user-history segments defined by prior familiarity, recency, or frequency of activity.\n\n## Data Card\n\n| field | description |\n|---|---|\n| unit of observation | Market-by-time sales observation, optionally split by prior user-history segment. |\n| time span | Pre-period and intervention-period repeated observations. |\n| sample construction | Markets are observed continuously for downstream sales, and campaign managers can change paid-search availability during the intervention period. |\n| treatment or exposure variable | Indicator for paid-search availability in a market during the intervention window. |\n| outcome variable | Downstream purchases, orders, sales, or revenue. |\n| secondary outcomes | Segment-specific purchases or related downstream sales summaries if observed. |\n| assignment or variation source | Campaign managers choose where to reduce or suspend paid-search availability based on operational or demand considerations rather than using a pre-committed experimental rule. |\n| assignment level | Market or market-time cell. |\n| outcome measurement level | Market-by-time or market-by-time-by-segment sales outcome. |\n| panel or repeated structure | Yes; repeated market-by-time observations before and during the campaign. |\n| compliance or take-up | Market-level ad availability does not map one-to-one into individual exposure, clicks, or purchases. |\n| spillover or interference | Users may substitute across unpaid search, direct navigation, neighboring markets, or other acquisition channels. |\n\n## Variable Groups\n\n### Treatment Or Exposure Variables\n\n- Market-level paid-search availability during the intervention window.\n- Intensity or duration of paid-search availability if observed.\n\n### Selection Or Sample-Flow Variables\n\n- Market membership of demand observations.\n- User-history segment assignment based on pre-period familiarity or activity.\n\n### Main Outcome Variables\n\n- Downstream purchases or sales.\n- Revenue or order counts.\n\n### Secondary Outcome Variables\n\n- Segment-specific sales outcomes.\n- New-to-firm or less-active-user purchase outcomes if available.\n\n### Baseline Controls And Design Variables\n\n- Historical market-level sales.\n- Market fixed characteristics, seasonality controls, and time indicators.\n- Prior familiarity, recency, or frequency segment summaries.\n\n## Perturbed Condition\n\nPaid-search availability is no longer varied according to a clearly exogenous or pre-committed experimental rule. Instead, campaign managers choose which markets to reduce or suspend based on operational judgments, expected demand, or budget considerations.\n\n## Known Constraints\n\n- The business setting and most of the data structure are intentionally similar to the base task.\n- One key identification condition has changed.\n- The answer must explain whether the original design logic still works, becomes weaker, or fails.\n- If strong causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.\n\n## Required Output\n\n1. Executive summary\n2. Research question\n3. Target estimand or strongest defensible estimand\n4. Treatment or exposure and main outcomes\n5. Data structure summary\n6. Relevant causal mechanisms\n7. Main identification challenge\n8. Whether credible causal identification is possible\n9. Proposed empirical design or strongest defensible descriptive analysis\n10. Why the design is valid or why causal identification is not credible\n11. Required assumptions\n12. Statistical model or analysis equation\n13. Robustness, placebo, falsification checks, or diagnostic tests\n14. Heterogeneity analysis if supportable\n15. Measurement, compliance, missingness, spillover, or implementation limits\n16. Failure modes and alternative explanations\n17. What cannot be claimed\n18. Additional data needed\n19. Threat-response table if explicitly requested by the task packet\n20. Claim-evidence table\n\n## Claim-Evidence Table\n\n| Claim | Evidence Used | Claim Type | Confidence | What Would Falsify This Claim |\n|---|---|---|---|---|\n\n\n## Stage 3 Candidate JSON\n\n```json\n{\n  \"candidates\": [\n    {\n      \"name\": \"Staggered Difference-in-Differences\",\n      \"estimand\": \"Average treatment effect on the treated (ATT) of paid-search suspension on downstream sales, estimated from staggered timing of suspension across markets.\",\n      \"identifying_variation\": \"Differential timing of paid-search availability reduction or suspension across markets, exploiting the panel structure with pre-period and intervention-period repeated observations.\",\n      \"critical_assumption\": \"Parallel trends: markets that suspend paid-search would have followed sales trajectories parallel to markets that do not, absent the suspension. This requires that manager decisions to suspend are not driven by market-specific time-varying demand shocks.\",\n      \"packet_support\": \"Repeated market-by-time observations before and during the campaign; pre-period historical sales patterns; market fixed characteristics; seasonality controls and time indicators; staggered suspension by campaign managers across market areas.\",\n      \"fragility\": \"Campaign managers select markets based on operational judgments, expected demand, or budget considerations. If expected demand drives both suspension decisions and future sales, parallel trends is violated and the ATT is biased. Pre-trend tests can detect some violations but not those arising from forward-looking selection on anticipated shocks contemporaneous with treatment.\",\n      \"is_fallback\": false\n    },\n    {\n      \"name\": \"Synthetic Control Method\",\n      \"estimand\": \"Market-specific treatment effect of paid-search suspension on sales, aggregated across treated markets, estimated by comparing each treated market to a weighted synthetic counterfactual constructed from untreated markets.\",\n      \"identifying_variation\": \"Pre-period sales trajectories and baseline market characteristics used to construct a convex combination of untreated donor markets that reproduces the treated market's pre-intervention path.\",\n      \"critical_assumption\": \"The synthetic control reproduces the counterfactual post-suspension sales path the treated market would have followed had paid-search remained active. This requires that the pre-period fit captures all relevant determinants of the counterfactual, including any unobserved factors driving the manager's suspension decision.\",\n      \"packet_support\": \"Multiple market areas with repeated observations before and during the campaign; historical sales patterns; baseline market characteristics available as matching covariates; multiple untreated markets available as donor pool.\",\n      \"fragility\": \"If managers suspend paid-search in markets experiencing idiosyncratic demand declines or anticipating future weakness, the synthetic control constructed from markets not facing those same pressures will overstate the treatment effect. Sparse donor pools or limited pre-period observations weaken the fit. No formal inference without multiple treated units or permutation methods.\",\n      \"is_fallback\": false\n    },\n    {\n      \"name\": \"Selection-on-Observables with Pre-Trend Adjustment\",\n      \"estimand\": \"Conditional average treatment effect of paid-search availability on sales, estimated from residual variation after controlling for observed market characteristics, historical sales, and pre-period trends.\",\n      \"identifying_variation\": \"Cross-market and within-market variation in paid-search availability that remains after conditioning on historical market-level sales, market fixed characteristics, seasonality controls, and time indicators.\",\n      \"critical_assumption\": \"Unconfoundedness (selection on observables): after conditioning on historical sales, market fixed characteristics, seasonality, and pre-period trends, the suspension decision is independent of potential outcomes. No unobserved time-varying confounders jointly determine suspension and sales.\",\n      \"packet_support\": \"Historical market-level sales; market fixed characteristics; seasonality controls; time indicators; panel structure enabling within-market differencing; segment-level covariates on prior familiarity, recency, and frequency.\",\n      \"fragility\": \"Managers use private forward-looking demand expectations and operational judgments when deciding where to suspend. These expectations are not in the observed covariate set. Conditioning on observables cannot recover causal effects if unobserved expected demand shocks drive both the suspension decision and subsequent sales.\",\n      \"is_fallback\": false\n    },\n    {\n      \"name\": \"Descriptive Correlational Benchmarking\",\n      \"estimand\": \"Conditional and unconditional associations between paid-search availability and downstream sales, described across markets, time periods, and user-history segments without causal interpretation.\",\n      \"identifying_variation\": \"All observed cross-market and within-market variation in paid-search availability and sales outcomes during the campaign window, including pre-post comparisons within suspended markets and cross-sectional contrasts between suspended and active markets.\",\n      \"critical_assumption\": \"No causal identifying assumptions are required. The analysis reports what the data show rather than what causes what.\",\n      \"packet_support\": \"All data structures described in the packet: market-by-time sales, treatment indicators, user-history segments, baseline controls, and pre-period observations. Can produce rich descriptive summaries including raw difference-in-means, pre-post changes, and segment-level patterns.\",\n      \"fragility\": \"Cannot support any causal claim about whether paid-search drives incremental purchases versus intercepting existing demand. All observed associations confound treatment effects with selection, demand heterogeneity, and substitution patterns. Descriptive patterns may be misleading if interpreted causally by readers.\",\n      \"is_fallback\": true\n    }\n  ],\n  \"recommended_primary\": \"Staggered Difference-in-Differences\",\n  \"notes\": \"All quasi-experimental candidates share a common fragility: campaign managers choose suspension markets based on expected demand and operational judgments, creating selection on unobservables that plausibly violates parallel trends, synthetic control fit, and unconfoundedness. The staggered DiD is recommended as the primary candidate because it uses the richest identifying structure available in the packet (panel with pre-trend diagnostics, event-study specification, and fixed effects), but its causal credibility hinges on whether the researcher can defend—through institutional knowledge, pre-trend tests, and falsification exercises—that the manager's decision rule is orthogonal to market-specific time-varying demand shocks. No candidate achieves strong causal identification under the perturbed condition without additional design elements not present in the packet.\"\n}\n```",
+    "finalAssistantVisibleText": "## Independent Critique: Stage 3 Candidates vs. Perturbed Packet C004\n\n### Perturbation Recap\n\nThe packet's perturbed condition explicitly replaces exogenous or pre-committed assignment with manager discretion: *\"campaign managers choose which markets to reduce or suspend based on operational judgments, expected demand, or budget considerations.\"* This is not a minor weakening — it introduces forward-looking, private-information selection directly into the treatment assignment mechanism. Every causal candidate must survive scrutiny under this condition.\n\n---\n\n### Candidate 1: Staggered Difference-in-Differences\n\n**Threat 1 — Forward-looking selection on anticipated demand shocks.** The packet states managers choose suspension markets based on \"expected demand.\" If a manager anticipates a market-specific downturn and suspends paid-search there, the post-suspension sales decline reflects both the treatment effect AND the anticipated demand shock. Parallel trends is violated because treatment timing is correlated with future potential outcomes. Pre-trend tests only detect pre-existing divergence; they are silent on shocks contemporaneous with treatment that the manager foresaw but the econometrician did not.\n\n**Threat 2 — Endogenous treatment timing with heterogeneous effects.** The packet provides no commitment device, no phased roll-out rule, and no quasi-random variation in timing. Under recent staggered-DiD decompositions (Goodman-Bacon 2021; Sun & Abraham 2021; Callaway & Sant'Anna 2021), when treatment adoption timing correlates with unit-specific trend differentials and effects are heterogeneous across cohorts or over time, the two-way fixed-effects estimator recovers a contaminated weighted average that can have the wrong sign. The packet's institutional details — manager discretion tied to demand and budget — are precisely the conditions that produce such contamination.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** Yes, directly. The original unperturbed design would have relied on exogenous or pre-committed assignment, under which parallel trends might be defensible. The perturbation removes this and introduces forward-looking selection by managers using private demand information. Parallel trends is no longer credible.\n\n**Verdict:** `not_defensible`\n\n---\n\n### Candidate 2: Synthetic Control Method\n\n**Threat 1 — Idiosyncratic selection pressures cannot be synthesized from untreated donors.** If managers suspend paid-search in markets experiencing (or anticipating) unique demand weakness, no convex combination of untreated markets — which by construction did not face those same pressures — can reproduce the treated market's counterfactual sales path. The synthetic control will systematically attribute a demand-driven decline to the treatment, inflating the estimated effect. This is not a minor bias; it is a structural failure of the donor pool.\n\n**Threat 2 — Sparse donor pool and limited pre-period under packet ambiguity.** The packet says \"multiple market areas\" without specifying numbers. SCM requires a sufficiently large donor pool with a sufficiently long pre-period to achieve a good pre-intervention fit. If only a handful of markets are suspended, and the remaining untreated markets are few or systematically different, the pre-period fit will be poor or the post-period counterfactual will be unreliable. The perturbation makes systematic difference likely because manager selection targets specific markets for reasons correlated with outcomes.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** Yes. SCM relies on selection being driven by factors that can be captured through pre-period outcomes and observed covariates. The perturbation introduces forward-looking demand expectations — time-varying, unobserved, and market-specific — that cannot be reconstructed from donor markets that lacked those same expectations.\n\n**Verdict:** `not_defensible`\n\n---\n\n### Candidate 3: Selection-on-Observables with Pre-Trend Adjustment\n\n**Threat 1 — Explicitly named unobserved confounders in the packet.** The perturbation states that managers use \"expected demand\" and \"operational judgments\" when deciding where to suspend. Neither appears in the observed covariate set (historical sales, market fixed characteristics, seasonality controls, time indicators, segment summaries). Expected demand is forward-looking and inherently unobserved by the researcher. Operational judgments are private managerial information. The unconfoundedness assumption is violated by construction — the packet names the unobserved confounders.\n\n**Threat 2 — Pre-trend adjustment cannot substitute for forward-looking information.** Including pre-period sales trends as controls can absorb divergent historical trajectories but cannot capture information the manager possesses about future market conditions that has not yet materialized in any observed variable. If a manager suspends paid-search in a market because they anticipate a local competitor entering next quarter, that rationale is not in pre-trends, not in historical sales, and not in market fixed characteristics. It is private, forward-looking, and jointly determines both treatment and future outcomes.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** Yes. Selection-on-observables requires that all confounders are observed and conditioned on. The perturbation explicitly introduces private, forward-looking confounders (expected demand, operational judgments) that are absent from the data card. No conditioning strategy can recover identification when treatment decisions incorporate information about future outcomes that the researcher cannot access.\n\n**Verdict:** `not_defensible`\n\n---\n\n### Candidate 4: Descriptive Correlational Benchmarking\n\n**Threat 1 — Patterns confound treatment effects with selection, demand heterogeneity, and substitution.** The packet documents that users substitute across unpaid search, direct navigation, neighboring markets, and other channels. A simple pre-post comparison in suspended markets will reflect not only any causal effect of paid-search removal but also demand seasonality, substitution to other channels, and the manager's reason for suspension. Even as description, the raw associations have no clear structural interpretation without a model of the manager's selection rule and user substitution behavior.\n\n**Threat 2 — Segment-level heterogeneity is uninterpretable under non-random assignment.** The packet asks about differences across \"less active and already active users.\" Under non-random assignment, any observed difference in paid-search associations across segments conflates (a) genuine differential treatment effects, (b) differential manager selection of which markets to treat — correlated with market segment composition, and (c) differential substitution elasticities across segments. A descriptive analysis cannot disentangle these, and presenting segment-level contrasts may actively mislead if readers impose causal interpretations.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** No. This candidate explicitly disclaims causal identification and does not rely on exogenous assignment, parallel trends, unconfoundedness, or any quasi-experimental identifying assumption. The perturbation weakens what can be learned (the descriptive patterns become harder to interpret meaningfully), but it does not break the descriptive method itself.\n\n**Verdict:** `defensible_with_caveats` — The descriptive approach is valid as a fallback precisely because it makes no causal claims requiring exogenous assignment. However, it requires stringent caveats: (a) all associations confound treatment effects with selection, demand heterogeneity, and substitution; (b) segment-level descriptive contrasts have no clear interpretation; (c) no finding can distinguish incremental purchases from demand interception; (d) the direction of any observed association cannot be attributed to paid-search without a model of why managers suspended it.\n\n---\n\n### Overall Assessment\n\nAll three quasi-experimental candidates (`Staggered Difference-in-Differences`, `Synthetic Control Method`, `Selection-on-Observables with Pre-Trend Adjustment`) depend on identifying conditions that the perturbation explicitly breaks: exogenous or unconfounded assignment. The perturbation replaces experimental or quasi-experimental variation with manager discretion driven by forward-looking demand expectations — private information that is unobserved, time-varying, and jointly determines both treatment and outcomes. No amount of pre-trend testing, covariate adjustment, or synthetic matching can recover identification when the selection mechanism itself incorporates information about future potential outcomes that the researcher cannot access.\n\nOnly the descriptive fallback survives, and only with strong caveats. A descriptive fallback is recommended.\n\n---\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 1,\n    \"not_defensible\": 3\n  },\n  \"recommended_primary\": \"Descriptive Correlational Benchmarking\",\n  \"recommend_descriptive_fallback\": true,\n  \"perturbed_condition_dependency_detected\": true\n}\n```",
+    "finalAssistantRawText": "## Independent Critique: Stage 3 Candidates vs. Perturbed Packet C004\n\n### Perturbation Recap\n\nThe packet's perturbed condition explicitly replaces exogenous or pre-committed assignment with manager discretion: *\"campaign managers choose which markets to reduce or suspend based on operational judgments, expected demand, or budget considerations.\"* This is not a minor weakening — it introduces forward-looking, private-information selection directly into the treatment assignment mechanism. Every causal candidate must survive scrutiny under this condition.\n\n---\n\n### Candidate 1: Staggered Difference-in-Differences\n\n**Threat 1 — Forward-looking selection on anticipated demand shocks.** The packet states managers choose suspension markets based on \"expected demand.\" If a manager anticipates a market-specific downturn and suspends paid-search there, the post-suspension sales decline reflects both the treatment effect AND the anticipated demand shock. Parallel trends is violated because treatment timing is correlated with future potential outcomes. Pre-trend tests only detect pre-existing divergence; they are silent on shocks contemporaneous with treatment that the manager foresaw but the econometrician did not.\n\n**Threat 2 — Endogenous treatment timing with heterogeneous effects.** The packet provides no commitment device, no phased roll-out rule, and no quasi-random variation in timing. Under recent staggered-DiD decompositions (Goodman-Bacon 2021; Sun & Abraham 2021; Callaway & Sant'Anna 2021), when treatment adoption timing correlates with unit-specific trend differentials and effects are heterogeneous across cohorts or over time, the two-way fixed-effects estimator recovers a contaminated weighted average that can have the wrong sign. The packet's institutional details — manager discretion tied to demand and budget — are precisely the conditions that produce such contamination.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** Yes, directly. The original unperturbed design would have relied on exogenous or pre-committed assignment, under which parallel trends might be defensible. The perturbation removes this and introduces forward-looking selection by managers using private demand information. Parallel trends is no longer credible.\n\n**Verdict:** `not_defensible`\n\n---\n\n### Candidate 2: Synthetic Control Method\n\n**Threat 1 — Idiosyncratic selection pressures cannot be synthesized from untreated donors.** If managers suspend paid-search in markets experiencing (or anticipating) unique demand weakness, no convex combination of untreated markets — which by construction did not face those same pressures — can reproduce the treated market's counterfactual sales path. The synthetic control will systematically attribute a demand-driven decline to the treatment, inflating the estimated effect. This is not a minor bias; it is a structural failure of the donor pool.\n\n**Threat 2 — Sparse donor pool and limited pre-period under packet ambiguity.** The packet says \"multiple market areas\" without specifying numbers. SCM requires a sufficiently large donor pool with a sufficiently long pre-period to achieve a good pre-intervention fit. If only a handful of markets are suspended, and the remaining untreated markets are few or systematically different, the pre-period fit will be poor or the post-period counterfactual will be unreliable. The perturbation makes systematic difference likely because manager selection targets specific markets for reasons correlated with outcomes.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** Yes. SCM relies on selection being driven by factors that can be captured through pre-period outcomes and observed covariates. The perturbation introduces forward-looking demand expectations — time-varying, unobserved, and market-specific — that cannot be reconstructed from donor markets that lacked those same expectations.\n\n**Verdict:** `not_defensible`\n\n---\n\n### Candidate 3: Selection-on-Observables with Pre-Trend Adjustment\n\n**Threat 1 — Explicitly named unobserved confounders in the packet.** The perturbation states that managers use \"expected demand\" and \"operational judgments\" when deciding where to suspend. Neither appears in the observed covariate set (historical sales, market fixed characteristics, seasonality controls, time indicators, segment summaries). Expected demand is forward-looking and inherently unobserved by the researcher. Operational judgments are private managerial information. The unconfoundedness assumption is violated by construction — the packet names the unobserved confounders.\n\n**Threat 2 — Pre-trend adjustment cannot substitute for forward-looking information.** Including pre-period sales trends as controls can absorb divergent historical trajectories but cannot capture information the manager possesses about future market conditions that has not yet materialized in any observed variable. If a manager suspends paid-search in a market because they anticipate a local competitor entering next quarter, that rationale is not in pre-trends, not in historical sales, and not in market fixed characteristics. It is private, forward-looking, and jointly determines both treatment and future outcomes.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** Yes. Selection-on-observables requires that all confounders are observed and conditioned on. The perturbation explicitly introduces private, forward-looking confounders (expected demand, operational judgments) that are absent from the data card. No conditioning strategy can recover identification when treatment decisions incorporate information about future outcomes that the researcher cannot access.\n\n**Verdict:** `not_defensible`\n\n---\n\n### Candidate 4: Descriptive Correlational Benchmarking\n\n**Threat 1 — Patterns confound treatment effects with selection, demand heterogeneity, and substitution.** The packet documents that users substitute across unpaid search, direct navigation, neighboring markets, and other channels. A simple pre-post comparison in suspended markets will reflect not only any causal effect of paid-search removal but also demand seasonality, substitution to other channels, and the manager's reason for suspension. Even as description, the raw associations have no clear structural interpretation without a model of the manager's selection rule and user substitution behavior.\n\n**Threat 2 — Segment-level heterogeneity is uninterpretable under non-random assignment.** The packet asks about differences across \"less active and already active users.\" Under non-random assignment, any observed difference in paid-search associations across segments conflates (a) genuine differential treatment effects, (b) differential manager selection of which markets to treat — correlated with market segment composition, and (c) differential substitution elasticities across segments. A descriptive analysis cannot disentangle these, and presenting segment-level contrasts may actively mislead if readers impose causal interpretations.\n\n**Does this candidate depend on a condition the perturbed packet has broken?** No. This candidate explicitly disclaims causal identification and does not rely on exogenous assignment, parallel trends, unconfoundedness, or any quasi-experimental identifying assumption. The perturbation weakens what can be learned (the descriptive patterns become harder to interpret meaningfully), but it does not break the descriptive method itself.\n\n**Verdict:** `defensible_with_caveats` — The descriptive approach is valid as a fallback precisely because it makes no causal claims requiring exogenous assignment. However, it requires stringent caveats: (a) all associations confound treatment effects with selection, demand heterogeneity, and substitution; (b) segment-level descriptive contrasts have no clear interpretation; (c) no finding can distinguish incremental purchases from demand interception; (d) the direction of any observed association cannot be attributed to paid-search without a model of why managers suspended it.\n\n---\n\n### Overall Assessment\n\nAll three quasi-experimental candidates (`Staggered Difference-in-Differences`, `Synthetic Control Method`, `Selection-on-Observables with Pre-Trend Adjustment`) depend on identifying conditions that the perturbation explicitly breaks: exogenous or unconfounded assignment. The perturbation replaces experimental or quasi-experimental variation with manager discretion driven by forward-looking demand expectations — private information that is unobserved, time-varying, and jointly determines both treatment and outcomes. No amount of pre-trend testing, covariate adjustment, or synthetic matching can recover identification when the selection mechanism itself incorporates information about future potential outcomes that the researcher cannot access.\n\nOnly the descriptive fallback survives, and only with strong caveats. A descriptive fallback is recommended.\n\n---\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 1,\n    \"not_defensible\": 3\n  },\n  \"recommended_primary\": \"Descriptive Correlational Benchmarking\",\n  \"recommend_descriptive_fallback\": true,\n  \"perturbed_condition_dependency_detected\": true\n}\n```",
+    "replayInvalid": false,
+    "livenessState": "working",
+    "stopReason": "stop",
+    "executionTrace": {
+      "winnerProvider": "deepseek",
+      "winnerModel": "deepseek-v4-pro",
+      "attempts": [
+        {
+          "provider": "deepseek",
+          "model": "deepseek-v4-pro",
+          "result": "success",
+          "stage": "assistant"
+        }
+      ],
+      "fallbackUsed": false,
+      "runner": "embedded"
+    },
+    "requestShaping": {
+      "authMode": "auth-profile",
+      "thinking": "high"
+    },
+    "completion": {
+      "stopReason": "stop",
+      "finishReason": "stop"
+    }
+  }
+}

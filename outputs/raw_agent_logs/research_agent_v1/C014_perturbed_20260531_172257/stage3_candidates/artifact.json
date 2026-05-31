@@ -1,0 +1,42 @@
+{
+  "candidates": [
+    {
+      "name": "RCT on Reported Expenditures (ITT)",
+      "estimand": "Average causal effect of monitoring assignment on officially reported project expenditures",
+      "identifying_variation": "Random assignment of projects to monitoring conditions (formal oversight, community monitoring, control) before implementation is complete",
+      "critical_assumption": "Random assignment is successfully implemented and the stable unit treatment value assumption (SUTVA) holds; no cross-project spillover in reporting behavior",
+      "packet_support": "Packet states researcher- or government-controlled assignment at the project level, pre-implementation timing, and a cross-section of funded projects with administrative reporting outcomes",
+      "fragility": "The estimand captures the effect on reported outcomes, not on true corruption or leakage. Monitoring may change what gets reported (deterrence, intimidation, improved bookkeeping, strategic misreporting) without changing actual resource use. The direction of reporting bias is unknown and may differ across arms, so even a significant ITT on expenditures cannot be interpreted as evidence of corruption reduction",
+      "is_fallback": false
+    },
+    {
+      "name": "Multi-Arm Reporting-Channel Decomposition",
+      "estimand": "Differential effect of formal oversight versus community-based monitoring on distinct reporting outcomes (total expenditures, line-item detail, milestone timing, complaint records)",
+      "identifying_variation": "Random assignment to three or more arms (formal audit, community participation, pure control), combined with comparison of treatment effects across different administrative report dimensions that may respond differently to top-down versus bottom-up monitoring pressure",
+      "critical_assumption": "Formal oversight and community monitoring affect reporting incentives through observably different channels, so divergent patterns across report types can be partially attributed to monitoring mechanism rather than to uniform reporting shifts",
+      "packet_support": "Packet explicitly asks to compare formal oversight with grassroots monitoring; multiple secondary outcomes (participation, complaints, process indicators, implementation milestones) are available alongside expenditure reports; timing structure allows within-project reporting comparisons",
+      "fragility": "Without independent ground truth, the decomposition remains speculative. Both monitoring types could produce identical reporting changes through different channels, or differential patterns could be driven by differential reporting pressure rather than differential corruption reduction. No credible decomposition of reporting effects from real effects is possible without an external benchmark",
+      "is_fallback": false
+    },
+    {
+      "name": "Anomaly-Index Proxy Outcomes",
+      "estimand": "Effect of monitoring assignment on a constructed index of reporting irregularities (digit heaping, round-number clustering, implausible uniformity, timing anomalies, discrepancy between expenditure and completion reports)",
+      "identifying_variation": "Random assignment to monitoring conditions, combined with outcome construction that extracts signal from within-administrative-data anomalies rather than from absolute expenditure levels",
+      "critical_assumption": "Reporting anomalies are valid proxies for misreporting or corruption, monitoring reduces anomalies without merely displacing them to subtler or unmeasured forms, and the anomaly-to-corruption mapping is stable across treatment arms",
+      "packet_support": "Packet notes official records may not cleanly reveal true corruption and frames outcome measurement as part of identification; multiple administrative report dimensions (expenditures, milestones, timing) provide raw material for cross-validation of anomalies",
+      "fragility": "The anomaly-to-corruption mapping is entirely untestable without independent measurement. Monitoring could induce more careful misreporting (reducing crude anomalies while preserving corruption), creating a spurious appearance of corruption reduction. No ground truth exists to validate or calibrate the proxy, so the exercise amounts to measuring the effect of monitoring on reporting quality, not on corruption",
+      "is_fallback": false
+    },
+    {
+      "name": "Descriptive Monitoring-Reporting Association (Fallback)",
+      "estimand": "Descriptive associations between monitoring conditions and administrative reporting patterns, with explicit acknowledgment that causal claims about corruption or leakage are not supported",
+      "identifying_variation": "None; the analysis is purely descriptive and does not attempt causal identification of monitoring effects on corruption",
+      "critical_assumption": "No causal identification assumption is required because no causal claim about corruption is made; the only requirement is that monitoring assignment and outcome reporting are measured without systematic error",
+      "packet_support": "Packet explicitly instructs that if credible causal identification is not possible, the answer must downgrade the claim; the perturbed condition removes independent post-completion measurement, making true corruption unobservable; packet states official records may not cleanly reveal true corruption outcomes",
+      "fragility": "N/A — this candidate does not claim to identify causal effects on corruption and is offered precisely because stronger candidates cannot credibly separate reporting behavior from true corruption reduction using only administrative data",
+      "is_fallback": true
+    }
+  ],
+  "recommended_primary": "RCT on Reported Expenditures (ITT)",
+  "notes": "The perturbed condition — no independent post-completion measurement — fundamentally changes what can be identified. Random assignment still supports a clean ITT estimate, but the estimand is the effect on reported outcomes, not on corruption. The reporting-versus-real-behavior confound is irreducible without external validation. The RCT candidate is recommended as primary because it makes the strongest defensible causal claim (effect on reporting) while transparently bounding what cannot be claimed (effect on corruption). If the research objective is strictly about corruption rather than reporting, the descriptive fallback is the only honest answer."
+}

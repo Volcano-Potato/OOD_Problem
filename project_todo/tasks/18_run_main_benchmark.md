@@ -168,11 +168,11 @@ echo $!
 
 ## 验收标准
 
-- [ ] Main run 输出数量和 run manifest 一致。
-- [ ] 每条 run 都能追溯到 case_id、variant_id、level、model、timestamp。
-- [ ] 失败或异常运行有明确状态，不被静默删除。
-- [ ] 没有在 main run 中临时改 prompt 或 task packet；如果必须改，要记录版本。
-- [ ] main run 使用的执行方式能明确记录本地文件隔离边界、远程工具配置和实际 tool use。
+- [x] Main run 输出数量和 run manifest 一致。
+- [x] 每条 run 都能追溯到 case_id、variant_id、level、model、timestamp。
+- [x] 失败或异常运行有明确状态，不被静默删除。
+- [x] 没有在 main run 中临时改 prompt 或 task packet；如果必须改，要记录版本。
+- [x] main run 使用的执行方式能明确记录本地文件隔离边界、远程工具配置和实际 tool use。
 
 ## 常见风险
 

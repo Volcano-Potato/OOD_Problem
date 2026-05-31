@@ -1,0 +1,42 @@
+{
+  "candidates": [
+    {
+      "name": "School-level ITT on self-reported outcomes",
+      "estimand": "Intention-to-treat effect of school-level assignment to targeted risk information (vs. generic curriculum) on self-reported activity, partner characteristics, and protection behavior.",
+      "identifying_variation": "Cross-school variation in planned information-content condition, with individual-level survey outcomes measured at a single follow-up wave.",
+      "critical_assumption": "Self-reporting propensity and social-desirability bias do not differ systematically between the targeted-information and generic-information arms.",
+      "packet_support": "Packet provides school-level assignment ('Planned school-level variation in information content'), individual-level survey follow-up recording activity, partner characteristics, and protection behavior, and baseline school characteristics.",
+      "fragility": "The treatment itself differentially changes the information students possess about risk, which likely alters their awareness of what constitutes risky behavior and their willingness to report it. Differential reporting bias is therefore highly plausible and cannot be tested without an objective outcome. This confound is the core identification problem the perturbed condition creates.",
+      "is_fallback": false
+    },
+    {
+      "name": "Difference-in-differences with baseline survey measures",
+      "estimand": "Effect of targeted-information assignment on change in self-reported outcomes from pre-intervention baseline to follow-up, relative to the change in generic-information schools.",
+      "identifying_variation": "Within-school pre-post change interacted with between-school variation in information-content condition.",
+      "critical_assumption": "Neither time-varying shocks to reporting behavior nor treatment-induced shifts in reporting norms differ across arms; parallel trends hold for true behavior and for measurement error jointly.",
+      "packet_support": "Packet states that the focal cohort is 'enrolled in schools before targeted information is delivered' and mentions 'baseline controls and design variables' including available pre-treatment environment measures. This implies at least some pre-intervention measurement exists.",
+      "fragility": "The DiD structure can difference out time-invariant school-level or individual-level reporting tendencies, but it cannot separate a treatment-induced change in true behavior from a treatment-induced change in reporting propensity. If targeted information makes students more aware of risk and therefore more (or less) honest in follow-up surveys, the DiD estimate conflates behavioral change with measurement change. The single follow-up wave also precludes testing for differential trends.",
+      "is_fallback": false
+    },
+    {
+      "name": "Partner-characteristic triangulation design",
+      "estimand": "Effect of targeted-information assignment on self-reported partner-profile measures (age gaps, partner-type composition), using these as less-direct but potentially less-reporting-biased behavioral proxies.",
+      "identifying_variation": "Cross-school variation in information content interacted with the differential sensitivity of partner-profile items versus direct activity items within the same survey instrument.",
+      "critical_assumption": "Partner characteristics are reported with materially lower social-desirability bias than direct activity reports, and the differential between the two item classes captures true behavioral response rather than differential reporting error.",
+      "packet_support": "The survey records 'partner characteristics' and 'self-reported activity' as distinct outcomes. Partner characteristics (e.g., age differences, partner type) may be perceived as less sensitive to disclose than direct sexual-activity reports and may be less directly targeted by the information treatment.",
+      "fragility": "All outcome measures remain self-reported; there is no objective benchmark to validate differential reporting bias across item types. If targeted information changes how students perceive and report partner characteristics (e.g., increased awareness of age gaps as a risk factor), then partner-profile measures inherit the same reporting-bias problem. The triangulation logic relies on an untestable assumption about relative bias magnitude.",
+      "is_fallback": false
+    },
+    {
+      "name": "Descriptive partial-identification bounds analysis",
+      "estimand": "Bounded interval for the average treatment effect of targeted information on true behavior, derived from self-reported outcomes under explicit, transparent assumptions about the direction and maximum magnitude of differential reporting bias.",
+      "identifying_variation": "Cross-school variation in information content combined with researcher-imposed bounds on the misreporting differential (e.g., using worst-case Manski-style bounds or assumptions about monotonic reporting bias).",
+      "critical_assumption": "Analysts can credibly sign and bound the differential reporting bias between treatment arms from institutional knowledge, survey-mode evidence, or auxiliary data; without such bounds, the interval is [-1, 1] and uninformative.",
+      "packet_support": "The perturbed condition explicitly removes the objective outcome, making causal point identification indefensible. The packet instructs: 'If strong causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.' The partial-identification framework directly addresses this instruction by replacing point identification with transparently qualified interval estimates.",
+      "fragility": "Without external validation data or an objective benchmark, bound selection is subjective; ranges may be too wide to be policy-relevant; and bounding reporting bias does not solve the underidentification of the behavioral effect vs. the reporting effect—it only quantifies the severity of the problem.",
+      "is_fallback": true
+    }
+  ],
+  "recommended_primary": null,
+  "notes": "No candidate can credibly separate the effect of targeted information on true behavior from its effect on reporting propensity because the perturbed condition removes the objective outcome that would serve as a benchmark. The school-level ITT design is the natural starting point but fails under the most plausible form of differential measurement error. The DiD variant improves on the ITT by removing time-invariant confounds but does not solve the core underidentification. The partner-characteristic triangulation is creative but rests on an untestable hierarchy of reporting bias. The partial-identification fallback is the most intellectually honest response to the packet constraints: it explicitly downgrades the causal claim and provides a framework for what can be learned under transparent assumptions. Recommended primary is null because no design achieves credible causal identification given the packet's removal of the objective outcome."
+}

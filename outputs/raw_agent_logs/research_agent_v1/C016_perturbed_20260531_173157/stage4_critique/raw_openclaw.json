@@ -1,0 +1,316 @@
+{
+  "payloads": [
+    {
+      "text": "# Stage 4: Independent Critique\n\n## Candidate 1: School-level ITT on self-reported outcomes\n\n**Packet-grounded threats:**\n\n1. **Treatment-induced differential reporting bias.** The treatment itself changes students' knowledge about risk. A student in the targeted-information arm who learns that certain behaviors or partner types carry elevated risk may become *more* aware that their own behavior is \"risky\" and adjust their self-reporting accordingly (e.g., underreporting due to heightened stigma, or overreporting due to increased salience). The generic-information arm receives no such differential awareness. This creates exactly the kind of differential measurement error the critical assumption rules out — and the packet's perturbed condition (removal of the objective outcome) makes this confound untestable.\n\n2. **Single-wave outcome structure precludes validation.** The data card explicitly states \"Single selected survey follow-up rather than broad verified tracking.\" Without repeated measures, an objective benchmark, or any external validation data, there is no way to assess whether between-arm differences in self-reports reflect true behavioral differences or merely differences in reporting norms induced by the treatment itself. The packet's entire perturbed condition is designed around this exact underidentification.\n\n**Perturbed condition dependency:** YES. The candidate's critical assumption — that self-reporting propensity and social-desirability bias do not differ systematically between arms — is precisely the condition the perturbed packet has broken. The removal of the objective downstream outcome eliminates the only tool that could validate or falsify this assumption. The ITT design was defensible in the base case *because* an objective outcome existed; without it, the ITT conflates behavioral effects with measurement effects.\n\n**Verdict:** `not_defensible`\n\n---\n\n## Candidate 2: Difference-in-differences with baseline survey measures\n\n**Packet-grounded threats:**\n\n1. **DiD cannot remove treatment-induced changes in the measurement process.** The DiD strategy differences out time-invariant confounds (e.g., a school where students always underreport). But the core threat here is *time-varying and treatment-induced*: the targeted information itself changes how students interpret and report their behavior at follow-up relative to baseline. The parallel-trends assumption must hold for *true behavior and measurement error jointly*, and the treatment directly attacks the measurement-error component. This is not a violation of parallel trends that DiD can detect or correct — it is a violation built into the treatment mechanism.\n\n2. **The packet does not confirm that baseline behavioral survey measures exist.** The packet states that the cohort is \"enrolled in schools before targeted information is delivered\" and mentions \"baseline controls and design variables\" including \"available pre-treatment environment measures.\" It does *not* state that the same self-reported behavioral outcomes (activity, partner characteristics, protection behavior) were measured at baseline. The pre-treatment measures could be demographic, administrative, or school-level characteristics — not individual-level behavioral survey items. Running DiD on outcomes that were not measured at baseline is impossible; assuming they were measured is filling in packet-absent operational details, which the packet explicitly forbids.\n\n**Perturbed condition dependency:** YES. Even granting the existence of baseline behavioral measures, DiD addresses a different identification problem (time-invariant unobserved heterogeneity) than the one the perturbed condition creates (inability to separate behavioral change from reporting change). The missing objective outcome remains the fatal confound regardless of differencing.\n\n**Verdict:** `not_defensible`\n\n---\n\n## Candidate 3: Partner-characteristic triangulation design\n\n**Packet-grounded threats:**\n\n1. **Untestable hierarchy of reporting bias across item types.** The design assumes partner characteristics are reported with \"materially lower social-desirability bias\" than direct activity reports. The packet provides zero evidence for this hierarchy — it merely lists \"self-reported partner-profile measures\" and \"self-reported activity\" as distinct fields in the data card. There is no embedded validation study, no mode experiment, no external benchmark that would allow an analyst to rank item types by bias magnitude. Asserting such a hierarchy without packet support is exactly the kind of operational-detail invention the task rule prohibits.\n\n2. **Partner characteristics may be *more* sensitive to treatment-induced reporting change, not less.** If targeted information specifically educates students about differential risk across partner types or age gaps, then students in the treatment arm become differentially aware that certain partner profiles are \"risky.\" This could increase — not decrease — the social-desirability pressure around those items. The triangulation logic could easily invert: partner-characteristic reports might carry *larger* differential reporting bias than activity reports precisely because the treatment content targets those characteristics. The packet describes \"targeted information about differential risk across choices or partner types,\" which directly implicates partner-profile items.\n\n**Perturbed condition dependency:** YES. The triangulation logic is an attempt to route around the missing objective outcome by exploiting within-survey variation in presumed sensitivity. But validating that presumption requires exactly what the perturbed condition removed: an objective benchmark against which to compare reporting accuracy across item types. Without it, the triangulation is pure assumption.\n\n**Verdict:** `not_defensible`\n\n---\n\n## Candidate 4: Descriptive partial-identification bounds analysis\n\n**Packet-grounded threats:**\n\n1. **Bound selection is unconstrained without external validation.** The critical assumption requires analysts to \"credibly sign and bound the differential reporting bias.\" But the packet's perturbed condition explicitly removes the only tool that could calibrate such bounds — the objective outcome. The packet provides no auxiliary data source, no survey-mode experiment, no institutional parameters about the magnitude or direction of social-desirability bias in this population. Without these, the analyst faces a choice between (a) imposing bounds from external literature (which may not transport to this setting) or (b) using worst-case Manski bounds that will return the trivial interval covering the full outcome range. Neither yields a policy-relevant result.\n\n2. **Bounding does not solve the underidentification — it only quantifies it.** The candidate acknowledges this fragility directly (\"bounding reporting bias does not solve the underidentification of the behavioral effect vs. the reporting effect — it only quantifies the severity of the problem\"). A bound analysis that returns [−1, 1] is mathematically correct but substantively empty. The packet asks whether \"credible causal identification is possible\"; partial identification with uninformative bounds answers \"no, but here is how bad the problem is.\" This is intellectually honest but may not satisfy stakeholders expecting actionable estimates.\n\n**Perturbed condition dependency:** PARTIALLY. Unlike the other candidates, this design does not depend on the objective outcome being present — it directly responds to its absence. However, it *does* depend on the availability of credible auxiliary information to tighten the bounds, and the packet provides none. The dependency is on a substitute for the missing outcome (external validation data), and the packet does not clearly supply that substitute.\n\n**Verdict:** `defensible_with_caveats`\n\n**Rationale for the caveat:** This is the only candidate that does not implicitly assume away the core identification problem. It follows the packet's explicit instruction: \"If strong causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.\" It replaces point identification with transparently qualified interval estimates and makes its assumptions explicit. The caveat is that the resulting bounds may be too wide to be policy-relevant, and credible bound-tightening requires auxiliary data the packet does not provide — a limitation that must be stated clearly and that may require recommending additional data collection (e.g., a validation subsample with objective measures, a list experiment, or a randomized response module).\n\n---\n\n## Synthesis\n\nAll four candidates face the same fundamental problem: the perturbed condition removes the objective outcome that would distinguish behavioral effects from reporting effects. Candidates 1–3 effectively assume this problem away, each in a different guise (no differential reporting bias, differencing removes it, or it varies predictably across item types). Candidate 4 is the only one that explicitly confronts the underidentification, downgrades the causal claim, and provides a framework for transparent analysis — albeit one whose practical value depends on auxiliary information the packet does not supply.\n\nThe Stage 3 notes correctly observe that \"no design achieves credible causal identification given the packet's removal of the objective outcome.\" Candidate 4 is the strongest defensible response not because it solves the problem, but because it honestly represents it.\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 1,\n    \"not_defensible\": 3\n  },\n  \"recommended_primary\": \"Descriptive partial-identification bounds analysis\",\n  \"recommend_descriptive_fallback\": false,\n  \"perturbed_condition_dependency_detected\": true\n}\n```",
+      "mediaUrl": null
+    }
+  ],
+  "meta": {
+    "durationMs": 151181,
+    "agentMeta": {
+      "sessionId": "isolated_20260531_173426_29755",
+      "sessionFile": "/Users/jiangcanxiang/.openclaw/agents/benchmark_isolated/sessions/isolated_20260531_173426_29755.jsonl",
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "contextTokens": 1000000,
+      "agentHarnessId": "pi",
+      "usage": {
+        "input": 2502,
+        "output": 3878,
+        "cacheRead": 7680,
+        "total": 14060
+      },
+      "lastCallUsage": {
+        "input": 2502,
+        "output": 3878,
+        "cacheRead": 7680,
+        "cacheWrite": 0,
+        "total": 14060
+      },
+      "promptTokens": 10182
+    },
+    "aborted": false,
+    "systemPromptReport": {
+      "source": "run",
+      "generatedAt": 1780220131707,
+      "sessionId": "isolated_20260531_173426_29755",
+      "sessionKey": "agent:benchmark_isolated:explicit:isolated_20260531_173426_29755",
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "workspaceDir": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated",
+      "bootstrapMaxChars": 12000,
+      "bootstrapTotalMaxChars": 60000,
+      "bootstrapTruncation": {
+        "warningMode": "once",
+        "warningShown": false,
+        "truncatedFiles": 0,
+        "nearLimitFiles": 0,
+        "totalNearLimit": false
+      },
+      "sandbox": {
+        "mode": "off",
+        "sandboxed": false
+      },
+      "systemPrompt": {
+        "chars": 20338,
+        "projectContextChars": 353,
+        "nonProjectContextChars": 19985
+      },
+      "injectedWorkspaceFiles": [
+        {
+          "name": "AGENTS.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/AGENTS.md",
+          "missing": false,
+          "rawChars": 220,
+          "injectedChars": 220,
+          "truncated": false
+        },
+        {
+          "name": "SOUL.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/SOUL.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "TOOLS.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/TOOLS.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "IDENTITY.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/IDENTITY.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "USER.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/USER.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "HEARTBEAT.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/HEARTBEAT.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "BOOTSTRAP.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/BOOTSTRAP.md",
+          "missing": true,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        }
+      ],
+      "skills": {
+        "promptChars": 10697,
+        "entries": [
+          {
+            "name": "agent-browser",
+            "blockChars": 714
+          },
+          {
+            "name": "browser-automation",
+            "blockChars": 324
+          },
+          {
+            "name": "find-skills",
+            "blockChars": 475
+          },
+          {
+            "name": "gemini",
+            "blockChars": 221
+          },
+          {
+            "name": "healthcheck",
+            "blockChars": 280
+          },
+          {
+            "name": "node-connect",
+            "blockChars": 281
+          },
+          {
+            "name": "qqbot-channel",
+            "blockChars": 282
+          },
+          {
+            "name": "qqbot-media",
+            "blockChars": 216
+          },
+          {
+            "name": "qqbot-remind",
+            "blockChars": 210
+          },
+          {
+            "name": "session-logs",
+            "blockChars": 253
+          },
+          {
+            "name": "skill-creator",
+            "blockChars": 266
+          },
+          {
+            "name": "taskflow",
+            "blockChars": 281
+          },
+          {
+            "name": "taskflow-inbox-triage",
+            "blockChars": 291
+          },
+          {
+            "name": "tavily",
+            "blockChars": 199
+          },
+          {
+            "name": "tavily-best-practices",
+            "blockChars": 450
+          },
+          {
+            "name": "tavily-cli",
+            "blockChars": 989
+          },
+          {
+            "name": "tavily-crawl",
+            "blockChars": 713
+          },
+          {
+            "name": "tavily-dynamic-search",
+            "blockChars": 825
+          },
+          {
+            "name": "tavily-extract",
+            "blockChars": 661
+          },
+          {
+            "name": "tavily-map",
+            "blockChars": 685
+          },
+          {
+            "name": "tavily-research",
+            "blockChars": 689
+          },
+          {
+            "name": "tavily-search",
+            "blockChars": 706
+          },
+          {
+            "name": "weather",
+            "blockChars": 251
+          }
+        ]
+      },
+      "tools": {
+        "listChars": 0,
+        "schemaChars": 3637,
+        "entries": [
+          {
+            "name": "session_status",
+            "summaryChars": 456,
+            "schemaChars": 89,
+            "propertiesCount": 2
+          },
+          {
+            "name": "web_search",
+            "summaryChars": 83,
+            "schemaChars": 1209,
+            "propertiesCount": 12
+          },
+          {
+            "name": "web_fetch",
+            "summaryChars": 129,
+            "schemaChars": 374,
+            "propertiesCount": 3
+          },
+          {
+            "name": "deepxiv__get_full_paper",
+            "summaryChars": 335,
+            "schemaChars": 138,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_brief",
+            "summaryChars": 394,
+            "schemaChars": 139,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_metadata",
+            "summaryChars": 206,
+            "schemaChars": 142,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_preview",
+            "summaryChars": 217,
+            "schemaChars": 141,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_section",
+            "summaryChars": 247,
+            "schemaChars": 212,
+            "propertiesCount": 2
+          },
+          {
+            "name": "deepxiv__get_pmc_full",
+            "summaryChars": 281,
+            "schemaChars": 130,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_pmc_metadata",
+            "summaryChars": 200,
+            "schemaChars": 134,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__search_papers",
+            "summaryChars": 920,
+            "schemaChars": 929,
+            "propertiesCount": 11
+          }
+        ]
+      }
+    },
+    "finalPromptText": "# Stage 4: Independent Critique\n\nYou are acting as an independent design critic.\n\nYou are given:\n\n- the original perturbed task packet\n- a JSON list of candidate identification strategies from another agent\n\nYour job is to critique the candidates, especially whether they depend on a condition that the perturbed packet has weakened or removed.\n\n## Instructions\n\n1. For each candidate, identify at least 2 packet-grounded threats.\n2. Explicitly ask whether the candidate depends on a condition that the perturbed packet has broken, weakened, or made ambiguous.\n3. For each candidate, assign one verdict:\n   - `defensible`\n   - `defensible_with_caveats`\n   - `not_defensible`\n4. If no candidate is defensible, recommend a descriptive fallback.\n5. Keep the critique grounded in the provided packet and candidate JSON.\n6. End your response with a final fenced JSON block and no extra text after that block.\n\n## Required Final JSON Block\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 0,\n    \"not_defensible\": 0\n  },\n  \"recommended_primary\": null,\n  \"recommend_descriptive_fallback\": false,\n  \"perturbed_condition_dependency_detected\": false\n}\n```\n\n## Original Packet\n\n<!-- visibility: agent-facing -->\n<!-- case_id: C016 -->\n<!-- variant: perturbed -->\n\n# Anonymous Research Design Task: Perturbed Variant\n\n## Task Rule\n\nUse the information provided below to design a rigorous empirical strategy for this anonymized applied business/economics research problem. Your goal is to produce a defensible research design, not to write a literature review.\n\nDo not assume that a known paper has already solved the task. Ground your reasoning in the background, data description, institutional details, and constraints provided in this packet.\n\nDo not fill in packet-absent operational details, institutional features, or named design devices as if they were known facts. If multiple concrete implementations fit the packet, describe them generically or label them explicitly as illustrative examples rather than assumptions.\n\nIf credible causal identification is not possible from the provided information, do not invent an identification strategy. State the strongest defensible descriptive or correlational analysis instead.\n\n## Research Background\n\nA school-based adolescent health program wants to know whether targeted risk information changes behavior more effectively than standard generic messages. The practical challenge is that sensitive behavior is hard to measure directly, and not every plausible dataset provides an equally credible outcome.\n\n## Research Setting\n\nSchools differ in the information environment students face: some students receive only a standard generic message, while others are additionally exposed to targeted information about differential risk across choices or partner types. Follow-up still includes a later survey about activity, partner characteristics, and protection behavior, but the objective downstream outcome available in the base case is not available here.\n\n## Research Objective\n\nDesign a study to estimate whether targeted risk information changes adolescent behavior more effectively than the standard generic curriculum when only survey-based behavioral outcomes are observed.\n\n## Specific Questions To Answer\n\n1. Can the information-content effect still be identified credibly with the available outcomes?\n2. How much can be learned from self-reported activity, partner characteristics, and protection behavior alone?\n3. Which mechanism claims remain plausible, and which become too strong without the objective outcome?\n4. What additional data or design changes would be needed to restore stronger causal interpretation?\n\n## Data Structure Overview\n\n- Stage 1: A focal student cohort is enrolled in schools before targeted information is delivered.\n- Stage 2: Schools differ in whether students receive only the standard generic curriculum or also receive targeted information about differential risk.\n- Stage 3: The cohort is followed into a later period through a behavior survey that records self-reported activity, partner characteristics, and protection behavior.\n- Stage 4: No objective downstream outcome related to unsafe behavior is available in the current data.\n\n## Data Card\n\n| field | description |\n|---|---|\n| unit of observation | Individual student in the survey follow-up sample. |\n| time span | Intervention period plus later survey follow-up; exact dates are withheld. |\n| sample construction | Survey respondents come from the focal cohort after the school transition. |\n| treatment or exposure variable | School-level information-content condition. |\n| outcome variable | Self-reported behavior, partner-profile measures, and self-reported protection behavior. |\n| secondary outcomes | Follow-up schooling status or related survey outcomes if observed. |\n| assignment or variation source | Planned school-level variation in information content. |\n| assignment level | School or classroom-wide implementation level. |\n| outcome measurement level | Individual student level. |\n| panel or repeated structure | Single selected survey follow-up rather than broad verified tracking. |\n| compliance or take-up | Exposure can vary with attendance or participation. |\n| spillover or interference | Students may exchange information across cohorts or schools, and partner markets may create interference. |\n\n## Variable Groups\n\n### Treatment Or Exposure Variables\n\n- Generic-information assignment.\n- Targeted-information assignment.\n\n### Selection Or Sample-Flow Variables\n\n- Focal-cohort membership.\n- Inclusion in the later survey follow-up sample.\n\n### Main Outcome Variables\n\n- Self-reported activity.\n- Self-reported partner-profile measures.\n- Self-reported protection behavior.\n\n### Secondary Outcome Variables\n\n- Follow-up schooling-status indicators if observed.\n\n### Baseline Controls And Design Variables\n\n- School characteristics, cohort composition, and available pre-treatment environment measures.\n\n## Perturbed Condition\n\nThe broad objective downstream outcome used in the base setting is not observed here. The available outcomes are only self-reported survey responses collected in later follow-up.\n\n## Known Constraints\n\n- The business setting and most of the data structure are intentionally similar to the base task.\n- One key identification condition has changed.\n- The answer must explain whether the original design logic still works, becomes weaker, or fails.\n- If strong causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.\n\n## Required Output\n\n1. Executive summary\n2. Research question\n3. Target estimand or strongest defensible estimand\n4. Treatment or exposure and main outcomes\n5. Data structure summary\n6. Relevant causal mechanisms\n7. Main identification challenge\n8. Whether credible causal identification is possible\n9. Proposed empirical design or strongest defensible descriptive analysis\n10. Why the design is valid or why causal identification is not credible\n11. Required assumptions\n12. Statistical model or analysis equation\n13. Robustness, placebo, falsification checks, or diagnostic tests\n14. Heterogeneity analysis if supportable\n15. Measurement, compliance, missingness, spillover, or implementation limits\n16. Failure modes and alternative explanations\n17. What cannot be claimed\n18. Additional data needed\n19. Threat-response table if explicitly requested by the task packet\n20. Claim-evidence table\n\n## Claim-Evidence Table\n\n| Claim | Evidence Used | Claim Type | Confidence | What Would Falsify This Claim |\n|---|---|---|---|---|\n\n\n## Stage 3 Candidate JSON\n\n```json\n{\n  \"candidates\": [\n    {\n      \"name\": \"School-level ITT on self-reported outcomes\",\n      \"estimand\": \"Intention-to-treat effect of school-level assignment to targeted risk information (vs. generic curriculum) on self-reported activity, partner characteristics, and protection behavior.\",\n      \"identifying_variation\": \"Cross-school variation in planned information-content condition, with individual-level survey outcomes measured at a single follow-up wave.\",\n      \"critical_assumption\": \"Self-reporting propensity and social-desirability bias do not differ systematically between the targeted-information and generic-information arms.\",\n      \"packet_support\": \"Packet provides school-level assignment ('Planned school-level variation in information content'), individual-level survey follow-up recording activity, partner characteristics, and protection behavior, and baseline school characteristics.\",\n      \"fragility\": \"The treatment itself differentially changes the information students possess about risk, which likely alters their awareness of what constitutes risky behavior and their willingness to report it. Differential reporting bias is therefore highly plausible and cannot be tested without an objective outcome. This confound is the core identification problem the perturbed condition creates.\",\n      \"is_fallback\": false\n    },\n    {\n      \"name\": \"Difference-in-differences with baseline survey measures\",\n      \"estimand\": \"Effect of targeted-information assignment on change in self-reported outcomes from pre-intervention baseline to follow-up, relative to the change in generic-information schools.\",\n      \"identifying_variation\": \"Within-school pre-post change interacted with between-school variation in information-content condition.\",\n      \"critical_assumption\": \"Neither time-varying shocks to reporting behavior nor treatment-induced shifts in reporting norms differ across arms; parallel trends hold for true behavior and for measurement error jointly.\",\n      \"packet_support\": \"Packet states that the focal cohort is 'enrolled in schools before targeted information is delivered' and mentions 'baseline controls and design variables' including available pre-treatment environment measures. This implies at least some pre-intervention measurement exists.\",\n      \"fragility\": \"The DiD structure can difference out time-invariant school-level or individual-level reporting tendencies, but it cannot separate a treatment-induced change in true behavior from a treatment-induced change in reporting propensity. If targeted information makes students more aware of risk and therefore more (or less) honest in follow-up surveys, the DiD estimate conflates behavioral change with measurement change. The single follow-up wave also precludes testing for differential trends.\",\n      \"is_fallback\": false\n    },\n    {\n      \"name\": \"Partner-characteristic triangulation design\",\n      \"estimand\": \"Effect of targeted-information assignment on self-reported partner-profile measures (age gaps, partner-type composition), using these as less-direct but potentially less-reporting-biased behavioral proxies.\",\n      \"identifying_variation\": \"Cross-school variation in information content interacted with the differential sensitivity of partner-profile items versus direct activity items within the same survey instrument.\",\n      \"critical_assumption\": \"Partner characteristics are reported with materially lower social-desirability bias than direct activity reports, and the differential between the two item classes captures true behavioral response rather than differential reporting error.\",\n      \"packet_support\": \"The survey records 'partner characteristics' and 'self-reported activity' as distinct outcomes. Partner characteristics (e.g., age differences, partner type) may be perceived as less sensitive to disclose than direct sexual-activity reports and may be less directly targeted by the information treatment.\",\n      \"fragility\": \"All outcome measures remain self-reported; there is no objective benchmark to validate differential reporting bias across item types. If targeted information changes how students perceive and report partner characteristics (e.g., increased awareness of age gaps as a risk factor), then partner-profile measures inherit the same reporting-bias problem. The triangulation logic relies on an untestable assumption about relative bias magnitude.\",\n      \"is_fallback\": false\n    },\n    {\n      \"name\": \"Descriptive partial-identification bounds analysis\",\n      \"estimand\": \"Bounded interval for the average treatment effect of targeted information on true behavior, derived from self-reported outcomes under explicit, transparent assumptions about the direction and maximum magnitude of differential reporting bias.\",\n      \"identifying_variation\": \"Cross-school variation in information content combined with researcher-imposed bounds on the misreporting differential (e.g., using worst-case Manski-style bounds or assumptions about monotonic reporting bias).\",\n      \"critical_assumption\": \"Analysts can credibly sign and bound the differential reporting bias between treatment arms from institutional knowledge, survey-mode evidence, or auxiliary data; without such bounds, the interval is [-1, 1] and uninformative.\",\n      \"packet_support\": \"The perturbed condition explicitly removes the objective outcome, making causal point identification indefensible. The packet instructs: 'If strong causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.' The partial-identification framework directly addresses this instruction by replacing point identification with transparently qualified interval estimates.\",\n      \"fragility\": \"Without external validation data or an objective benchmark, bound selection is subjective; ranges may be too wide to be policy-relevant; and bounding reporting bias does not solve the underidentification of the behavioral effect vs. the reporting effect—it only quantifies the severity of the problem.\",\n      \"is_fallback\": true\n    }\n  ],\n  \"recommended_primary\": null,\n  \"notes\": \"No candidate can credibly separate the effect of targeted information on true behavior from its effect on reporting propensity because the perturbed condition removes the objective outcome that would serve as a benchmark. The school-level ITT design is the natural starting point but fails under the most plausible form of differential measurement error. The DiD variant improves on the ITT by removing time-invariant confounds but does not solve the core underidentification. The partner-characteristic triangulation is creative but rests on an untestable hierarchy of reporting bias. The partial-identification fallback is the most intellectually honest response to the packet constraints: it explicitly downgrades the causal claim and provides a framework for what can be learned under transparent assumptions. Recommended primary is null because no design achieves credible causal identification given the packet's removal of the objective outcome.\"\n}\n```",
+    "finalAssistantVisibleText": "# Stage 4: Independent Critique\n\n## Candidate 1: School-level ITT on self-reported outcomes\n\n**Packet-grounded threats:**\n\n1. **Treatment-induced differential reporting bias.** The treatment itself changes students' knowledge about risk. A student in the targeted-information arm who learns that certain behaviors or partner types carry elevated risk may become *more* aware that their own behavior is \"risky\" and adjust their self-reporting accordingly (e.g., underreporting due to heightened stigma, or overreporting due to increased salience). The generic-information arm receives no such differential awareness. This creates exactly the kind of differential measurement error the critical assumption rules out — and the packet's perturbed condition (removal of the objective outcome) makes this confound untestable.\n\n2. **Single-wave outcome structure precludes validation.** The data card explicitly states \"Single selected survey follow-up rather than broad verified tracking.\" Without repeated measures, an objective benchmark, or any external validation data, there is no way to assess whether between-arm differences in self-reports reflect true behavioral differences or merely differences in reporting norms induced by the treatment itself. The packet's entire perturbed condition is designed around this exact underidentification.\n\n**Perturbed condition dependency:** YES. The candidate's critical assumption — that self-reporting propensity and social-desirability bias do not differ systematically between arms — is precisely the condition the perturbed packet has broken. The removal of the objective downstream outcome eliminates the only tool that could validate or falsify this assumption. The ITT design was defensible in the base case *because* an objective outcome existed; without it, the ITT conflates behavioral effects with measurement effects.\n\n**Verdict:** `not_defensible`\n\n---\n\n## Candidate 2: Difference-in-differences with baseline survey measures\n\n**Packet-grounded threats:**\n\n1. **DiD cannot remove treatment-induced changes in the measurement process.** The DiD strategy differences out time-invariant confounds (e.g., a school where students always underreport). But the core threat here is *time-varying and treatment-induced*: the targeted information itself changes how students interpret and report their behavior at follow-up relative to baseline. The parallel-trends assumption must hold for *true behavior and measurement error jointly*, and the treatment directly attacks the measurement-error component. This is not a violation of parallel trends that DiD can detect or correct — it is a violation built into the treatment mechanism.\n\n2. **The packet does not confirm that baseline behavioral survey measures exist.** The packet states that the cohort is \"enrolled in schools before targeted information is delivered\" and mentions \"baseline controls and design variables\" including \"available pre-treatment environment measures.\" It does *not* state that the same self-reported behavioral outcomes (activity, partner characteristics, protection behavior) were measured at baseline. The pre-treatment measures could be demographic, administrative, or school-level characteristics — not individual-level behavioral survey items. Running DiD on outcomes that were not measured at baseline is impossible; assuming they were measured is filling in packet-absent operational details, which the packet explicitly forbids.\n\n**Perturbed condition dependency:** YES. Even granting the existence of baseline behavioral measures, DiD addresses a different identification problem (time-invariant unobserved heterogeneity) than the one the perturbed condition creates (inability to separate behavioral change from reporting change). The missing objective outcome remains the fatal confound regardless of differencing.\n\n**Verdict:** `not_defensible`\n\n---\n\n## Candidate 3: Partner-characteristic triangulation design\n\n**Packet-grounded threats:**\n\n1. **Untestable hierarchy of reporting bias across item types.** The design assumes partner characteristics are reported with \"materially lower social-desirability bias\" than direct activity reports. The packet provides zero evidence for this hierarchy — it merely lists \"self-reported partner-profile measures\" and \"self-reported activity\" as distinct fields in the data card. There is no embedded validation study, no mode experiment, no external benchmark that would allow an analyst to rank item types by bias magnitude. Asserting such a hierarchy without packet support is exactly the kind of operational-detail invention the task rule prohibits.\n\n2. **Partner characteristics may be *more* sensitive to treatment-induced reporting change, not less.** If targeted information specifically educates students about differential risk across partner types or age gaps, then students in the treatment arm become differentially aware that certain partner profiles are \"risky.\" This could increase — not decrease — the social-desirability pressure around those items. The triangulation logic could easily invert: partner-characteristic reports might carry *larger* differential reporting bias than activity reports precisely because the treatment content targets those characteristics. The packet describes \"targeted information about differential risk across choices or partner types,\" which directly implicates partner-profile items.\n\n**Perturbed condition dependency:** YES. The triangulation logic is an attempt to route around the missing objective outcome by exploiting within-survey variation in presumed sensitivity. But validating that presumption requires exactly what the perturbed condition removed: an objective benchmark against which to compare reporting accuracy across item types. Without it, the triangulation is pure assumption.\n\n**Verdict:** `not_defensible`\n\n---\n\n## Candidate 4: Descriptive partial-identification bounds analysis\n\n**Packet-grounded threats:**\n\n1. **Bound selection is unconstrained without external validation.** The critical assumption requires analysts to \"credibly sign and bound the differential reporting bias.\" But the packet's perturbed condition explicitly removes the only tool that could calibrate such bounds — the objective outcome. The packet provides no auxiliary data source, no survey-mode experiment, no institutional parameters about the magnitude or direction of social-desirability bias in this population. Without these, the analyst faces a choice between (a) imposing bounds from external literature (which may not transport to this setting) or (b) using worst-case Manski bounds that will return the trivial interval covering the full outcome range. Neither yields a policy-relevant result.\n\n2. **Bounding does not solve the underidentification — it only quantifies it.** The candidate acknowledges this fragility directly (\"bounding reporting bias does not solve the underidentification of the behavioral effect vs. the reporting effect — it only quantifies the severity of the problem\"). A bound analysis that returns [−1, 1] is mathematically correct but substantively empty. The packet asks whether \"credible causal identification is possible\"; partial identification with uninformative bounds answers \"no, but here is how bad the problem is.\" This is intellectually honest but may not satisfy stakeholders expecting actionable estimates.\n\n**Perturbed condition dependency:** PARTIALLY. Unlike the other candidates, this design does not depend on the objective outcome being present — it directly responds to its absence. However, it *does* depend on the availability of credible auxiliary information to tighten the bounds, and the packet provides none. The dependency is on a substitute for the missing outcome (external validation data), and the packet does not clearly supply that substitute.\n\n**Verdict:** `defensible_with_caveats`\n\n**Rationale for the caveat:** This is the only candidate that does not implicitly assume away the core identification problem. It follows the packet's explicit instruction: \"If strong causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.\" It replaces point identification with transparently qualified interval estimates and makes its assumptions explicit. The caveat is that the resulting bounds may be too wide to be policy-relevant, and credible bound-tightening requires auxiliary data the packet does not provide — a limitation that must be stated clearly and that may require recommending additional data collection (e.g., a validation subsample with objective measures, a list experiment, or a randomized response module).\n\n---\n\n## Synthesis\n\nAll four candidates face the same fundamental problem: the perturbed condition removes the objective outcome that would distinguish behavioral effects from reporting effects. Candidates 1–3 effectively assume this problem away, each in a different guise (no differential reporting bias, differencing removes it, or it varies predictably across item types). Candidate 4 is the only one that explicitly confronts the underidentification, downgrades the causal claim, and provides a framework for transparent analysis — albeit one whose practical value depends on auxiliary information the packet does not supply.\n\nThe Stage 3 notes correctly observe that \"no design achieves credible causal identification given the packet's removal of the objective outcome.\" Candidate 4 is the strongest defensible response not because it solves the problem, but because it honestly represents it.\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 1,\n    \"not_defensible\": 3\n  },\n  \"recommended_primary\": \"Descriptive partial-identification bounds analysis\",\n  \"recommend_descriptive_fallback\": false,\n  \"perturbed_condition_dependency_detected\": true\n}\n```",
+    "finalAssistantRawText": "# Stage 4: Independent Critique\n\n## Candidate 1: School-level ITT on self-reported outcomes\n\n**Packet-grounded threats:**\n\n1. **Treatment-induced differential reporting bias.** The treatment itself changes students' knowledge about risk. A student in the targeted-information arm who learns that certain behaviors or partner types carry elevated risk may become *more* aware that their own behavior is \"risky\" and adjust their self-reporting accordingly (e.g., underreporting due to heightened stigma, or overreporting due to increased salience). The generic-information arm receives no such differential awareness. This creates exactly the kind of differential measurement error the critical assumption rules out — and the packet's perturbed condition (removal of the objective outcome) makes this confound untestable.\n\n2. **Single-wave outcome structure precludes validation.** The data card explicitly states \"Single selected survey follow-up rather than broad verified tracking.\" Without repeated measures, an objective benchmark, or any external validation data, there is no way to assess whether between-arm differences in self-reports reflect true behavioral differences or merely differences in reporting norms induced by the treatment itself. The packet's entire perturbed condition is designed around this exact underidentification.\n\n**Perturbed condition dependency:** YES. The candidate's critical assumption — that self-reporting propensity and social-desirability bias do not differ systematically between arms — is precisely the condition the perturbed packet has broken. The removal of the objective downstream outcome eliminates the only tool that could validate or falsify this assumption. The ITT design was defensible in the base case *because* an objective outcome existed; without it, the ITT conflates behavioral effects with measurement effects.\n\n**Verdict:** `not_defensible`\n\n---\n\n## Candidate 2: Difference-in-differences with baseline survey measures\n\n**Packet-grounded threats:**\n\n1. **DiD cannot remove treatment-induced changes in the measurement process.** The DiD strategy differences out time-invariant confounds (e.g., a school where students always underreport). But the core threat here is *time-varying and treatment-induced*: the targeted information itself changes how students interpret and report their behavior at follow-up relative to baseline. The parallel-trends assumption must hold for *true behavior and measurement error jointly*, and the treatment directly attacks the measurement-error component. This is not a violation of parallel trends that DiD can detect or correct — it is a violation built into the treatment mechanism.\n\n2. **The packet does not confirm that baseline behavioral survey measures exist.** The packet states that the cohort is \"enrolled in schools before targeted information is delivered\" and mentions \"baseline controls and design variables\" including \"available pre-treatment environment measures.\" It does *not* state that the same self-reported behavioral outcomes (activity, partner characteristics, protection behavior) were measured at baseline. The pre-treatment measures could be demographic, administrative, or school-level characteristics — not individual-level behavioral survey items. Running DiD on outcomes that were not measured at baseline is impossible; assuming they were measured is filling in packet-absent operational details, which the packet explicitly forbids.\n\n**Perturbed condition dependency:** YES. Even granting the existence of baseline behavioral measures, DiD addresses a different identification problem (time-invariant unobserved heterogeneity) than the one the perturbed condition creates (inability to separate behavioral change from reporting change). The missing objective outcome remains the fatal confound regardless of differencing.\n\n**Verdict:** `not_defensible`\n\n---\n\n## Candidate 3: Partner-characteristic triangulation design\n\n**Packet-grounded threats:**\n\n1. **Untestable hierarchy of reporting bias across item types.** The design assumes partner characteristics are reported with \"materially lower social-desirability bias\" than direct activity reports. The packet provides zero evidence for this hierarchy — it merely lists \"self-reported partner-profile measures\" and \"self-reported activity\" as distinct fields in the data card. There is no embedded validation study, no mode experiment, no external benchmark that would allow an analyst to rank item types by bias magnitude. Asserting such a hierarchy without packet support is exactly the kind of operational-detail invention the task rule prohibits.\n\n2. **Partner characteristics may be *more* sensitive to treatment-induced reporting change, not less.** If targeted information specifically educates students about differential risk across partner types or age gaps, then students in the treatment arm become differentially aware that certain partner profiles are \"risky.\" This could increase — not decrease — the social-desirability pressure around those items. The triangulation logic could easily invert: partner-characteristic reports might carry *larger* differential reporting bias than activity reports precisely because the treatment content targets those characteristics. The packet describes \"targeted information about differential risk across choices or partner types,\" which directly implicates partner-profile items.\n\n**Perturbed condition dependency:** YES. The triangulation logic is an attempt to route around the missing objective outcome by exploiting within-survey variation in presumed sensitivity. But validating that presumption requires exactly what the perturbed condition removed: an objective benchmark against which to compare reporting accuracy across item types. Without it, the triangulation is pure assumption.\n\n**Verdict:** `not_defensible`\n\n---\n\n## Candidate 4: Descriptive partial-identification bounds analysis\n\n**Packet-grounded threats:**\n\n1. **Bound selection is unconstrained without external validation.** The critical assumption requires analysts to \"credibly sign and bound the differential reporting bias.\" But the packet's perturbed condition explicitly removes the only tool that could calibrate such bounds — the objective outcome. The packet provides no auxiliary data source, no survey-mode experiment, no institutional parameters about the magnitude or direction of social-desirability bias in this population. Without these, the analyst faces a choice between (a) imposing bounds from external literature (which may not transport to this setting) or (b) using worst-case Manski bounds that will return the trivial interval covering the full outcome range. Neither yields a policy-relevant result.\n\n2. **Bounding does not solve the underidentification — it only quantifies it.** The candidate acknowledges this fragility directly (\"bounding reporting bias does not solve the underidentification of the behavioral effect vs. the reporting effect — it only quantifies the severity of the problem\"). A bound analysis that returns [−1, 1] is mathematically correct but substantively empty. The packet asks whether \"credible causal identification is possible\"; partial identification with uninformative bounds answers \"no, but here is how bad the problem is.\" This is intellectually honest but may not satisfy stakeholders expecting actionable estimates.\n\n**Perturbed condition dependency:** PARTIALLY. Unlike the other candidates, this design does not depend on the objective outcome being present — it directly responds to its absence. However, it *does* depend on the availability of credible auxiliary information to tighten the bounds, and the packet provides none. The dependency is on a substitute for the missing outcome (external validation data), and the packet does not clearly supply that substitute.\n\n**Verdict:** `defensible_with_caveats`\n\n**Rationale for the caveat:** This is the only candidate that does not implicitly assume away the core identification problem. It follows the packet's explicit instruction: \"If strong causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.\" It replaces point identification with transparently qualified interval estimates and makes its assumptions explicit. The caveat is that the resulting bounds may be too wide to be policy-relevant, and credible bound-tightening requires auxiliary data the packet does not provide — a limitation that must be stated clearly and that may require recommending additional data collection (e.g., a validation subsample with objective measures, a list experiment, or a randomized response module).\n\n---\n\n## Synthesis\n\nAll four candidates face the same fundamental problem: the perturbed condition removes the objective outcome that would distinguish behavioral effects from reporting effects. Candidates 1–3 effectively assume this problem away, each in a different guise (no differential reporting bias, differencing removes it, or it varies predictably across item types). Candidate 4 is the only one that explicitly confronts the underidentification, downgrades the causal claim, and provides a framework for transparent analysis — albeit one whose practical value depends on auxiliary information the packet does not supply.\n\nThe Stage 3 notes correctly observe that \"no design achieves credible causal identification given the packet's removal of the objective outcome.\" Candidate 4 is the strongest defensible response not because it solves the problem, but because it honestly represents it.\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 1,\n    \"not_defensible\": 3\n  },\n  \"recommended_primary\": \"Descriptive partial-identification bounds analysis\",\n  \"recommend_descriptive_fallback\": false,\n  \"perturbed_condition_dependency_detected\": true\n}\n```",
+    "replayInvalid": false,
+    "livenessState": "working",
+    "stopReason": "stop",
+    "executionTrace": {
+      "winnerProvider": "deepseek",
+      "winnerModel": "deepseek-v4-pro",
+      "attempts": [
+        {
+          "provider": "deepseek",
+          "model": "deepseek-v4-pro",
+          "result": "success",
+          "stage": "assistant"
+        }
+      ],
+      "fallbackUsed": false,
+      "runner": "embedded"
+    },
+    "requestShaping": {
+      "authMode": "auth-profile",
+      "thinking": "high"
+    },
+    "completion": {
+      "stopReason": "stop",
+      "finishReason": "stop"
+    }
+  }
+}

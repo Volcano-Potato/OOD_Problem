@@ -12,6 +12,7 @@ FIRST_PASS = ROOT / "annotations" / "annotation_sheet.csv"
 SECOND_LABELS = ROOT / "annotations" / "second_labels.csv"
 ADJUDICATED = ROOT / "annotations" / "adjudicated_labels.csv"
 ADJ_NOTES = ROOT / "annotations" / "adjudication_notes.md"
+DEFAULT_AGENT_VARIANT = "benchmark_isolated"
 
 
 MIN_TARGET_SAMPLE_SIZE = 60
@@ -245,6 +246,7 @@ def build_second_labels(sample: list[dict[str, str]]) -> list[dict[str, str]]:
                 "variant_id": row["variant_id"],
                 "level": row["level"],
                 "agent_name": row["agent_name"],
+                "agent_variant": row.get("agent_variant", "") or DEFAULT_AGENT_VARIANT,
                 "run_id": row["run_id"],
                 "claim_id": row["claim_id"],
                 "claim_type": row["claim_type"],
@@ -321,6 +323,7 @@ def adjudicate(first_rows: list[dict[str, str]], second_rows: list[dict[str, str
                 "variant_id": row["variant_id"],
                 "level": row["level"],
                 "agent_name": row["agent_name"],
+                "agent_variant": row.get("agent_variant", "") or DEFAULT_AGENT_VARIANT,
                 "run_id": row["run_id"],
                 "claim_id": claim_id,
                 "claim_type": row["claim_type"],
@@ -343,60 +346,171 @@ def adjudicate(first_rows: list[dict[str, str]], second_rows: list[dict[str, str
 
 
 def write_csv(path: Path, fieldnames: list[str], rows: list[dict[str, str]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
 
-def write_notes(
+def load_existing_rows(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def preserve_existing_sample_rows(
+    existing_rows: list[dict[str, str]],
+    agent_variant: str,
+    first_rows: list[dict[str, str]],
+) -> list[dict[str, str]] | None:
+    variant_rows = [
+        row for row in existing_rows if (row.get("agent_variant", "") or DEFAULT_AGENT_VARIANT) == agent_variant
+    ]
+    if not variant_rows:
+        return None
+
+    first_claim_ids = {row["claim_id"] for row in first_rows}
+    if any(row["claim_id"] not in first_claim_ids for row in variant_rows):
+        return None
+
+    return sorted(variant_rows, key=lambda row: (row["case_id"], row["variant_id"], row["claim_id"]))
+
+
+def preserve_existing_full_rows(
+    existing_rows: list[dict[str, str]],
+    agent_variant: str,
+    first_rows: list[dict[str, str]],
+) -> list[dict[str, str]] | None:
+    variant_rows = [
+        row for row in existing_rows if (row.get("agent_variant", "") or DEFAULT_AGENT_VARIANT) == agent_variant
+    ]
+    if not variant_rows:
+        return None
+
+    first_claim_ids = [row["claim_id"] for row in first_rows]
+    existing_by_claim = {row["claim_id"]: row for row in variant_rows}
+    if set(existing_by_claim) != set(first_claim_ids):
+        return None
+
+    return [existing_by_claim[claim_id] for claim_id in first_claim_ids]
+
+
+def build_notes_section(
+    agent_variant: str,
     sample: list[dict[str, str]],
-    second_rows: list[dict[str, str]],
     disagreements: list[dict[str, str]],
     stats: dict[str, float],
-) -> None:
-    total_first_pass_rows = len(list(csv.DictReader(FIRST_PASS.open())))
+) -> list[str]:
     sample_case = Counter(r["case_id"] for r in sample)
     sample_variant = Counter(r["variant_id"] for r in sample)
+    lines = [
+        f"## Agent Variant: `{agent_variant}`",
+        "",
+        "### Sampling Rule",
+        "",
+        f"- fixed seed: `{SAMPLE_SEED}`",
+        "- include all `critical` first-pass claims",
+        "- include all `calibration_set` claims",
+        f"- target sample size: `max({MIN_TARGET_SAMPLE_SIZE}, ceil(total_claims * {TARGET_SAMPLE_SHARE:.2f}))`",
+        f"- enforce minimum case coverage: `{MIN_PER_CASE}` claims per case when available",
+        "- enforce minimum variant coverage:",
+    ]
+    for variant_id, target in MIN_PER_VARIANT.items():
+        lines.append(f"  - `{variant_id}`: up to `{target}` claims when available")
+    lines.extend(
+        [
+            "",
+            "### Sample Summary",
+            "",
+            f"- sampled claims: `{len(sample)}`",
+            "- sample by case:",
+        ]
+    )
+    for case_id in sorted(sample_case):
+        lines.append(f"  - `{case_id}`: `{sample_case[case_id]}`")
+    lines.append("- sample by variant:")
+    for variant_id in sorted(sample_variant):
+        lines.append(f"  - `{variant_id}`: `{sample_variant[variant_id]}`")
+    lines.extend(
+        [
+            "",
+            "### Agreement",
+            "",
+            f"- simple agreement on `human_judgment`: `{stats['judgment_agreement']:.1%}`",
+            f"- simple agreement on `error_type`: `{stats['error_agreement']:.1%}`",
+            f"- disagreement rows requiring adjudication: `{stats['disagreements']}`",
+            "",
+            "### Disagreement Table",
+            "",
+            "| Claim ID | Case | Variant | Labeler1 | Labeler2 | Final | Reason |",
+            "|---|---|---|---|---|---|---|",
+        ]
+    )
+    for row in disagreements:
+        lines.append(
+            f"| `{row['claim_id']}` | `{row['case_id']}` | `{row['variant_id']}` | `{row['labeler1_judgment']}` | `{row['labeler2_judgment']}` | `{row['final_judgment']}` | {row['reason']} |"
+        )
+    lines.append("")
+    return lines
+
+
+def write_notes(
+    total_first_pass_rows: int,
+    preserved_variants: list[tuple[str, int]],
+    generated_sections: list[list[str]],
+) -> None:
     with ADJ_NOTES.open("w") as handle:
         handle.write("# Adjudication Notes\n\n")
-        handle.write("## Sampling Rule\n\n")
-        handle.write(f"- fixed seed: `{SAMPLE_SEED}`\n")
-        handle.write("- include all `critical` first-pass claims\n")
-        handle.write("- include all `calibration_set` claims\n")
-        handle.write(f"- target sample size: `max({MIN_TARGET_SAMPLE_SIZE}, ceil(total_claims * {TARGET_SAMPLE_SHARE:.2f}))`\n")
-        handle.write(f"- enforce minimum case coverage: `{MIN_PER_CASE}` claims per case when available\n")
-        handle.write("- enforce minimum variant coverage:\n")
-        for variant_id, target in MIN_PER_VARIANT.items():
-            handle.write(f"  - `{variant_id}`: up to `{target}` claims when available\n")
+        handle.write(f"- total first-pass claims in file: `{total_first_pass_rows}`\n")
+        if preserved_variants:
+            handle.write("- preserved existing adjudication for variants with unchanged claim sets:\n")
+            for agent_variant, count in preserved_variants:
+                handle.write(f"  - `{agent_variant}`: `{count}` claims\n")
+        if generated_sections:
+            handle.write("- newly generated adjudication sections follow below.\n")
         handle.write("\n")
-        handle.write("## Sample Summary\n\n")
-        handle.write(f"- sampled claims: `{len(sample)}`\n")
-        handle.write(f"- share of all claims: `{len(sample)}/{total_first_pass_rows} = {len(sample)/total_first_pass_rows:.1%}`\n")
-        handle.write("- sample by case:\n")
-        for case_id in sorted(sample_case):
-            handle.write(f"  - `{case_id}`: `{sample_case[case_id]}`\n")
-        handle.write("- sample by variant:\n")
-        for variant_id in sorted(sample_variant):
-            handle.write(f"  - `{variant_id}`: `{sample_variant[variant_id]}`\n")
-        handle.write("\n## Agreement\n\n")
-        handle.write(f"- simple agreement on `human_judgment`: `{stats['judgment_agreement']:.1%}`\n")
-        handle.write(f"- simple agreement on `error_type`: `{stats['error_agreement']:.1%}`\n")
-        handle.write(f"- disagreement rows requiring adjudication: `{stats['disagreements']}`\n")
-        handle.write("\n## Disagreement Table\n\n")
-        handle.write("| Claim ID | Case | Variant | Labeler1 | Labeler2 | Final | Reason |\n")
-        handle.write("|---|---|---|---|---|---|---|\n")
-        for row in disagreements:
-            handle.write(
-                f"| `{row['claim_id']}` | `{row['case_id']}` | `{row['variant_id']}` | `{row['labeler1_judgment']}` | `{row['labeler2_judgment']}` | `{row['final_judgment']}` | {row['reason']} |\n"
-            )
+        for section in generated_sections:
+            handle.write("\n".join(section))
+            handle.write("\n")
 
 
 def main() -> None:
-    first_rows = list(csv.DictReader(FIRST_PASS.open()))
-    sample = select_sample(first_rows)
-    second_rows = build_second_labels(sample)
-    adjudicated, disagreements, stats = adjudicate(first_rows, second_rows)
+    with FIRST_PASS.open(newline="") as handle:
+        first_rows_all = list(csv.DictReader(handle))
+
+    existing_second_rows = load_existing_rows(SECOND_LABELS)
+    existing_adjudicated_rows = load_existing_rows(ADJUDICATED)
+
+    rows_by_variant = defaultdict(list)
+    for row in first_rows_all:
+        rows_by_variant[row.get("agent_variant", "") or DEFAULT_AGENT_VARIANT].append(row)
+
+    second_rows: list[dict[str, str]] = []
+    adjudicated: list[dict[str, str]] = []
+    preserved_variants: list[tuple[str, int]] = []
+    generated_sections: list[list[str]] = []
+
+    for agent_variant in sorted(rows_by_variant):
+        first_rows = rows_by_variant[agent_variant]
+        preserved_second = preserve_existing_sample_rows(existing_second_rows, agent_variant, first_rows)
+        preserved_adjudicated = preserve_existing_full_rows(existing_adjudicated_rows, agent_variant, first_rows)
+        if preserved_second is not None and preserved_adjudicated is not None:
+            second_rows.extend(preserved_second)
+            adjudicated.extend(preserved_adjudicated)
+            preserved_variants.append((agent_variant, len(first_rows)))
+            continue
+
+        sample = select_sample(first_rows)
+        variant_second_rows = build_second_labels(sample)
+        variant_adjudicated, disagreements, stats = adjudicate(first_rows, variant_second_rows)
+        second_rows.extend(variant_second_rows)
+        adjudicated.extend(variant_adjudicated)
+        generated_sections.append(build_notes_section(agent_variant, sample, disagreements, stats))
+
+    second_rows.sort(key=lambda row: (row["case_id"], row["variant_id"], row["claim_id"]))
+    adjudicated.sort(key=lambda row: (row["case_id"], row["variant_id"], row["claim_id"]))
 
     write_csv(
         SECOND_LABELS,
@@ -405,6 +519,7 @@ def main() -> None:
             "variant_id",
             "level",
             "agent_name",
+            "agent_variant",
             "run_id",
             "claim_id",
             "claim_type",
@@ -426,6 +541,7 @@ def main() -> None:
             "variant_id",
             "level",
             "agent_name",
+            "agent_variant",
             "run_id",
             "claim_id",
             "claim_type",
@@ -439,7 +555,7 @@ def main() -> None:
         adjudicated,
     )
 
-    write_notes(sample, second_rows, disagreements, stats)
+    write_notes(len(first_rows_all), preserved_variants, generated_sections)
 
 
 if __name__ == "__main__":

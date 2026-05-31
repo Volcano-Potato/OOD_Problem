@@ -1,14 +1,25 @@
 # Metrics Summary
 
-All Task 22 metrics are derived from `annotations/adjudicated_labels.csv`, with main-run execution counts cross-checked against `outputs/run_manifest.csv`.
+Canonical metrics are derived from `annotations/adjudicated_labels.csv` filtered to `agent_variant == "benchmark_isolated"`, with main-run execution counts cross-checked against `outputs/run_manifest.csv`.
 
 ## Counting Rules
 
 - Claim-level metrics use claims as the denominator.
 - Run-level metrics use successful annotated runs as the denominator unless the metric explicitly references all main-manifest rows.
 - Main-run rows are identified by `raw_output_file` paths under `outputs/raw_agent_logs/main/`.
+- This file summarizes only rows with `agent_variant == "benchmark_isolated"`.
 - After Task 26, information-gradient reporting should be interpreted across `level1`, `level2`, and `level3` together rather than from a single adjacent pair.
 - `Critical Design Omission Rate` and `Mechanism Confounding Rate` are reported as proxies because the current annotation schema does not contain explicit omission-only or mechanism-only tags.
+
+## Bottleneck Crosswalk
+
+This benchmark is best interpreted as a focused execution-quality probe rather than a full reproduction of *The Ideation Bottleneck* six-dimension rubric. The detailed mapping from Bottleneck dimensions to benchmark evidence is documented in [results/bottleneck_crosswalk.md](/Users/jiangcanxiang/Documents/OOD_Problem/results/bottleneck_crosswalk.md).
+
+The short version is:
+
+- `Identification Strategy` and `Mechanism and External Validity` are the benchmark's strongest direct measurement areas.
+- `Econometric Methodology` and `Data Quality` are only partially proxied through claim-level errors and selected failure cases.
+- `Robustness and Sensitivity` and `Writing and Presentation` are intentionally secondary in this benchmark.
 
 ## Metrics
 

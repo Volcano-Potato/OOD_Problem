@@ -1,0 +1,36 @@
+{
+  "case_id": "C004",
+  "variant_id": "perturbed",
+  "agent_variant": "research_agent_v1",
+  "input_packet_sha256": "e44a87971f97d4884d8a0e840ced320e25e3a5064b41031f3468f95377da49a5",
+  "stages": {
+    "stage3_candidates": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage3_candidates/artifact.json",
+      "duration_sec": 139.665,
+      "validation": "n_candidates=4",
+      "stderr_path": "stage3_candidates/stderr.log"
+    },
+    "stage4_critique": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage4_critique/artifact.md",
+      "duration_sec": 95.859,
+      "validation": "meta_path=stage4_critique/artifact.meta.json",
+      "stderr_path": "stage4_critique/stderr.log"
+    },
+    "stage5_final": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage5_final/artifact.md",
+      "duration_sec": 174.118,
+      "validation": "recommend_descriptive_fallback=True",
+      "stderr_path": "stage5_final/stderr.log"
+    }
+  },
+  "pipeline_failed": false,
+  "created_at": "2026-05-31T16:53:12.985872",
+  "source_input_file": "benchmark/cases/C004_paid_search_effectiveness/agent_task_perturbed.md",
+  "completed_at": "2026-05-31T17:00:02.632173"
+}

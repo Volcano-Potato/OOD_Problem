@@ -1,0 +1,400 @@
+{
+  "payloads": [
+    {
+      "text": "## Independent Critique: Stage 4\n\n### Candidate 1: `prompt-zone-iv`\n\n**Packet-Grounded Threat 1 — Exclusion Restriction Violation Is Unaddressable Without Pre-Trip Intentions.** The packet explicitly states that \"there is no reliable pre-trip record of the shopper's planned basket or intended mission.\" The IV exclusion restriction requires that prompt placement affects checkout spending *only* through route length. But a snack-aisle prompt may trigger a direct reminder or salience effect — the shopper buys snacks *without* deviating from their path. Testing this exclusion restriction requires knowing what the shopper would have bought absent the prompt, which in turn requires pre-trip intentions. The perturbation removes exactly the data needed to even attempt a falsification of this pathway. The packet itself flags this: \"The main issue is endogenous within-trip exposure.\"\n\n**Packet-Grounded Threat 2 — No Evidence of Exogenous Prompt Assignment and Zone Selection Is Endogenous to Unobserved Mission.** The packet says the retailer \"observes which category-level prompts were available near different store areas\" but contains no description of temporal or spatial randomization of prompts. Meanwhile, the perturbation removes pre-trip mission data, meaning shoppers with different trip intentions (e.g., \"restock fresh produce\" vs. \"buy birthday cake supplies\") self-select into different store zones for reasons correlated with their spending plans. A shopper who walks past the bakery zone (and sees bakery prompts) is not randomly assigned to that exposure — they walked there *because* they planned to buy bakery items. The instrument's exogeneity is untestable under the packet's data constraints.\n\n**Perturbed-Condition Dependency Assessment:** This candidate depends on two conditions that the perturbation has broken: (a) the ability to separate prompt-salience effects from route-length effects (requires pre-trip intentions to test the exclusion restriction), and (b) the independence of prompt-zone exposure from trip mission (requires either randomization or mission controls, neither of which the packet provides). **Dependency confirmed.**\n\n**Verdict: `not_defensible`**\n\n---\n\n### Candidate 2: `within-trip-sequential`\n\n**Packet-Grounded Threat 1 — Visit-Order Is Endogenous to Unobserved Purchase Intentions.** The critical assumption states that category visit order is independent of planned spending intensity. But the perturbation removes pre-trip basket data, and shoppers almost certainly route themselves based on what they intend to buy. A shopper planning to buy fresh produce visits produce first; a shopper planning to buy frozen foods heads to the freezer aisle first. Without pre-trip plans, there is no way to control for or even diagnose this planned-ordering confound. The packet's own data card confirms the data are \"primarily cross-sectional at the trip level,\" so within-shopper differencing (which might absorb stable preferences) is unavailable.\n\n**Packet-Grounded Threat 2 — Trip-Stage Effects Are Inseparable from Route-Position Effects.** Even if visit order were plausibly exogenous, later-category spending could differ from early-category spending for reasons unrelated to route-induced impulse: shopper fatigue, budget depletion as the basket fills, or time pressure as the trip progresses. The perturbation removes the ability to benchmark these against a pre-trip plan (e.g., \"I planned to spend X on category Y and actually spent X+Z\"). The packet provides no trip-duration or basket-accumulation metrics to disentangle these mechanisms.\n\n**Perturbed-Condition Dependency Assessment:** The design's logic — that early-category spending ≈ planned and late-category spending ≈ unplanned — is exactly the inference the perturbation renders impossible by removing pre-trip baskets. Without knowing what was planned, the analyst cannot assign plan/impulse labels to any visit-order position. **Dependency confirmed.**\n\n**Verdict: `not_defensible`**\n\n---\n\n### Candidate 3: `selection-on-observables-matching`\n\n**Packet-Grounded Threat 1 — The Dominant Confound (Trip Mission) Is Unobserved by Construction.** The unconfoundedness assumption requires that all joint determinants of route length and spending are captured in covariates. The perturbation explicitly removes \"the shopper's original intended basket before wandering begins.\" Trip mission type — whether this is a major weekly stock-up trip, a quick fill-in trip, or a browse-heavy leisure trip — determines *both* how far the shopper walks *and* how much they spend. The packet's available covariates (demographics, store familiarity, time-of-day, prompt exposure) cannot proxy for mission type: two demographically identical shoppers entering at the same time on the same day can have fundamentally different trip missions with radically different route-length/spending relationships. The perturbation degrades the covariate set precisely at its most critical variable.\n\n**Packet-Grounded Threat 2 — The Outcome \"Unplanned Spending\" Is Unmeasurable, Forcing Reliance on Total Spending.** The research objective asks to estimate \"whether longer in-store travel causes higher unplanned spending.\" The perturbation removes pre-trip baskets, so \"unplanned\" cannot be defined at the individual-trip level. The candidate substitutes total spending, which conflates planned and unplanned components. Even if matching balanced covariates perfectly, the estimand would be the effect of route length on *total* spending — a different, weaker question than the one posed, and one where the business interpretation (\"does making people walk more make them spend more overall?\") fails to address the mechanism the retailer cares about.\n\n**Perturbed-Condition Dependency Assessment:** The candidate depends on the ability to condition on trip mission and to measure unplanned spending. The perturbation breaks both. Demographics and time-of-day do not substitute for trip-level purchase intentions. **Dependency confirmed.**\n\n**Verdict: `not_defensible`**\n\n---\n\n### Candidate 4: `descriptive-correlation-decomposition`\n\n**Packet-Grounded Threat 1 — \"Unplanned\" Spending Proxies Are Inherently Misclassification-Prone.** This candidate acknowledges that any definition of \"unplanned\" constructed from checkout data alone (e.g., rarely-purchased categories, prompt-matched items) is a proxy. Without pre-trip baskets, there is no ground truth to calibrate or validate this proxy. A shopper who always buys cereal on every trip and passes a cereal prompt will have their cereal purchase classified as \"prompt-responsive/unplanned\" under a naive proxy, when it is in fact entirely planned. The packet provides no household purchase-history panel that could be used to construct a better baseline.\n\n**Packet-Grounded Threat 2 — Descriptive Associations Cannot Answer the Causal Business Question.** The retailer wants to know \"whether path-inducing promotions are useful.\" A positive partial correlation between route length and spending does not imply that interventions lengthening routes will increase spending. Reverse causality (shoppers with larger spending needs walk further to fulfill them) and omitted variable bias (trip mission drives both) are equally consistent with the same descriptive pattern. The candidate correctly disclaims causal interpretation, but the business decision-maker receives no actionable evidence on the policy question.\n\n**Perturbed-Condition Dependency Assessment:** This candidate makes no causal identification assumptions and does not depend on pre-trip basket information. It operates entirely within the data the packet actually provides. Its threats are inherent to descriptive analysis and are explicitly acknowledged in the candidate's own framing. **No dependency on perturbed conditions.**\n\n**Verdict: `defensible_with_caveats`** — defensible as a descriptive analysis, with the caveat that it cannot answer the causal research question and that \"unplanned spending\" proxies are unvalidated.\n\n---\n\n### Summary Assessment\n\nAll three causal candidates (`prompt-zone-iv`, `within-trip-sequential`, `selection-on-observables-matching`) depend on conditions that the perturbation — removal of reliable pre-trip planned basket and mission data — has broken or rendered unverifiable. The perturbation is not a marginal data limitation; it removes the single most important variable for causal identification of route-length effects on *unplanned* spending. The descriptive fallback is the only candidate consistent with the packet's actual data constraints. The Stage 3 recommendation of `descriptive-correlation-decomposition` as primary is correct and necessary.\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 1,\n    \"not_defensible\": 3\n  },\n  \"recommended_primary\": \"descriptive-correlation-decomposition\",\n  \"recommend_descriptive_fallback\": true,\n  \"perturbed_condition_dependency_detected\": true\n}\n```",
+      "mediaUrl": null
+    }
+  ],
+  "meta": {
+    "durationMs": 75479,
+    "agentMeta": {
+      "sessionId": "isolated_20260531_174318_30157",
+      "sessionFile": "/Users/jiangcanxiang/.openclaw/agents/benchmark_isolated/sessions/isolated_20260531_174318_30157.jsonl",
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "contextTokens": 1000000,
+      "agentHarnessId": "pi",
+      "usage": {
+        "input": 3094,
+        "output": 2961,
+        "cacheRead": 13440,
+        "total": 19495
+      },
+      "lastCallUsage": {
+        "input": 3094,
+        "output": 2961,
+        "cacheRead": 13440,
+        "cacheWrite": 0,
+        "total": 19495
+      },
+      "promptTokens": 16534
+    },
+    "aborted": false,
+    "systemPromptReport": {
+      "source": "run",
+      "generatedAt": 1780220607882,
+      "sessionId": "isolated_20260531_174318_30157",
+      "sessionKey": "agent:benchmark_isolated:explicit:isolated_20260531_174318_30157",
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "workspaceDir": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated",
+      "bootstrapMaxChars": 12000,
+      "bootstrapTotalMaxChars": 60000,
+      "bootstrapTruncation": {
+        "warningMode": "once",
+        "warningShown": false,
+        "truncatedFiles": 0,
+        "nearLimitFiles": 0,
+        "totalNearLimit": false
+      },
+      "sandbox": {
+        "mode": "off",
+        "sandboxed": false
+      },
+      "systemPrompt": {
+        "chars": 20884,
+        "projectContextChars": 353,
+        "nonProjectContextChars": 20531
+      },
+      "injectedWorkspaceFiles": [
+        {
+          "name": "AGENTS.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/AGENTS.md",
+          "missing": false,
+          "rawChars": 220,
+          "injectedChars": 220,
+          "truncated": false
+        },
+        {
+          "name": "SOUL.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/SOUL.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "TOOLS.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/TOOLS.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "IDENTITY.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/IDENTITY.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "USER.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/USER.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "HEARTBEAT.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/HEARTBEAT.md",
+          "missing": false,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        },
+        {
+          "name": "BOOTSTRAP.md",
+          "path": "/Users/jiangcanxiang/OpenClawBenchmarkIsolated/BOOTSTRAP.md",
+          "missing": true,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        }
+      ],
+      "skills": {
+        "promptChars": 10697,
+        "entries": [
+          {
+            "name": "agent-browser",
+            "blockChars": 714
+          },
+          {
+            "name": "browser-automation",
+            "blockChars": 324
+          },
+          {
+            "name": "find-skills",
+            "blockChars": 475
+          },
+          {
+            "name": "gemini",
+            "blockChars": 221
+          },
+          {
+            "name": "healthcheck",
+            "blockChars": 280
+          },
+          {
+            "name": "node-connect",
+            "blockChars": 281
+          },
+          {
+            "name": "qqbot-channel",
+            "blockChars": 282
+          },
+          {
+            "name": "qqbot-media",
+            "blockChars": 216
+          },
+          {
+            "name": "qqbot-remind",
+            "blockChars": 210
+          },
+          {
+            "name": "session-logs",
+            "blockChars": 253
+          },
+          {
+            "name": "skill-creator",
+            "blockChars": 266
+          },
+          {
+            "name": "taskflow",
+            "blockChars": 281
+          },
+          {
+            "name": "taskflow-inbox-triage",
+            "blockChars": 291
+          },
+          {
+            "name": "tavily",
+            "blockChars": 199
+          },
+          {
+            "name": "tavily-best-practices",
+            "blockChars": 450
+          },
+          {
+            "name": "tavily-cli",
+            "blockChars": 989
+          },
+          {
+            "name": "tavily-crawl",
+            "blockChars": 713
+          },
+          {
+            "name": "tavily-dynamic-search",
+            "blockChars": 825
+          },
+          {
+            "name": "tavily-extract",
+            "blockChars": 661
+          },
+          {
+            "name": "tavily-map",
+            "blockChars": 685
+          },
+          {
+            "name": "tavily-research",
+            "blockChars": 689
+          },
+          {
+            "name": "tavily-search",
+            "blockChars": 706
+          },
+          {
+            "name": "weather",
+            "blockChars": 251
+          }
+        ]
+      },
+      "tools": {
+        "listChars": 0,
+        "schemaChars": 6359,
+        "entries": [
+          {
+            "name": "session_status",
+            "summaryChars": 456,
+            "schemaChars": 89,
+            "propertiesCount": 2
+          },
+          {
+            "name": "web_search",
+            "summaryChars": 83,
+            "schemaChars": 1209,
+            "propertiesCount": 12
+          },
+          {
+            "name": "web_fetch",
+            "summaryChars": 129,
+            "schemaChars": 374,
+            "propertiesCount": 3
+          },
+          {
+            "name": "deepxiv__get_full_paper",
+            "summaryChars": 335,
+            "schemaChars": 138,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_brief",
+            "summaryChars": 394,
+            "schemaChars": 139,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_metadata",
+            "summaryChars": 206,
+            "schemaChars": 142,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_preview",
+            "summaryChars": 217,
+            "schemaChars": 141,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_paper_section",
+            "summaryChars": 247,
+            "schemaChars": 212,
+            "propertiesCount": 2
+          },
+          {
+            "name": "deepxiv__get_pmc_full",
+            "summaryChars": 281,
+            "schemaChars": 130,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__get_pmc_metadata",
+            "summaryChars": 200,
+            "schemaChars": 134,
+            "propertiesCount": 1
+          },
+          {
+            "name": "deepxiv__search_papers",
+            "summaryChars": 920,
+            "schemaChars": 929,
+            "propertiesCount": 11
+          },
+          {
+            "name": "semantic-scholar__clear_tracked_papers",
+            "summaryChars": 288,
+            "schemaChars": 33,
+            "propertiesCount": 0
+          },
+          {
+            "name": "semantic-scholar__consolidate_authors",
+            "summaryChars": 1079,
+            "schemaChars": 165,
+            "propertiesCount": 2
+          },
+          {
+            "name": "semantic-scholar__export_bibtex",
+            "summaryChars": 1243,
+            "schemaChars": 413,
+            "propertiesCount": 6
+          },
+          {
+            "name": "semantic-scholar__find_duplicate_authors",
+            "summaryChars": 1044,
+            "schemaChars": 219,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_author_details",
+            "summaryChars": 1207,
+            "schemaChars": 185,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_author_top_papers",
+            "summaryChars": 1220,
+            "schemaChars": 204,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_paper_citations",
+            "summaryChars": 1499,
+            "schemaChars": 193,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_paper_details",
+            "summaryChars": 1305,
+            "schemaChars": 134,
+            "propertiesCount": 2
+          },
+          {
+            "name": "semantic-scholar__get_paper_references",
+            "summaryChars": 1358,
+            "schemaChars": 125,
+            "propertiesCount": 2
+          },
+          {
+            "name": "semantic-scholar__get_recommendations",
+            "summaryChars": 1705,
+            "schemaChars": 174,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__get_related_papers",
+            "summaryChars": 2129,
+            "schemaChars": 277,
+            "propertiesCount": 3
+          },
+          {
+            "name": "semantic-scholar__list_tracked_papers",
+            "summaryChars": 595,
+            "schemaChars": 107,
+            "propertiesCount": 1
+          },
+          {
+            "name": "semantic-scholar__search_authors",
+            "summaryChars": 1100,
+            "schemaChars": 119,
+            "propertiesCount": 2
+          },
+          {
+            "name": "semantic-scholar__search_papers",
+            "summaryChars": 1585,
+            "schemaChars": 374,
+            "propertiesCount": 5
+          }
+        ]
+      }
+    },
+    "finalPromptText": "# Stage 4: Independent Critique\n\nYou are acting as an independent design critic.\n\nYou are given:\n\n- the original perturbed task packet\n- a JSON list of candidate identification strategies from another agent\n\nYour job is to critique the candidates, especially whether they depend on a condition that the perturbed packet has weakened or removed.\n\n## Instructions\n\n1. For each candidate, identify at least 2 packet-grounded threats.\n2. Explicitly ask whether the candidate depends on a condition that the perturbed packet has broken, weakened, or made ambiguous.\n3. For each candidate, assign one verdict:\n   - `defensible`\n   - `defensible_with_caveats`\n   - `not_defensible`\n4. If no candidate is defensible, recommend a descriptive fallback.\n5. Keep the critique grounded in the provided packet and candidate JSON.\n6. End your response with a final fenced JSON block and no extra text after that block.\n\n## Required Final JSON Block\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 0,\n    \"not_defensible\": 0\n  },\n  \"recommended_primary\": null,\n  \"recommend_descriptive_fallback\": false,\n  \"perturbed_condition_dependency_detected\": false\n}\n```\n\n## Original Packet\n\n<!-- visibility: agent-facing -->\n<!-- case_id: C019 -->\n<!-- variant: perturbed -->\n\n# Anonymous Research Design Task: Perturbed Variant\n\n## Task Rule\n\nUse the information provided below to design a rigorous empirical strategy for this anonymized applied business/economics research problem. Your goal is to produce a defensible research design, not to write a literature review.\n\nDo not assume that a known paper has already solved the task. Ground your reasoning in the background, data description, institutional details, and constraints provided in this packet.\n\nDo not fill in packet-absent operational details, institutional features, or named design devices as if they were known facts. If multiple concrete implementations fit the packet, describe them generically or label them explicitly as illustrative examples rather than assumptions.\n\nIf credible causal identification is not possible from the provided information, do not invent an identification strategy. State the strongest defensible descriptive or correlational analysis instead.\n\n## Research Background\n\nA retailer wants to know whether longer in-store travel increases unplanned spending and whether path-inducing promotions are useful. The challenge is still that route length is a choice-driven exposure rather than a naturally randomized treatment.\n\n## Research Setting\n\nThe researcher can observe a shopper's actual route through the store and the final basket at checkout. The retailer also observes which category-level prompts were available near different store areas. However, unlike the base case, there is no reliable pre-trip record of the shopper's planned basket or intended mission.\n\n## Research Objective\n\nDesign a study to estimate whether longer in-store travel causes higher unplanned spending when no reliable pre-trip basket information is available.\n\n## Specific Questions To Answer\n\n1. Can the original route-based identification logic still work?\n2. What kinds of causal claims remain plausible with only observed routes, prompts, and checkout outcomes?\n3. What additional data or redesign would be needed to recover a stronger route-based causal design?\n4. What descriptive or predictive analyses are still defensible?\n\n## Data Structure Overview\n\n- Stage 1: Shoppers enter the store and begin shopping, but there is no validated pre-trip basket or mission capture.\n- Stage 2: The shopper's route through the store is measured during the trip, and category-level prompts or stimuli may be observed.\n- Stage 3: Checkout records reveal the final basket and total spending, allowing some definition of unplanned or additional spending.\n- Stage 4: The retailer may know which prompts were displayed, but does not know the shopper's original intended basket before wandering begins.\n\n## Data Card\n\n| field | description |\n|---|---|\n| unit of observation | Individual shopping trip. |\n| time span | Single-trip setting with in-trip measurement and post-checkout outcomes. |\n| sample construction | Trips are observed when route measures and checkout transactions are available, but there is no reliable pre-trip planning record. |\n| treatment or exposure variable | Actual route length or observed route-inducing prompts. |\n| outcome variable | Trip-level unplanned or additional spending. |\n| secondary outcomes | Number of unplanned categories or prompt redemption if observed. |\n| assignment or variation source | Observed route and prompt exposure; no validated pre-trip route benchmark is available. |\n| assignment level | Shopper-trip level. |\n| outcome measurement level | Shopper-trip level. |\n| panel or repeated structure | Primarily cross-sectional at the trip level. |\n| compliance or take-up | Shoppers may ignore or partially respond to prompts. |\n| spillover or interference | Minimal cross-shopper interference; the main issue is endogenous within-trip exposure. |\n\n## Variable Groups\n\n### Treatment Or Exposure Variables\n\n- Actual route length.\n- Observed prompts or in-store stimuli.\n\n### Selection Or Sample-Flow Variables\n\n- Availability of usable route measures.\n- Availability of linked checkout records.\n\n### Main Outcome Variables\n\n- Unplanned or additional spending amount.\n\n### Secondary Outcome Variables\n\n- Number of unplanned categories.\n- Prompt-response indicators if available.\n\n### Baseline Controls And Design Variables\n\n- Shopper demographics and store familiarity measures if available.\n\n## Perturbed Condition\n\nThe reliable pre-trip planned basket and mission capture used in the base setting is unavailable here. The researcher sees where the shopper walked and what the shopper bought, but not a validated statement of what the shopper intended to buy before the trip unfolded.\n\n## Known Constraints\n\n- The business setting and most of the data structure are intentionally similar to the base task.\n- One key identification condition has changed.\n- The answer must explain whether the original design logic still works, becomes weaker, or fails.\n- If strong causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.\n\n## Required Output\n\n1. Executive summary\n2. Research question\n3. Target estimand or strongest defensible estimand\n4. Treatment or exposure and main outcomes\n5. Data structure summary\n6. Relevant causal mechanisms\n7. Main identification challenge\n8. Whether credible causal identification is possible\n9. Proposed empirical design or strongest defensible descriptive analysis\n10. Why the design is valid or why causal identification is not credible\n11. Required assumptions\n12. Statistical model or analysis equation\n13. Robustness, placebo, falsification checks, or diagnostic tests\n14. Heterogeneity analysis if supportable\n15. Measurement, compliance, missingness, spillover, or implementation limits\n16. Failure modes and alternative explanations\n17. What cannot be claimed\n18. Additional data needed\n19. Threat-response table if explicitly requested by the task packet\n20. Claim-evidence table\n\n## Claim-Evidence Table\n\n| Claim | Evidence Used | Claim Type | Confidence | What Would Falsify This Claim |\n|---|---|---|---|---|\n\n\n## Stage 3 Candidate JSON\n\n```json\n{\n  \"candidates\": [\n    {\n      \"name\": \"prompt-zone-iv\",\n      \"estimand\": \"Local average treatment effect (LATE) of route length on total checkout spending among shoppers whose route is extended by exposure to category-level prompts, where the instrument is the spatial or temporal availability of prompts in the shopper's path.\",\n      \"identifying_variation\": \"Quasi-exogenous variation in which category-level prompts are displayed across different store zones or time windows, generating differential incentives to deviate from the most direct path that are plausibly independent of individual shoppers' trip-level purchase intentions.\",\n      \"critical_assumption\": \"Exclusion restriction: prompt placement affects checkout spending only through its effect on route length, not through direct reminder/salience effects on category demand. Additionally, prompt availability across zones or time windows must be independent of shopper type sorting into those zones or time windows (no endogenous zone selection based on planned mission).\",\n      \"packet_support\": \"Packet states the retailer 'observes which category-level prompts were available near different store areas' and that 'category-level prompts or stimuli may be observed.' It also notes partial compliance ('Shoppers may ignore or partially respond to prompts'), which is compatible with an IV framework. The data structure distinguishes Stage 2 (in-trip route and prompt observation) from Stage 3 (checkout outcomes).\",\n      \"fragility\": \"The exclusion restriction is likely violated: a prompt for a snack category may directly remind or induce a shopper to buy snacks without altering their walking path. No evidence in the packet confirms that prompt assignment is exogenous to shopper type or time-of-day confounds. Without pre-trip intentions, the outcome 'unplanned spending' cannot be cleanly separated from total spending, weakening the economic interpretation of the LATE. The packet does not describe any temporal or spatial randomization of prompts, so the instrument's exogeneity is an untestable assumption.\",\n      \"is_fallback\": false\n    },\n    {\n      \"name\": \"within-trip-sequential\",\n      \"estimand\": \"Partial association between route-position order and category-level spending, interpreted as suggestive evidence of route-induced impulse purchasing: categories visited later in the trip or after passing a relevant prompt exhibit higher spending relative to categories visited earlier, controlling for shopper fixed effects when repeat-visit data are available.\",\n      \"identifying_variation\": \"Within-trip (or within-shopper across trips) variation in the sequence of category encounters and the timing of prompt exposure relative to category purchases. The comparison is between categories the shopper visits early versus late, or between trips where a given category is encountered at different points in the walk sequence.\",\n      \"critical_assumption\": \"The order in which a shopper visits categories is, conditional on observables, independent of the shopper's latent planned spending intensity for those categories. In other words, a shopper does not systematically visit high-intention categories earlier (or later) in the trip for reasons unrelated to route-induced impulse.\",\n      \"packet_support\": \"The packet describes trip-level route measurement with category-level granularity ('route through the store is measured during the trip, and category-level prompts or stimuli may be observed'). The data structure captures within-trip sequence: Stage 2 route measures and Stage 3 checkout records can be merged to reconstruct the order of category encounters and purchases. Demographics and store-familiarity controls are mentioned as available baseline variables.\",\n      \"fragility\": \"Shoppers almost certainly plan their route based on intended purchases (e.g., visiting high-priority categories first or last), violating the independence of visit order and category-level spending intentions. Without pre-trip plans, there is no way to verify that early-category spending reflects 'planned' purchases while late-category spending reflects 'unplanned' ones. The comparison conflates route-length effects with trip-stage effects (fatigue, basket-filling dynamics, budget depletion). The packet notes the data are 'primarily cross-sectional,' so within-shopper identification is weak or unavailable.\",\n      \"is_fallback\": false\n    },\n    {\n      \"name\": \"selection-on-observables-matching\",\n      \"estimand\": \"Average treatment effect of longer route length (dichotomized or binned) on total spending or on a constructed 'impulse proxy' spending measure, conditional on observed shopper demographics, store familiarity, time-of-day, and prompt-exposure covariates.\",\n      \"identifying_variation\": \"Residual variation in route length across shopping trips after conditioning on a rich set of observable shopper and trip characteristics. Design uses propensity score matching, inverse-probability weighting, or doubly robust methods to compare trips with similar observed covariate profiles but different realized route lengths.\",\n      \"critical_assumption\": \"Unconfoundedness (selection on observables): all factors that jointly determine route length and spending are captured in the observed covariate set. In particular, shopper trip mission type, latent purchase intentions, and within-trip decision-making are fully proxied by demographics, store familiarity, time-of-day, and prompt-exposure measures.\",\n      \"packet_support\": \"Packet mentions availability of 'shopper demographics and store familiarity measures if available' as baseline controls. Route length, prompt exposure, and checkout outcomes are all observed. The data are at the trip level with linked route and checkout records, supporting covariate-adjusted comparisons.\",\n      \"fragility\": \"The unconfoundedness assumption is extremely strong and almost certainly violated: the same unobserved shopper intention (e.g., 'big weekly stock-up' vs. 'quick milk run') drives both how far the shopper walks and how much they spend. No pre-trip intentions or mission-type data are available to include as covariates. Without these, selection on observables cannot credibly isolate the causal effect of route length. Even with rich demographics, the fundamental confound—why the shopper came to the store—remains unobserved. The outcome ('unplanned spending') is itself unmeasurable without pre-trip plans, forcing reliance on a total-spending proxy.\",\n      \"is_fallback\": false\n    },\n    {\n      \"name\": \"descriptive-correlation-decomposition\",\n      \"estimand\": \"Partial correlation between route length and checkout outcomes (total spending, category count, spending per category), decomposed by prompt-exposure status and shopper segments. No causal estimand is targeted.\",\n      \"identifying_variation\": \"Raw cross-sectional covariation between observed route length and observed checkout spending, sliced by (a) whether the shopper passed a prompt for a given category before purchasing it, (b) shopper demographic segments, and (c) time-of-day or day-of-week windows.\",\n      \"critical_assumption\": \"No causal identifying assumption is made. The analysis interprets associations descriptively, acknowledging that route length and spending are jointly determined by unobserved trip intentions. The value lies in characterizing patterns useful for predictive or exploratory business decisions (e.g., which categories show the strongest prompt-response associations) rather than establishing causation.\",\n      \"packet_support\": \"All required data elements are present in the packet: observed route length, observed category-level prompt exposure, observed checkout spending and category counts, and available demographics. The packet explicitly asks 'What descriptive or predictive analyses are still defensible?' and requires that if 'credible causal identification is no longer justified, the answer must explicitly downgrade the claim.' This candidate directly addresses that requirement.\",\n      \"fragility\": \"No causal interpretation is possible, limiting the business value for 'whether path-inducing promotions are useful' beyond correlational evidence. The descriptive patterns may be misleading for policy: a positive correlation between route length and spending does not imply that interventions lengthening routes will increase spending (reverse causality and omitted variable bias are both plausible). Any definition of 'unplanned' spending constructed from checkout data alone (e.g., items from rarely-purchased categories, items matching passed prompts) is a proxy that may misclassify planned purchases as unplanned.\",\n      \"is_fallback\": true\n    }\n  ],\n  \"recommended_primary\": \"descriptive-correlation-decomposition\",\n  \"notes\": \"The core identifying challenge is twofold: (1) route length is endogenously chosen and jointly determined with spending by unobserved trip intentions, and (2) 'unplanned spending' cannot be defined or measured at the individual-trip level without pre-trip basket information. All three causal candidates suffer from fundamental violations of their critical assumptions given packet constraints. The prompt-zone IV faces a near-certain exclusion-restriction violation (prompts affect spending directly via salience), the within-trip sequential design cannot separate route-position effects from planned category ordering, and the selection-on-observables approach cannot control for the dominant confound (trip mission). The descriptive-correlation-decomposition is the only candidate whose assumptions are consistent with the data actually available. It is recommended as primary not because it answers the causal question, but because it is the strongest design that can be executed honestly with this packet's data constraints.\"\n}\n```",
+    "finalAssistantVisibleText": "## Independent Critique: Stage 4\n\n### Candidate 1: `prompt-zone-iv`\n\n**Packet-Grounded Threat 1 — Exclusion Restriction Violation Is Unaddressable Without Pre-Trip Intentions.** The packet explicitly states that \"there is no reliable pre-trip record of the shopper's planned basket or intended mission.\" The IV exclusion restriction requires that prompt placement affects checkout spending *only* through route length. But a snack-aisle prompt may trigger a direct reminder or salience effect — the shopper buys snacks *without* deviating from their path. Testing this exclusion restriction requires knowing what the shopper would have bought absent the prompt, which in turn requires pre-trip intentions. The perturbation removes exactly the data needed to even attempt a falsification of this pathway. The packet itself flags this: \"The main issue is endogenous within-trip exposure.\"\n\n**Packet-Grounded Threat 2 — No Evidence of Exogenous Prompt Assignment and Zone Selection Is Endogenous to Unobserved Mission.** The packet says the retailer \"observes which category-level prompts were available near different store areas\" but contains no description of temporal or spatial randomization of prompts. Meanwhile, the perturbation removes pre-trip mission data, meaning shoppers with different trip intentions (e.g., \"restock fresh produce\" vs. \"buy birthday cake supplies\") self-select into different store zones for reasons correlated with their spending plans. A shopper who walks past the bakery zone (and sees bakery prompts) is not randomly assigned to that exposure — they walked there *because* they planned to buy bakery items. The instrument's exogeneity is untestable under the packet's data constraints.\n\n**Perturbed-Condition Dependency Assessment:** This candidate depends on two conditions that the perturbation has broken: (a) the ability to separate prompt-salience effects from route-length effects (requires pre-trip intentions to test the exclusion restriction), and (b) the independence of prompt-zone exposure from trip mission (requires either randomization or mission controls, neither of which the packet provides). **Dependency confirmed.**\n\n**Verdict: `not_defensible`**\n\n---\n\n### Candidate 2: `within-trip-sequential`\n\n**Packet-Grounded Threat 1 — Visit-Order Is Endogenous to Unobserved Purchase Intentions.** The critical assumption states that category visit order is independent of planned spending intensity. But the perturbation removes pre-trip basket data, and shoppers almost certainly route themselves based on what they intend to buy. A shopper planning to buy fresh produce visits produce first; a shopper planning to buy frozen foods heads to the freezer aisle first. Without pre-trip plans, there is no way to control for or even diagnose this planned-ordering confound. The packet's own data card confirms the data are \"primarily cross-sectional at the trip level,\" so within-shopper differencing (which might absorb stable preferences) is unavailable.\n\n**Packet-Grounded Threat 2 — Trip-Stage Effects Are Inseparable from Route-Position Effects.** Even if visit order were plausibly exogenous, later-category spending could differ from early-category spending for reasons unrelated to route-induced impulse: shopper fatigue, budget depletion as the basket fills, or time pressure as the trip progresses. The perturbation removes the ability to benchmark these against a pre-trip plan (e.g., \"I planned to spend X on category Y and actually spent X+Z\"). The packet provides no trip-duration or basket-accumulation metrics to disentangle these mechanisms.\n\n**Perturbed-Condition Dependency Assessment:** The design's logic — that early-category spending ≈ planned and late-category spending ≈ unplanned — is exactly the inference the perturbation renders impossible by removing pre-trip baskets. Without knowing what was planned, the analyst cannot assign plan/impulse labels to any visit-order position. **Dependency confirmed.**\n\n**Verdict: `not_defensible`**\n\n---\n\n### Candidate 3: `selection-on-observables-matching`\n\n**Packet-Grounded Threat 1 — The Dominant Confound (Trip Mission) Is Unobserved by Construction.** The unconfoundedness assumption requires that all joint determinants of route length and spending are captured in covariates. The perturbation explicitly removes \"the shopper's original intended basket before wandering begins.\" Trip mission type — whether this is a major weekly stock-up trip, a quick fill-in trip, or a browse-heavy leisure trip — determines *both* how far the shopper walks *and* how much they spend. The packet's available covariates (demographics, store familiarity, time-of-day, prompt exposure) cannot proxy for mission type: two demographically identical shoppers entering at the same time on the same day can have fundamentally different trip missions with radically different route-length/spending relationships. The perturbation degrades the covariate set precisely at its most critical variable.\n\n**Packet-Grounded Threat 2 — The Outcome \"Unplanned Spending\" Is Unmeasurable, Forcing Reliance on Total Spending.** The research objective asks to estimate \"whether longer in-store travel causes higher unplanned spending.\" The perturbation removes pre-trip baskets, so \"unplanned\" cannot be defined at the individual-trip level. The candidate substitutes total spending, which conflates planned and unplanned components. Even if matching balanced covariates perfectly, the estimand would be the effect of route length on *total* spending — a different, weaker question than the one posed, and one where the business interpretation (\"does making people walk more make them spend more overall?\") fails to address the mechanism the retailer cares about.\n\n**Perturbed-Condition Dependency Assessment:** The candidate depends on the ability to condition on trip mission and to measure unplanned spending. The perturbation breaks both. Demographics and time-of-day do not substitute for trip-level purchase intentions. **Dependency confirmed.**\n\n**Verdict: `not_defensible`**\n\n---\n\n### Candidate 4: `descriptive-correlation-decomposition`\n\n**Packet-Grounded Threat 1 — \"Unplanned\" Spending Proxies Are Inherently Misclassification-Prone.** This candidate acknowledges that any definition of \"unplanned\" constructed from checkout data alone (e.g., rarely-purchased categories, prompt-matched items) is a proxy. Without pre-trip baskets, there is no ground truth to calibrate or validate this proxy. A shopper who always buys cereal on every trip and passes a cereal prompt will have their cereal purchase classified as \"prompt-responsive/unplanned\" under a naive proxy, when it is in fact entirely planned. The packet provides no household purchase-history panel that could be used to construct a better baseline.\n\n**Packet-Grounded Threat 2 — Descriptive Associations Cannot Answer the Causal Business Question.** The retailer wants to know \"whether path-inducing promotions are useful.\" A positive partial correlation between route length and spending does not imply that interventions lengthening routes will increase spending. Reverse causality (shoppers with larger spending needs walk further to fulfill them) and omitted variable bias (trip mission drives both) are equally consistent with the same descriptive pattern. The candidate correctly disclaims causal interpretation, but the business decision-maker receives no actionable evidence on the policy question.\n\n**Perturbed-Condition Dependency Assessment:** This candidate makes no causal identification assumptions and does not depend on pre-trip basket information. It operates entirely within the data the packet actually provides. Its threats are inherent to descriptive analysis and are explicitly acknowledged in the candidate's own framing. **No dependency on perturbed conditions.**\n\n**Verdict: `defensible_with_caveats`** — defensible as a descriptive analysis, with the caveat that it cannot answer the causal research question and that \"unplanned spending\" proxies are unvalidated.\n\n---\n\n### Summary Assessment\n\nAll three causal candidates (`prompt-zone-iv`, `within-trip-sequential`, `selection-on-observables-matching`) depend on conditions that the perturbation — removal of reliable pre-trip planned basket and mission data — has broken or rendered unverifiable. The perturbation is not a marginal data limitation; it removes the single most important variable for causal identification of route-length effects on *unplanned* spending. The descriptive fallback is the only candidate consistent with the packet's actual data constraints. The Stage 3 recommendation of `descriptive-correlation-decomposition` as primary is correct and necessary.\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 1,\n    \"not_defensible\": 3\n  },\n  \"recommended_primary\": \"descriptive-correlation-decomposition\",\n  \"recommend_descriptive_fallback\": true,\n  \"perturbed_condition_dependency_detected\": true\n}\n```",
+    "finalAssistantRawText": "## Independent Critique: Stage 4\n\n### Candidate 1: `prompt-zone-iv`\n\n**Packet-Grounded Threat 1 — Exclusion Restriction Violation Is Unaddressable Without Pre-Trip Intentions.** The packet explicitly states that \"there is no reliable pre-trip record of the shopper's planned basket or intended mission.\" The IV exclusion restriction requires that prompt placement affects checkout spending *only* through route length. But a snack-aisle prompt may trigger a direct reminder or salience effect — the shopper buys snacks *without* deviating from their path. Testing this exclusion restriction requires knowing what the shopper would have bought absent the prompt, which in turn requires pre-trip intentions. The perturbation removes exactly the data needed to even attempt a falsification of this pathway. The packet itself flags this: \"The main issue is endogenous within-trip exposure.\"\n\n**Packet-Grounded Threat 2 — No Evidence of Exogenous Prompt Assignment and Zone Selection Is Endogenous to Unobserved Mission.** The packet says the retailer \"observes which category-level prompts were available near different store areas\" but contains no description of temporal or spatial randomization of prompts. Meanwhile, the perturbation removes pre-trip mission data, meaning shoppers with different trip intentions (e.g., \"restock fresh produce\" vs. \"buy birthday cake supplies\") self-select into different store zones for reasons correlated with their spending plans. A shopper who walks past the bakery zone (and sees bakery prompts) is not randomly assigned to that exposure — they walked there *because* they planned to buy bakery items. The instrument's exogeneity is untestable under the packet's data constraints.\n\n**Perturbed-Condition Dependency Assessment:** This candidate depends on two conditions that the perturbation has broken: (a) the ability to separate prompt-salience effects from route-length effects (requires pre-trip intentions to test the exclusion restriction), and (b) the independence of prompt-zone exposure from trip mission (requires either randomization or mission controls, neither of which the packet provides). **Dependency confirmed.**\n\n**Verdict: `not_defensible`**\n\n---\n\n### Candidate 2: `within-trip-sequential`\n\n**Packet-Grounded Threat 1 — Visit-Order Is Endogenous to Unobserved Purchase Intentions.** The critical assumption states that category visit order is independent of planned spending intensity. But the perturbation removes pre-trip basket data, and shoppers almost certainly route themselves based on what they intend to buy. A shopper planning to buy fresh produce visits produce first; a shopper planning to buy frozen foods heads to the freezer aisle first. Without pre-trip plans, there is no way to control for or even diagnose this planned-ordering confound. The packet's own data card confirms the data are \"primarily cross-sectional at the trip level,\" so within-shopper differencing (which might absorb stable preferences) is unavailable.\n\n**Packet-Grounded Threat 2 — Trip-Stage Effects Are Inseparable from Route-Position Effects.** Even if visit order were plausibly exogenous, later-category spending could differ from early-category spending for reasons unrelated to route-induced impulse: shopper fatigue, budget depletion as the basket fills, or time pressure as the trip progresses. The perturbation removes the ability to benchmark these against a pre-trip plan (e.g., \"I planned to spend X on category Y and actually spent X+Z\"). The packet provides no trip-duration or basket-accumulation metrics to disentangle these mechanisms.\n\n**Perturbed-Condition Dependency Assessment:** The design's logic — that early-category spending ≈ planned and late-category spending ≈ unplanned — is exactly the inference the perturbation renders impossible by removing pre-trip baskets. Without knowing what was planned, the analyst cannot assign plan/impulse labels to any visit-order position. **Dependency confirmed.**\n\n**Verdict: `not_defensible`**\n\n---\n\n### Candidate 3: `selection-on-observables-matching`\n\n**Packet-Grounded Threat 1 — The Dominant Confound (Trip Mission) Is Unobserved by Construction.** The unconfoundedness assumption requires that all joint determinants of route length and spending are captured in covariates. The perturbation explicitly removes \"the shopper's original intended basket before wandering begins.\" Trip mission type — whether this is a major weekly stock-up trip, a quick fill-in trip, or a browse-heavy leisure trip — determines *both* how far the shopper walks *and* how much they spend. The packet's available covariates (demographics, store familiarity, time-of-day, prompt exposure) cannot proxy for mission type: two demographically identical shoppers entering at the same time on the same day can have fundamentally different trip missions with radically different route-length/spending relationships. The perturbation degrades the covariate set precisely at its most critical variable.\n\n**Packet-Grounded Threat 2 — The Outcome \"Unplanned Spending\" Is Unmeasurable, Forcing Reliance on Total Spending.** The research objective asks to estimate \"whether longer in-store travel causes higher unplanned spending.\" The perturbation removes pre-trip baskets, so \"unplanned\" cannot be defined at the individual-trip level. The candidate substitutes total spending, which conflates planned and unplanned components. Even if matching balanced covariates perfectly, the estimand would be the effect of route length on *total* spending — a different, weaker question than the one posed, and one where the business interpretation (\"does making people walk more make them spend more overall?\") fails to address the mechanism the retailer cares about.\n\n**Perturbed-Condition Dependency Assessment:** The candidate depends on the ability to condition on trip mission and to measure unplanned spending. The perturbation breaks both. Demographics and time-of-day do not substitute for trip-level purchase intentions. **Dependency confirmed.**\n\n**Verdict: `not_defensible`**\n\n---\n\n### Candidate 4: `descriptive-correlation-decomposition`\n\n**Packet-Grounded Threat 1 — \"Unplanned\" Spending Proxies Are Inherently Misclassification-Prone.** This candidate acknowledges that any definition of \"unplanned\" constructed from checkout data alone (e.g., rarely-purchased categories, prompt-matched items) is a proxy. Without pre-trip baskets, there is no ground truth to calibrate or validate this proxy. A shopper who always buys cereal on every trip and passes a cereal prompt will have their cereal purchase classified as \"prompt-responsive/unplanned\" under a naive proxy, when it is in fact entirely planned. The packet provides no household purchase-history panel that could be used to construct a better baseline.\n\n**Packet-Grounded Threat 2 — Descriptive Associations Cannot Answer the Causal Business Question.** The retailer wants to know \"whether path-inducing promotions are useful.\" A positive partial correlation between route length and spending does not imply that interventions lengthening routes will increase spending. Reverse causality (shoppers with larger spending needs walk further to fulfill them) and omitted variable bias (trip mission drives both) are equally consistent with the same descriptive pattern. The candidate correctly disclaims causal interpretation, but the business decision-maker receives no actionable evidence on the policy question.\n\n**Perturbed-Condition Dependency Assessment:** This candidate makes no causal identification assumptions and does not depend on pre-trip basket information. It operates entirely within the data the packet actually provides. Its threats are inherent to descriptive analysis and are explicitly acknowledged in the candidate's own framing. **No dependency on perturbed conditions.**\n\n**Verdict: `defensible_with_caveats`** — defensible as a descriptive analysis, with the caveat that it cannot answer the causal research question and that \"unplanned spending\" proxies are unvalidated.\n\n---\n\n### Summary Assessment\n\nAll three causal candidates (`prompt-zone-iv`, `within-trip-sequential`, `selection-on-observables-matching`) depend on conditions that the perturbation — removal of reliable pre-trip planned basket and mission data — has broken or rendered unverifiable. The perturbation is not a marginal data limitation; it removes the single most important variable for causal identification of route-length effects on *unplanned* spending. The descriptive fallback is the only candidate consistent with the packet's actual data constraints. The Stage 3 recommendation of `descriptive-correlation-decomposition` as primary is correct and necessary.\n\n```json\n{\n  \"verdict_distribution\": {\n    \"defensible\": 0,\n    \"defensible_with_caveats\": 1,\n    \"not_defensible\": 3\n  },\n  \"recommended_primary\": \"descriptive-correlation-decomposition\",\n  \"recommend_descriptive_fallback\": true,\n  \"perturbed_condition_dependency_detected\": true\n}\n```",
+    "replayInvalid": false,
+    "livenessState": "working",
+    "stopReason": "stop",
+    "executionTrace": {
+      "winnerProvider": "deepseek",
+      "winnerModel": "deepseek-v4-pro",
+      "attempts": [
+        {
+          "provider": "deepseek",
+          "model": "deepseek-v4-pro",
+          "result": "success",
+          "stage": "assistant"
+        }
+      ],
+      "fallbackUsed": false,
+      "runner": "embedded"
+    },
+    "requestShaping": {
+      "authMode": "auth-profile",
+      "thinking": "high"
+    },
+    "completion": {
+      "stopReason": "stop",
+      "finishReason": "stop"
+    }
+  }
+}

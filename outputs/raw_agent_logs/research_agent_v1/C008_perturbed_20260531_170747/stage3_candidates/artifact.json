@@ -1,0 +1,42 @@
+{
+  "candidates": [
+    {
+      "name": "Within-Store Difference-in-Differences",
+      "estimand": "Average treatment effect on the treated (ATT) of visible all-in pricing on quantity sold, using untreated product categories within the focal store as the comparison group.",
+      "identifying_variation": "Pre-post change in demand for treated product categories relative to the pre-post change for untreated product categories, both observed within the same store over the same time window.",
+      "critical_assumption": "Parallel trends: in the absence of the display intervention, treated and untreated product categories would have followed the same demand trajectory. Also requires no within-store SUTRA violations from substitution or attention spillover.",
+      "packet_support": "Packet states untreated products 'may provide comparison groups inside the same store'; repeated product/category observations over time in the focal store are available; pre-intervention sales levels and trends are recorded.",
+      "fragility": "Within-store spillover is explicitly noted in the data card ('Shoppers may substitute between treated and untreated products; display changes may draw attention to nearby products or categories'), which violates SUTVA and biases the untreated-group counterfactual. Treated and untreated categories may be fundamentally different product types with divergent seasonal or promotional dynamics, making parallel trends implausible. No untreated stores exist to validate the parallel-trends assumption or to benchmark the untreated-product trend.",
+      "is_fallback": false
+    },
+    {
+      "name": "Staggered Event Study",
+      "estimand": "Dynamic average treatment effect on the treated by event time, capturing how the salience effect evolves after the display change is introduced to each product category.",
+      "identifying_variation": "Within-category variation in treatment timing across product categories, exploiting that not all categories receive the display change simultaneously. Newly treated categories are compared to not-yet-treated categories at the same calendar time.",
+      "critical_assumption": "Treatment timing is conditionally independent of demand shocks — i.e., the sequence in which categories receive the display change is as-good-as-random after conditioning on category and time fixed effects. No anticipation effects before implementation.",
+      "packet_support": "Treatment timing and treated-category indicators are listed among treatment variables, suggesting possible staggered or phased rollout. Panel structure with repeated observations over time supports event-study estimation. Pre-period data allow testing for pre-trends and anticipation.",
+      "fragility": "If all treated categories receive the intervention simultaneously, this design collapses to a simple pre-post comparison. Even if staggered, the rollout order may be endogenous (e.g., high-margin or high-volume categories treated first), which biases the not-yet-treated counterfactual. Standard two-way fixed-effects estimators with staggered timing can produce biased estimates under treatment-effect heterogeneity; newer estimators (e.g., Callaway-Sant'Anna, Sun-Abraham) would be needed but their validity still hinges on parallel trends conditional on covariates.",
+      "is_fallback": false
+    },
+    {
+      "name": "Interrupted Time Series on Treated Products",
+      "estimand": "Change in the level and/or slope of demand for treated products at the point of intervention, where the counterfactual is the extrapolated pre-intervention trend.",
+      "identifying_variation": "Time-series break in the outcome series for treated products at the known intervention date, compared to a counterfactual trend fit on pre-period data and projected forward.",
+      "critical_assumption": "No other events, shocks, or interventions coincide with the display-change timing that could independently shift demand for the treated products. The pre-period trend is a valid model of what would have occurred absent the intervention.",
+      "packet_support": "Pre-intervention and intervention periods span multiple weeks, providing a time series long enough to model pre-trends. The intervention date is known. Actual prices, discounts, and promotions are observable and can be included as time-varying controls.",
+      "fragility": "Without a comparison group, the design cannot distinguish the display-change effect from any other event occurring at the same time (seasonal shifts, competitor actions, supply changes, other in-store changes). The intervention is a single point in time, so there is no replication. Credible causal identification is weak; at best this identifies a structural break in the time series that is consistent with a salience effect but cannot rule out confounds. This is a quasi-experimental design with low internal validity.",
+      "is_fallback": false
+    },
+    {
+      "name": "Descriptive Pre-Post with Price Controls",
+      "estimand": "Conditional association between the visible all-in price display and product demand, net of observed price changes, discounts, and promotions.",
+      "identifying_variation": "Before-after comparison of demand outcomes for treated products only, controlling for the actual paid price, promotional intensity, and discount depth observed in each period.",
+      "critical_assumption": "All determinants of demand that change around the intervention timing are captured by the observed price, promotion, and discount controls. No unobserved confounders are correlated with both the display change and demand.",
+      "packet_support": "Packet provides actual paid price, discounts, and promotions as baseline controls. Pre-intervention outcomes are available for descriptive comparison. The packet explicitly instructs: 'If credible causal identification is no longer justified, the answer must explicitly downgrade the claim or propose additional design changes.'",
+      "fragility": "This design cannot support a causal claim. The display change may be coincident with other unobserved changes (e.g., supplier negotiations, inventory adjustments, manager reassignments, local demand shocks). Even with price controls, the display change is perfectly collinear with time, so the salience effect cannot be separated from any other time-varying confound. At best, the analysis can describe whether demand changed after the intervention and whether that change persists after controlling for observed price movements, but cannot attribute the change to salience versus other mechanisms.",
+      "is_fallback": true
+    }
+  ],
+  "recommended_primary": "Within-Store Difference-in-Differences",
+  "notes": "The Within-Store DiD is the strongest candidate because it uses the only available comparison group (untreated products in the same store) and exploits both cross-sectional and temporal variation. However, its validity is severely threatened by within-store spillover, which the packet explicitly flags. The Staggered Event Study would be preferable if rollout was phased, but the packet does not confirm staggered timing. The ITS is a weaker quasi-experimental fallback. The purely descriptive pre-post analysis is listed as the fallback because it transparently downgrades the claim to association rather than causation. Without untreated stores, no candidate can achieve the same level of internal validity as the base design."
+}

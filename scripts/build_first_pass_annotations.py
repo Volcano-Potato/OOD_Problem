@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CLAIMS_CSV = ROOT / "outputs" / "parsed_claims" / "claims_to_annotate.csv"
 ANNOTATION_CSV = ROOT / "annotations" / "annotation_sheet.csv"
+DEFAULT_AGENT_VARIANT = "benchmark_isolated"
 
 
 def key(run_id: str, idx: int) -> str:
@@ -653,12 +654,14 @@ def default_supported_explanation(row: dict) -> str:
 
 
 def main() -> None:
-    rows = list(csv.DictReader(CLAIMS_CSV.open()))
+    with CLAIMS_CSV.open(newline="") as handle:
+        rows = list(csv.DictReader(handle))
     fieldnames = [
         "case_id",
         "variant_id",
         "level",
         "agent_name",
+        "agent_variant",
         "run_id",
         "claim_id",
         "claim_type",
@@ -695,6 +698,7 @@ def main() -> None:
                 "variant_id": row["variant_id"],
                 "level": row["level"],
                 "agent_name": "openclaw",
+                "agent_variant": row.get("agent_variant", "") or DEFAULT_AGENT_VARIANT,
                 "run_id": row["run_id"],
                 "claim_id": claim_id,
                 "claim_type": row["claim_type"],
@@ -712,6 +716,7 @@ def main() -> None:
             }
         )
 
+    ANNOTATION_CSV.parent.mkdir(parents=True, exist_ok=True)
     with ANNOTATION_CSV.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()

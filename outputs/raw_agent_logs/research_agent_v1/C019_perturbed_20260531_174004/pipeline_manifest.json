@@ -1,0 +1,36 @@
+{
+  "case_id": "C019",
+  "variant_id": "perturbed",
+  "agent_variant": "research_agent_v1",
+  "input_packet_sha256": "7513473ebef2dee1abb908f0f974bfae9b829b5b37d050465f4108c291b7edb6",
+  "stages": {
+    "stage3_candidates": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage3_candidates/artifact.json",
+      "duration_sec": 194.201,
+      "validation": "n_candidates=4",
+      "stderr_path": "stage3_candidates/stderr.log"
+    },
+    "stage4_critique": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage4_critique/artifact.md",
+      "duration_sec": 79.514,
+      "validation": "meta_path=stage4_critique/artifact.meta.json",
+      "stderr_path": "stage4_critique/stderr.log"
+    },
+    "stage5_final": {
+      "status": "ok",
+      "retries": 0,
+      "artifact_path": "stage5_final/artifact.md",
+      "duration_sec": 218.031,
+      "validation": "recommend_descriptive_fallback=True",
+      "stderr_path": "stage5_final/stderr.log"
+    }
+  },
+  "pipeline_failed": false,
+  "created_at": "2026-05-31T17:40:04.167873",
+  "source_input_file": "benchmark/cases/C019_in_store_travel_distance/agent_task_perturbed.md",
+  "completed_at": "2026-05-31T17:48:15.917255"
+}

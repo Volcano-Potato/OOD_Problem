@@ -1,0 +1,42 @@
+{
+  "candidates": [
+    {
+      "name": "Descriptive Stratification by Pre-Contact Choice × Contact Status",
+      "estimand": "Conditional mean differences in contribution probability and amount across four exposure groups defined by pre-contact choice (opted for notice vs. did not) and realized contact (contacted vs. not contacted).",
+      "identifying_variation": "Observed associations between self-selected pre-contact choices, realized contact status, and giving outcomes within strata of route, neighborhood, and timing.",
+      "critical_assumption": "No causal assumption is required for the descriptive estimand itself; the design explicitly refrains from claiming identification. Any causal interpretation would require unconfoundedness, which the perturbation precludes.",
+      "packet_support": "All necessary variables are directly observed in the data structure: pre-contact notice receipt, avoidance signals, realized contact, contribution occurrence, and contribution amount. Route, neighborhood, and timing controls are available for stratification.",
+      "fragility": "Cannot support any causal claim. The perturbation removes random assignment of the pre-contact condition, making self-selection the central feature of the data. Group comparisons conflate treatment effects with selection effects by construction.",
+      "is_fallback": true
+    },
+    {
+      "name": "Instrumental Variables Using Solicitor Identity and Visit Timing",
+      "estimand": "Local average treatment effect (LATE) of in-person contact on contribution probability, for the subpopulation of households whose contact status is shifted by variation in solicitor assignment or visit timing.",
+      "identifying_variation": "Different solicitors or teams have different baseline contact rates; visit timing windows (early vs. late in the route) create plausibly exogenous variation in the probability that a household is reached, independent of the household's own giving propensity.",
+      "critical_assumption": "Solicitor identity and visit timing affect contribution outcomes only through the probability of contact (exclusion restriction), and solicitor/route assignments are as good as randomly assigned conditional on observable area characteristics.",
+      "packet_support": "The data card explicitly lists solicitor or team identifiers and contact timing or visit window as baseline controls and design variables. The organization constructs the initial route list, providing a potential source of quasi-experimental variation in who conducts each visit and when.",
+      "fragility": "Solicitor assignment is unlikely to be random in practice: more experienced solicitors may be assigned to higher-income or denser routes. The exclusion restriction is fundamentally untestable. The packet provides no evidence that solicitor assignment or timing is orthogonal to area characteristics, and no explicit randomization protocol is described. The instrument may be weak if solicitor effects on contact are small relative to household self-selection.",
+      "is_fallback": false
+    },
+    {
+      "name": "Revealed-Preference Bounding with Avoidance Signals",
+      "estimand": "Bounds on the social-pressure component of giving, derived from comparing contribution behavior of households that signaled an avoidance preference but were contacted anyway to households that welcomed contact.",
+      "identifying_variation": "The gap between stated avoidance preference and realized contact status: households that explicitly signaled a desire to avoid the visit but were nonetheless contacted reveal a lower bound on pressure-induced giving, while households that sought advance notice and were contacted provide an upper bound on unpressured willingness.",
+      "critical_assumption": "The avoidance signal is a truthful revelation of the household's preference not to be solicited, and any contribution from contacted avoiders is attributable primarily to social pressure from the in-person interaction rather than to latent willingness.",
+      "packet_support": "The data structure records both whether the household signals a preference to avoid the visit (Stage 2) and whether contact actually occurs (Stage 3), along with contribution outcomes. The four-way classification of avoidance-signal × contact-status × contribution is directly constructable from observed variables.",
+      "fragility": "Avoidance signals may be noisy or strategic rather than truthful (e.g., households may signal avoidance to reduce fundraising hassle while still intending to give if contacted). The subpopulation of contacted avoiders may be too small to yield informative bounds. The bounding approach produces intervals rather than point estimates, and those intervals may be wide enough to be substantively uninformative. No auxiliary assumptions about monotonicity or treatment response are verifiable from the packet.",
+      "is_fallback": false
+    },
+    {
+      "name": "Selection-on-Observables with Route-Neighborhood Fixed Effects",
+      "estimand": "Average treatment effect of receiving advance notice (relative to no notice) on contribution probability, estimated from within-route and within-neighborhood comparisons of households that made different pre-contact choices.",
+      "identifying_variation": "Within narrowly defined geographic areas (same route segment, same neighborhood), some households opt for advance notice while others do not; comparing their giving outcomes conditional on a rich set of area-level and timing controls.",
+      "critical_assumption": "Conditional on route, neighborhood, building, visit timing, and solicitor fixed effects, the household's pre-contact choice (advance notice vs. not) is independent of potential giving outcomes. All determinants of both selection and giving are captured by the observables.",
+      "packet_support": "The packet provides route, building, neighborhood, and area indicators; contact timing or visit window; and solicitor or team identifiers as baseline controls. These permit a high-dimensional fixed-effects specification.",
+      "fragility": "The unconfoundedness assumption is implausible in this setting. Household-level characteristics such as altruism, income, social pressure sensitivity, and baseline engagement with the cause likely drive both pre-contact choices and giving outcomes. These are unobserved in the data structure. Even rich geographic and timing controls cannot absorb individual-level selection. The design would produce conditional correlations, not credible causal estimates.",
+      "is_fallback": false
+    }
+  ],
+  "recommended_primary": "Descriptive Stratification by Pre-Contact Choice × Contact Status",
+  "notes": "The perturbation removes researcher control over the pre-contact condition, which is the core source of identifying variation in the base design. No candidate achieves credible point identification of a causal effect. The IV strategy is the strongest causal candidate but requires an exclusion restriction and quasi-random solicitor assignment that the packet does not support. The bounding approach offers partial identification but depends on the truthfulness of avoidance signals. The recommended primary is the descriptive fallback because it aligns with the packet's instruction to downgrade claims when strong identification is no longer justified."
+}
