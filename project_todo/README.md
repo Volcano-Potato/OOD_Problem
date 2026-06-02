@@ -93,17 +93,42 @@
     - baseline `level2` threat-recognition audit headline: `19/20`
     - `9/10` cases scored `2/2`
   - `task32` not started
-  - `task33-38` planned
-    - `task33-35`: v2 retrieval ablation
-    - `task36-38`: v3 planner/debate ablation
+  - `task33` complete
+    - v2 retrieval stage/search gate implemented
+    - `C001_perturbed` smoke passed end-to-end
+    - session-based tool accounting fixed
+  - `task34` complete
+    - `10`-case `research_agent_v2_search` perturbed batch completed
+    - formal main rows and retrieval metadata recorded in `outputs/run_manifest.csv`
+    - downstream extraction / annotation / adjudication / metrics chain completed
+    - `results/metrics_summary_research_agent_v2_search.csv` and `.md` generated
+  - `task35` complete
+    - v2 paired audit headline: `0/10` mechanical reuse
+    - v1 vs v2 delta: `2/10 -> 0/10`
+    - retrieval attempt / success: `10/10`, with `0/10` zero-tool-use runs
+    - retrieval usefulness audit generated, with `helpful 6 / neutral 3 / noisy 1 / failed 0`
+    - recommendation: `go to v3`, but only as an optional ablation rather than a rescue step
+  - `task36` complete
+    - smoke-only `research_agent_v3_planner_debate` runner implemented
+    - single-case `C005_perturbed` smoke passed end-to-end
+    - `Stage 0 planner`, `Stage 3b response`, and `Stage 4b critique` artifacts now land under `outputs/raw_agent_logs/research_agent_v3/`
+    - planner/debate stop rule fixed at one debate round for smoke validation
+    - no formal bridge executed; `outputs/run_manifest.csv` remains unchanged for `v3`
+  - `task37` complete
+    - clean full rerun of `research_agent_v3_planner_debate` `10`-case `perturbed` batch completed
+    - formal main rows and planner/retrieval/debate metadata recorded in `outputs/run_manifest.csv`
+    - downstream extraction / annotation / adjudication / metrics chain completed
+    - `results/metrics_summary_research_agent_v3_planner_debate.csv` and `.md` generated
+    - current claim-level headline metrics remain provisional; the main `v3 vs v1/v2` interpretation is deferred to `task38`
+  - `task38` planned
+    - v3 planner/debate ablation against `v1` and `v2`
 
 当前最合理的后续顺序是：
 
-1. 若要继续做 agent redesign，先执行 `task33 -> 34 -> 35`
-2. 只有在 `task35` 认为 v2 值得继续时，再做 `task36 -> 37 -> 38`
-3. `task32` no-solution 扩展保持为独立 coverage extension，不与 v2/v3 ablation 混跑
-4. 如有需要，再补 `research_agent_v1` 的 run-specific annotation overrides，使其 claim-level headline metrics 也达到可稳定引用状态
-5. 如有需要，再把 `task31` 的轻量 audit 扩到 intervention arm，做 baseline vs `research_agent_v1` 的 threat-recognition appendix
+1. 若要继续做 agent redesign，执行 `task38`
+2. `task32` no-solution 扩展保持为独立 coverage extension，不与 v2/v3 ablation 混跑
+3. 如有需要，再补 `research_agent_v1` 的 run-specific annotation overrides，使其 claim-level headline metrics 也达到可稳定引用状态
+4. 如有需要，再把 `task31` 的轻量 audit 扩到 intervention arm，做 baseline vs `research_agent_v1` 的 threat-recognition appendix
 
 ## 完成定义
 

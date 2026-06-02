@@ -82,6 +82,8 @@ def perturbed_audit_path_for_variant(agent_variant: str) -> Path:
         return PERTURBED_AUDIT_CSV
     if agent_variant == "research_agent_v1":
         return RESULTS_DIR / "perturbed_mechanical_reuse_v1.csv"
+    if agent_variant == "research_agent_v2_search":
+        return RESULTS_DIR / "perturbed_mechanical_reuse_v2.csv"
     return RESULTS_DIR / f"perturbed_mechanical_reuse_{metric_suffix(agent_variant)}.csv"
 
 

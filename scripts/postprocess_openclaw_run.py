@@ -33,6 +33,10 @@ MANIFEST_FIELDNAMES = [
     "status",
     "contamination_status",
     "contamination_reason",
+    "retrieval_attempted",
+    "retrieval_successful",
+    "retrieval_tool_calls",
+    "retrieval_failure_reason",
     "notes",
 ]
 
@@ -62,9 +66,27 @@ def parse_args():
         "--tools-enabled",
         default="locally_isolated_remote_tool_enabled",
     )
+    parser.add_argument("--actual-tool-use-override")
+    parser.add_argument("--tool-call-count-override", type=int)
+    parser.add_argument("--tool-result-count-override", type=int)
+    parser.add_argument("--retrieval-attempted-override")
+    parser.add_argument("--retrieval-successful-override")
+    parser.add_argument("--retrieval-tool-calls-override", type=int)
+    parser.add_argument("--retrieval-failure-reason-override")
     parser.add_argument("--manifest-path", default="outputs/run_manifest.csv")
     parser.add_argument("--default-status", default="unknown")
     return parser.parse_args()
+
+
+def normalize_optional_bool(value: str | None) -> str:
+    if value is None:
+        return ""
+    lowered = value.strip().lower()
+    if lowered in {"true", "1", "yes"}:
+        return "true"
+    if lowered in {"false", "0", "no"}:
+        return "false"
+    return value
 
 
 def load_json_if_present(path: Path):
@@ -127,33 +149,72 @@ def extract_tool_meta(trajectory_path: Path):
     return tool_metas, workspace_dir, trace_status
 
 
-def extract_tool_counts(session_path: Path):
+def normalize_tool_names(tool_items):
+    names = []
+    seen = set()
+    for item in tool_items or []:
+        value = None
+        if isinstance(item, dict):
+            for key in ("name", "toolName", "id"):
+                candidate = item.get(key)
+                if candidate:
+                    value = str(candidate)
+                    break
+        elif item:
+            value = str(item)
+        if value and value not in seen:
+            seen.add(value)
+            names.append(value)
+    return names
+
+
+def extract_session_tool_activity(session_path: Path):
     if not session_path.exists():
         return {
             "tool_call_count": 0,
             "tool_result_count": 0,
+            "tool_names": [],
             "session_log_exists": False,
         }
-    text = session_path.read_text(errors="ignore")
+    tool_call_count = 0
+    tool_result_count = 0
+    tool_names = []
+    seen_names = set()
+    for line in session_path.read_text(errors="ignore").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            entry = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if entry.get("type") != "message":
+            continue
+        message = entry.get("message") or {}
+        role = message.get("role")
+        if role == "toolResult":
+            tool_result_count += 1
+            tool_name = message.get("toolName")
+            if tool_name and tool_name not in seen_names:
+                seen_names.add(tool_name)
+                tool_names.append(str(tool_name))
+            continue
+        content = message.get("content")
+        if isinstance(content, list):
+            for block in content:
+                if not isinstance(block, dict) or block.get("type") != "toolCall":
+                    continue
+                tool_call_count += 1
+                tool_name = block.get("name")
+                if tool_name and tool_name not in seen_names:
+                    seen_names.add(tool_name)
+                    tool_names.append(str(tool_name))
     return {
-        "tool_call_count": text.count("toolCall"),
-        "tool_result_count": text.count("toolResult"),
+        "tool_call_count": tool_call_count,
+        "tool_result_count": tool_result_count,
+        "tool_names": tool_names,
         "session_log_exists": True,
     }
-
-
-def normalize_tool_names(tool_metas):
-    names = []
-    for item in tool_metas or []:
-        if isinstance(item, dict):
-            for key in ("name", "toolName", "id"):
-                value = item.get(key)
-                if value:
-                    names.append(str(value))
-                    break
-        elif item:
-            names.append(str(item))
-    return names
 
 
 def derive_status(exit_code: int, json_data: dict | None, output_text: str):
@@ -169,11 +230,11 @@ def derive_status(exit_code: int, json_data: dict | None, output_text: str):
     return "success"
 
 
-def derive_contamination(status: str, actual_tool_use: str, trajectory_exists: bool):
+def derive_contamination(status: str, actual_tool_use: str, tool_activity_reconstructed: bool):
     if status != "success":
         reason = "run did not complete successfully; contamination review pending"
         return "unknown", reason
-    if not trajectory_exists:
+    if not tool_activity_reconstructed:
         reason = "trajectory missing; actual tool use could not be reconstructed"
         return "suspected", reason
     if actual_tool_use == "none":
@@ -270,15 +331,25 @@ def append_manifest_row(manifest_path: Path, row: dict[str, str]):
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     existing = set()
     header = MANIFEST_FIELDNAMES
+    existing_rows = []
     if manifest_path.exists():
         with manifest_path.open(newline="") as fh:
             reader = csv.DictReader(fh)
             if reader.fieldnames:
-                header = reader.fieldnames
+                header = list(reader.fieldnames)
             for current in reader:
+                existing_rows.append(current)
                 run_id = current.get("run_id")
                 if run_id:
                     existing.add(run_id)
+    missing_fields = [field for field in MANIFEST_FIELDNAMES if field not in header]
+    if missing_fields:
+        header = list(header) + missing_fields
+        with manifest_path.open("w", newline="") as fh:
+            writer = csv.DictWriter(fh, fieldnames=header, lineterminator="\n")
+            writer.writeheader()
+            for current in existing_rows:
+                writer.writerow({key: current.get(key, "") for key in header})
     if row["run_id"] in existing:
         raise SystemExit(f"run_id already exists in manifest: {row['run_id']}")
     with manifest_path.open("a", newline="") as fh:
@@ -307,8 +378,14 @@ def main():
     session_file_hint = agent_meta.get("sessionFile")
     session_path, trajectory_path = find_session_paths(session_id, session_file_hint)
     tool_metas, workspace_dir, trace_status = extract_tool_meta(trajectory_path)
-    tool_counts = extract_tool_counts(session_path)
-    tool_names = normalize_tool_names(tool_metas)
+    tool_counts = extract_session_tool_activity(session_path)
+    if args.tool_call_count_override is not None:
+        tool_counts["tool_call_count"] = args.tool_call_count_override
+    if args.tool_result_count_override is not None:
+        tool_counts["tool_result_count"] = args.tool_result_count_override
+    tool_names = tool_counts["tool_names"] or normalize_tool_names(tool_metas)
+    if args.actual_tool_use_override is not None:
+        tool_names = [name for name in args.actual_tool_use_override.split(",") if name]
     actual_tool_use = ",".join(tool_names) if tool_names else "none"
 
     exit_code = int(os.environ.get("OPENCLAW_RUN_EXIT_CODE", "0"))
@@ -316,7 +393,7 @@ def main():
     contamination_status, contamination_reason = derive_contamination(
         status=status,
         actual_tool_use=actual_tool_use,
-        trajectory_exists=trajectory_path.exists(),
+        tool_activity_reconstructed=bool(tool_counts["session_log_exists"] or trajectory_path.exists()),
     )
 
     model = agent_meta.get("model", "unknown")
@@ -412,6 +489,12 @@ def main():
         "status": status,
         "contamination_status": contamination_status,
         "contamination_reason": contamination_reason,
+        "retrieval_attempted": normalize_optional_bool(args.retrieval_attempted_override),
+        "retrieval_successful": normalize_optional_bool(args.retrieval_successful_override),
+        "retrieval_tool_calls": (
+            str(args.retrieval_tool_calls_override) if args.retrieval_tool_calls_override is not None else ""
+        ),
+        "retrieval_failure_reason": args.retrieval_failure_reason_override or "",
         "notes": "; ".join(notes_parts),
     }
     append_manifest_row(manifest_path, row)

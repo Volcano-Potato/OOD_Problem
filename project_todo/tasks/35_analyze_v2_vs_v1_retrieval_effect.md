@@ -116,13 +116,13 @@
 
 ## 验收标准
 
-- [ ] v2 的 paired manual audit 已完成。
-- [ ] v2 的 `mechanical_reuse` headline 已给出。
-- [ ] v2 的 retrieval attempt / success / failure 已统计。
-- [ ] 每个 case 的 retrieval usefulness 已分类。
-- [ ] 已写出 v1 vs v2 的结果对比说明。
-- [ ] 已给出是否继续进入 v3 的明确建议。
-- [ ] 所有新增或更新文件通过 `git diff --check`。
+- [x] v2 的 paired manual audit 已完成。
+- [x] v2 的 `mechanical_reuse` headline 已给出。
+- [x] v2 的 retrieval attempt / success / failure 已统计。
+- [x] 每个 case 的 retrieval usefulness 已分类。
+- [x] 已写出 v1 vs v2 的结果对比说明。
+- [x] 已给出是否继续进入 v3 的明确建议。
+- [x] 所有新增或更新文件通过 `git diff --check`。
 
 ## 常见风险
 
@@ -130,4 +130,3 @@
 - 把“发生了工具调用”误当作“retrieval 有帮助”。
 - retrieval rate 很高，但最终 memo 没变化，却仍夸大 v2 的价值。
 - 没有给出 go / no-go 结论，导致 v3 变成惯性扩展。
-

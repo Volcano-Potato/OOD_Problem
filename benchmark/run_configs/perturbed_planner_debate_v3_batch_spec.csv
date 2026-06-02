@@ -1,0 +1,11 @@
+case_id,variant_id,input_file,enabled,notes
+C001,perturbed,benchmark/cases/C001_charitable_giving/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun
+C002,perturbed,benchmark/cases/C002_consumer_credit/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun
+C004,perturbed,benchmark/cases/C004_paid_search_effectiveness/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun
+C005,perturbed,benchmark/cases/C005_online_ad_measurement/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun
+C008,perturbed,benchmark/cases/C008_retail_tax_salience/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun
+C010,perturbed,benchmark/cases/C010_fertilizer_present_bias/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun
+C014,perturbed,benchmark/cases/C014_corruption_monitoring/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun
+C016,perturbed,benchmark/cases/C016_hiv_risk_information/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun
+C019,perturbed,benchmark/cases/C019_in_store_travel_distance/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun
+C020,perturbed,benchmark/cases/C020_price_ending_field_experiment/agent_task_perturbed.md,true,task37 research_agent_v3 planner debate perturbed rerun

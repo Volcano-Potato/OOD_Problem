@@ -83,14 +83,33 @@
 
 ## 验收标准
 
-- [ ] v3 的 `10` 条 `perturbed` batch spec 已冻结。
-- [ ] `10` 条正式 v3 batch 已运行完成并落盘。
-- [ ] planner / retrieval / debate / final artifacts 均已保留。
-- [ ] 每条成功 run 都已 bridge 进正式 main raw log。
-- [ ] manifest 中已登记 `research_agent_v3_planner_debate` rows。
-- [ ] v3 arm 已进入 extraction / annotation / adjudication / metrics 链。
-- [ ] arm-specific metrics summary 已生成。
-- [ ] 所有新增或更新文件通过 `git diff --check`。
+- [x] v3 的 `10` 条 `perturbed` batch spec 已冻结。
+- [x] `10` 条正式 v3 batch 已运行完成并落盘。
+- [x] planner / retrieval / debate / final artifacts 均已保留。
+- [x] 每条成功 run 都已 bridge 进正式 main raw log。
+- [x] manifest 中已登记 `research_agent_v3_planner_debate` rows。
+- [x] v3 arm 已进入 extraction / annotation / adjudication / metrics 链。
+- [x] arm-specific metrics summary 已生成。
+- [x] 所有新增或更新文件通过 `git diff --check`。
+
+## 完成说明
+
+- 正式 `10` 条 `perturbed` batch 已全部成功写入：
+  - `outputs/raw_agent_logs/research_agent_v3/`
+  - `outputs/raw_agent_logs/main/`
+  - `outputs/run_manifest.csv`
+- 当前正式 `agent_variant = research_agent_v3_planner_debate` 共 `10` 条 `success` rows。
+- retrieval metadata 已全部透传到 manifest：
+  - `retrieval_attempted = true`
+  - `retrieval_successful = true`
+  - `retrieval_tool_calls > 0`
+- 下游链已重跑并接入：
+  - `outputs/parsed_claims/claims_to_annotate.csv`
+  - `annotations/annotation_sheet.csv`
+  - `annotations/adjudicated_labels.csv`
+  - `results/metrics_summary_research_agent_v3_planner_debate.csv`
+  - `results/metrics_summary_research_agent_v3_planner_debate.md`
+- 与 `v1/v2` 一样，`v3` 当前的 claim-level headline metrics 仍应视为 provisional，不应替代 `task38` 中的 paired audit / ablation comparison。
 
 ## 常见风险
 
@@ -98,4 +117,3 @@
 - debate 轮数太多，成本失控。
 - v3 batch 中途调整 planner / debate prompt，导致内部不可比。
 - 没有把 planner / debate metadata 透传到最终分析层。
-

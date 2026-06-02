@@ -130,15 +130,15 @@ v3 解决的问题不是“会不会搜”，而是：
 
 ## 验收标准
 
-- [ ] `Stage 0 planner` 已固定为独立 stage。
-- [ ] planner artifact schema 已写明并可解析。
-- [ ] debate protocol 与最大轮数已固定。
-- [ ] stop rule 已写明。
-- [ ] v3 orchestrator 已支持完整 loop。
-- [ ] 单 case smoke test 已跑通并落盘。
-- [ ] smoke test 中至少发生一轮真实 debate 交互。
-- [ ] final memo 仍符合正式 output contract。
-- [ ] 所有新增或更新文件通过 `git diff --check`。
+- [x] `Stage 0 planner` 已固定为独立 stage。
+- [x] planner artifact schema 已写明并可解析。
+- [x] debate protocol 与最大轮数已固定。
+- [x] stop rule 已写明。
+- [x] v3 orchestrator 已支持完整 loop。
+- [x] 单 case smoke test 已跑通并落盘。
+- [x] smoke test 中至少发生一轮真实 debate 交互。
+- [x] final memo 仍符合正式 output contract。
+- [x] 所有新增或更新文件通过 `git diff --check`。
 
 ## 常见风险
 
@@ -146,4 +146,3 @@ v3 解决的问题不是“会不会搜”，而是：
 - debate 没有 stop rule，导致成本失控。
 - 把 v2 和 v3 的状态机写进同一个难维护脚本。
 - 为了让 debate 看起来“更 agentic”而牺牲可审计性。
-

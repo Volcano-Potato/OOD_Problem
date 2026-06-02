@@ -7,9 +7,9 @@ __pycache__/
 .venv/
 venv/
 env/
+.benchmark.local.env
 
 # Local runtime artifacts; keep curated benchmark data and annotations tracked.
 outputs/
 results/
 *.log
-

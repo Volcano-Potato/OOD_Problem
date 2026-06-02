@@ -125,14 +125,14 @@
 
 ## 验收标准
 
-- [ ] `10` 条 `perturbed` case 的 v2 batch spec 已冻结。
-- [ ] `10` 条正式 v2 batch 已运行完成并落盘。
-- [ ] 每条成功 run 都已 bridge 进正式 main raw log。
-- [ ] `run_manifest.csv` 已记录 `research_agent_v2_search` rows。
-- [ ] 每条 run 的 retrieval metadata 可追踪。
-- [ ] v2 arm 已进入 extraction / annotation / adjudication / metrics 链。
-- [ ] arm-specific metrics summary 已生成。
-- [ ] 所有新增或更新文件通过 `git diff --check`。
+- [x] `10` 条 `perturbed` case 的 v2 batch spec 已冻结。
+- [x] `10` 条正式 v2 batch 已运行完成并落盘。
+- [x] 每条成功 run 都已 bridge 进正式 main raw log。
+- [x] `run_manifest.csv` 已记录 `research_agent_v2_search` rows。
+- [x] 每条 run 的 retrieval metadata 可追踪。
+- [x] v2 arm 已进入 extraction / annotation / adjudication / metrics 链。
+- [x] arm-specific metrics summary 已生成。
+- [x] 所有新增或更新文件通过 `git diff --check`。
 
 ## 常见风险
 
@@ -140,4 +140,3 @@
 - retrieval metadata 只在中间目录里，manifest 没透传，后续没法统计。
 - batch 过程中改 prompt 或 search gate，导致 v2 内部不可比。
 - v2 arm 的 downstream 输出覆盖 baseline canonical 结果。
-

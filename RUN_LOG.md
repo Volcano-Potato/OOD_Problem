@@ -1062,3 +1062,441 @@ The goal was to turn `task30` from a planning document into a runnable and audit
   - `task33 -> 34 -> 35` as the v2 branch
   - `task36 -> 37 -> 38` as the v3 branch
 - `task32` remains a separate `no_solution` coverage extension and is intentionally not bundled into the v2 / v3 ablation path.
+
+### Task 33: OpenAlex-First Retrieval Gate Work Started
+
+- Began `task33` implementation for `research_agent_v2`.
+- Added:
+  - `scripts/run_research_agent_v2.py`
+  - `scripts/postprocess_research_agent_v2_run.py`
+  - `benchmark/prompts/research_agent_v2/`
+  - `tests/test_research_agent_v2_smoke.py`
+  - `docs/superpowers/plans/2026-06-01-task33-v2-retrieval-stage-implementation.md`
+- Fixed the v2 runner so that:
+  - OpenAlex is queried runner-side via `OPENALEX_API_KEY` and `OPENALEX_EMAIL`
+  - the resulting `openalex_seed.json` is saved under `stage2_retrieval/`
+  - `Stage 2` is marked `invalid` when `actual tool calls = 0`
+  - invalid runs still preserve `artifact.json`, `evidence_summary.md`, `raw_openclaw.json`, and `stderr.log` for audit
+- Updated `task33` spec to reflect the intended retrieval stack:
+  - primary scholarly graph: `OpenAlex`
+  - economics-first layer: `RePEc/IDEAS`
+  - supplemental layer: `NBER/SSRN`
+  - current live fallback: `deepxiv` and `web_search`
+- Added local credential persistence for runner-side OpenAlex access:
+  - `.benchmark.local.env` is now the default local credential file
+  - `.benchmark.local.env.example` documents the expected format
+  - `run_research_agent_v2.py` auto-loads this file on each run if `OPENALEX_API_KEY` / `OPENALEX_EMAIL` are not already present in the shell environment
+  - `.benchmark.local.env` is git-ignored and should remain local-only
+
+### Task 33 Smoke Outcome So Far
+
+- Verified runner-side OpenAlex access works:
+  - `openalex_seed.json` is generated successfully for `C001_perturbed`
+  - current query shape still needs refinement, but the API path is live
+- Verified `deepxiv` is available in the OpenClaw tool stack during the smoke run
+- Ran two early `C001_perturbed` v2 smoke tests before the counter fix.
+- Both runs failed at the same gate:
+  - `Stage 2 is invalid: no actual retrieval tool call was recorded.`
+- In both runs:
+  - `toolMetas = null`
+  - `messages = []`
+  - `tool_calls = 0`
+  - `tool_results = 0`
+- The model still fabricated retrieval artifacts claiming use of:
+  - `deepxiv`
+  - `semantic-scholar`
+  - `web_search`
+  despite leaving no actual tool-call trace
+
+### Interpretation Of Current Task 33 State
+
+- The OpenAlex integration path is now working at the runner layer.
+- The remaining failure is no longer about unavailable scholarly context.
+- The remaining blocker is agent behavior:
+  - even with a mandatory first-query instruction and an explicit real-tool-call requirement, the current OpenClaw trajectory still chooses to emit a fabricated retrieval summary instead of executing a live tool call
+- Therefore `task33` is **in progress**, not complete.
+- The next likely repair direction is to add a stronger execution constraint than prompt-only gating, such as:
+  - a tool-preflight step outside the model
+  - or a stricter no-answer-before-tool-call protocol if the platform supports it
+
+## 2026-06-01
+
+### Stage
+
+OpenClaw "cannot call tools" investigation. Root-caused the Task 33 search-gate failure and corrected the prior misdiagnosis.
+
+### Trigger
+
+- Reported symptom: OpenClaw in this project "keeps failing to call tools".
+- The `2026-05-31` Task 33 entry concluded the blocker was **agent behavior** (the model allegedly fabricating retrieval instead of calling tools).
+- This conclusion was **wrong** and is corrected below.
+
+### Root Cause
+
+- The failure was a parser bug in `scripts/run_research_agent_v2.py`, not OpenClaw and not model behavior.
+- `extract_tool_call_counts()` read tool activity from `data["messages"]` and `meta["toolMetas"]`.
+- Current OpenClaw (`2026.5.5`) `openclaw agent --local --json` output contains neither:
+  - top-level keys are only `payloads` and `meta`
+  - there is no `messages` array
+  - `meta.toolMetas` is empty even when tools were called
+- Actual tool calls are recorded only in the session transcript at `meta.agentMeta.sessionFile`:
+  - assistant messages carry `content` blocks of `type: "toolCall"`
+  - tool outputs are separate messages with `role: "toolResult"`
+- Therefore `extract_tool_call_counts()` always returned `0`, which made the gate (`tool_calls == 0`) mark `Stage 2` invalid and made `normalize_stage2_artifact()` overwrite the model's truthful `retrieval_successful` to `False` with `failure_reason="no_actual_tool_use_recorded"`.
+
+### Evidence
+
+- The initial real `C001_perturbed` run recorded `retrieval_tool_calls: 0` in its manifest even though the session transcript showed live tool use.
+- Its session transcript actually contained `20` tool calls:
+  - `web_search` x15, `web_fetch` x3, `semantic-scholar__search_papers` x1, `semantic-scholar__get_paper_details` x1
+- The stage artifact even self-reported `tool_attempt_count: 12`, `tool_success_count: 10`.
+- `systemPromptReport.tools.entries` confirmed all tools (`web_search`, `web_fetch`, `deepxiv__*`, `semantic-scholar__*`) were registered and sent as native function schemas (`schemaChars: 6359`).
+- Two isolated control probes (`--thinking off` and `--thinking high`, identical forcing prompt) both produced real `toolCall` blocks, ruling out a thinking-level or capability cause.
+
+### Fix — What Was Changed
+
+- File: `scripts/run_research_agent_v2.py`
+- Function: `extract_tool_call_counts()` (only this function changed; added one helper).
+
+**Why it was wrong:** the old version counted from `data["messages"]` and `meta["toolMetas"]`, neither of which exists/populates in OpenClaw `2026.5.5` `--json` output, so it always returned `0`.
+
+Before (broken — reads fields the `--json` payload does not contain):
+
+```python
+def extract_tool_call_counts(data: dict) -> dict[str, int]:
+    tool_calls = 0
+    tool_results = 0
+    for entry in data.get("messages") or []:          # <- no "messages" key in --json
+        ...
+    tool_metas = (data.get("meta") or {}).get("toolMetas") or []   # <- always empty
+    if tool_calls == 0 and tool_metas:
+        tool_calls = len(tool_metas)
+    return {"tool_calls": tool_calls, "tool_results": tool_results}
+```
+
+After (fixed — counts from the session transcript, which is the source of truth):
+
+```python
+def count_tool_calls_from_session(session_file: Path) -> dict[str, int]:
+    # assistant messages carry content blocks of type "toolCall";
+    # tool outputs are separate messages with role "toolResult".
+    ...
+
+def extract_tool_call_counts(data: dict) -> dict[str, int]:
+    meta = data.get("meta") or {}
+    session_file = (meta.get("agentMeta") or {}).get("sessionFile")
+    if session_file and Path(session_file).exists():
+        return count_tool_calls_from_session(Path(session_file))   # <- new primary path
+    # ... old messages/toolMetas logic retained only as fallback ...
+```
+
+- Net effect: tool calls are now read from `meta.agentMeta.sessionFile` (`toolCall` blocks + `toolResult` messages); the old logic stays only as a fallback for other `--json` schemas.
+- No other pipeline stage, prompt, or schema was modified.
+
+### Fix Verification (replay, no new API call)
+
+- Re-ran the patched counter against the original pre-fix `C001_perturbed` run:
+  - `extract_tool_call_counts -> {'tool_calls': 20, 'tool_results': 19}`
+  - the gate no longer fails (`tool_calls == 0` is now `False`)
+  - on fresh model values, `normalize_stage2_artifact` keeps `retrieval_successful=True` and `failure_reason=None`
+- `python3 -m py_compile scripts/run_research_agent_v2.py` passed.
+
+### Re-run Verification (fresh C001 perturbed run)
+
+- Re-ran the full pipeline on `benchmark/cases/C001_charitable_giving/agent_task_perturbed.md`.
+- A fresh post-fix validation run then passed the Stage 2 gate and completed the full pipeline.
+- `stage2_retrieval` now passes the gate:
+  - `status: ok`
+  - `retrieval_attempted: true`
+  - `retrieval_successful: true`
+  - `retrieval_tool_calls: 12`
+  - no `no_actual_tool_use_recorded` failure_reason
+- Actual tool use in the new stage 2 session (`12` calls / `12` results):
+  - `web_search` x6 (live web search)
+  - `deepxiv__search_papers` x5 (literature retrieval MCP)
+  - `web_fetch` x1
+- Full pipeline completed: `pipeline_failed: false`, all four stages `ok`, `stage5_final` recorded `retrieval_successful=True`, `recommend_descriptive_fallback=False`.
+- Conclusion: with the counter fixed, the same case that previously hard-failed at the gate now correctly registers live tool use and web search, and the pipeline runs to completion.
+
+### Secondary Findings (not the main blocker)
+
+- `web_fetch` to `news.ycombinator.com` hit the 30s SSRF-guard timeout in the isolated probes; when a tool fails, `deepseek-v4-pro` tends to fabricate a plausible result instead of reporting the failure. This is a benchmark-integrity risk to watch.
+- Non-fatal config warnings: `bundle-mcp` is an invalid allowlist entry; `plugins.allow` is empty so `qqbot`/`openclaw-weixin` auto-load; skills symlink-escape warnings for `.orchestra`/`.codex` paths.
+- `~/.openclaw/openclaw.json` stores secrets (tavily key, gateway token, qqbot clientSecret) in plaintext; do not share or commit that file.
+
+### Corrected Interpretation Of Task 33
+
+- The earlier "agent fabricates retrieval instead of calling tools" reading was an artifact of the broken counter.
+- The model does perform live retrieval; the pipeline simply failed to see it.
+- `task33` should be re-evaluated with the fixed gate before adding any heavier no-answer-before-tool-call constraint.
+
+### Task 33 Completion After Counter Fix
+
+- Re-ran the full `C001_perturbed` v2 smoke test after the counter repair.
+- Final outcome:
+  - all four stages `ok`
+  - `pipeline_failed: false`
+  - `stage2_retrieval.retrieval_tool_calls = 15`
+  - `stage2_retrieval.retrieval_successful = true`
+- This confirms the original `invalid` outcome was a false negative produced by the broken tool counter.
+
+### Postprocess Chain Correction
+
+- Fixed `scripts/postprocess_openclaw_run.py` so that:
+  - `sessionFile` is the primary truth source for both tool counts and tool names
+  - trajectory `toolMetas` is now only a fallback
+- Fixed `scripts/postprocess_research_agent_v2_run.py` so that:
+  - formal v2 raw logs summarize **pipeline-level** tool use, not just the `stage5_final` session
+- Re-bridged the successful smoke run:
+  - run id: `RUN_20260601_TASK33_SMOKE_FIX`
+  - raw log: `outputs/raw_agent_logs/main/C001_perturbed__research_agent_v2_search__RUN_20260601_TASK33_SMOKE_FIX.md`
+- Correct formal tool summary now records:
+  - `actual_tool_use = deepxiv__search_papers,web_search,deepxiv__get_paper_brief`
+  - contamination note also reflects the same pipeline-level tool use
+
+### Task 33 Status
+
+- `task33` is now complete.
+- The next executable step in the redesign branch is:
+  - `task34`: run the v2 retrieval-augmented 10-case `perturbed` batch
+
+## 2026-06-01 - Task 34 v2 Batch Completion
+
+### Batch Completion
+
+- Completed the formal `research_agent_v2_search` `10`-case `perturbed` batch with the same case set as `research_agent_v1`:
+  - `C001`, `C002`, `C004`, `C005`, `C008`, `C010`, `C014`, `C016`, `C019`, `C020`
+- Batch spec:
+  - `benchmark/run_configs/perturbed_retrieval_v2_batch_spec.csv`
+- Batch runner:
+  - `scripts/run_research_agent_v2_batch.sh`
+- Multi-stage artifacts:
+  - `outputs/raw_agent_logs/research_agent_v2/`
+- Formal bridged outputs:
+  - `outputs/raw_agent_logs/main/*__research_agent_v2_search__*.md`
+
+### Manifest / Retrieval Metadata
+
+- `outputs/run_manifest.csv` now contains `10` success rows for `research_agent_v2_search`.
+- All `10` rows record retrieval metadata:
+  - `retrieval_attempted = true`
+  - `retrieval_successful = true`
+  - `retrieval_tool_calls > 0`
+- Recorded retrieval tool-call counts across the `10` runs:
+  - `10, 15, 17, 19, 24, 14, 19, 17, 18, 14`
+- Non-fatal retrieval notes remain in `retrieval_failure_reason` for some rows where `semantic-scholar` hit rate limits but `deepxiv` / `web_search` still provided enough coverage.
+
+### Downstream Chain
+
+- Re-ran the v2 downstream chain after the batch:
+  - `scripts/extract_agent_claims.py`
+  - `scripts/build_first_pass_annotations.py`
+  - `scripts/build_second_labels_and_adjudication.py`
+  - `scripts/compute_benchmark_metrics.py`
+- v2 is now present in:
+  - `outputs/parsed_claims/claims_to_annotate.csv`
+  - `annotations/annotation_sheet.csv`
+  - `annotations/second_labels.csv`
+  - `annotations/adjudicated_labels.csv`
+- Generated arm-specific metrics outputs:
+  - `results/metrics_summary_research_agent_v2_search.csv`
+  - `results/metrics_summary_research_agent_v2_search.md`
+
+### Downstream Debug Note
+
+- A transient false failure appeared while re-running downstream because `build_first_pass_annotations.py` and `build_second_labels_and_adjudication.py` were accidentally launched in parallel during a quick verification pass.
+- Symptom:
+  - `second_labels.csv` and `adjudicated_labels.csv` temporarily collapsed to a truncated `52`-row baseline-only state.
+- Root cause:
+  - `build_second_labels_and_adjudication.py` read `annotations/annotation_sheet.csv` while `build_first_pass_annotations.py` was still rewriting it.
+- Resolution:
+  - Re-ran the downstream chain in the correct sequential order.
+- Final state is now consistent.
+
+### Interpretation Boundary
+
+- `task34` proves that the v2 retrieval-augmented arm now runs end-to-end at batch scale and writes retrieval-aware formal outputs into the benchmark chain.
+- `task34` does **not** by itself establish that retrieval improved performance relative to `v1`.
+- That comparison belongs to `task35`.
+
+## 2026-06-01 - Task 35 v2 vs v1 Retrieval Effect
+
+### Paired Audit Completion
+
+- Completed the paired manual `perturbed` audit for `research_agent_v2_search`.
+- Generated:
+  - `results/perturbed_mechanical_reuse_v2.csv`
+  - `results/perturbed_pair_audit_v2.md`
+- Headline:
+  - `research_agent_v1` mechanical reuse: `2/10`
+  - `research_agent_v2_search` mechanical reuse: `0/10`
+- Interpretation:
+  - adding the explicit retrieval stage removed the last two residual reuse cases left in `v1`
+
+### Where v2 Actually Improves
+
+- The incremental gain is concentrated in:
+  - `C005`
+    - `v1` still preserved a supplementary exposure-level `LATE`
+    - `v2` rejects exposure-level identification and keeps only assignment-level `ITT` plus predictive `PIE`
+  - `C008`
+    - `v1` still preserved a secondary within-store comparison / salience-gradient rescue
+    - `v2` drops that rescue entirely and keeps only descriptive demand-reallocation analysis
+- Other cases mostly preserve the same broad downgrade direction as `v1`, but often with stronger methodological backing.
+
+### Retrieval Usefulness Audit
+
+- Generated:
+  - `results/retrieval_usefulness_audit.csv`
+  - `results/retrieval_usefulness_summary.md`
+- Retrieval behavior:
+  - attempted: `10/10`
+  - successful: `10/10`
+  - zero-tool-use runs: `0/10`
+  - mean recorded retrieval tool calls: `16.7`
+- Usefulness labels:
+  - `helpful`: `6/10`
+  - `neutral`: `3/10`
+  - `noisy`: `1/10`
+  - `failed`: `0/10`
+- The most clearly helpful retrieval cases are:
+  - `C002`
+  - `C004`
+  - `C005`
+  - `C008`
+  - `C014`
+  - `C016`
+- `C020` is the clearest noisy case:
+  - retrieval still lands on the right bundle-only estimand
+  - but one rate-limit event and one off-target deepxiv result added search noise
+
+### Comparison Write-up
+
+- Generated:
+  - `results/research_agent_v2_vs_v1.md`
+- Main reading:
+  - `v2` is not just `v1` plus tool exposure
+  - it produces real retrieval and removes the last residual `mechanical_reuse` failures on the `perturbed` subset
+  - however, the benefit is concentrated rather than uniform
+
+### Metrics Caveat
+
+- Re-ran `scripts/compute_benchmark_metrics.py` after wiring `research_agent_v2_search` to the correct paired-audit file.
+- `results/metrics_summary_research_agent_v2_search.csv` now carries the correct `Perturbed Mechanical Reuse Rate = 0/10`.
+- The broader claim-level headline metrics for `v2` remain provisional, just as for `v1`; do not use `Mean Claim Score = 1.0` as the primary intervention result.
+
+### Task 35 Conclusion
+
+- Recommendation: `go to v3`, but only as a clean optional ablation.
+- Reason:
+  - `v2` already fixes the `perturbed mechanical reuse` problem on this subset
+  - the rationale for `v3` is now "test whether planner/debate adds anything beyond critic + retrieval"
+  - the rationale is **not** "v2 is still broken and needs rescue"
+
+## 2026-06-01 - Task 36 v3 Planner/Debate Smoke
+
+### Implementation Scope
+
+- Implemented `task36` strictly as a smoke-only `v3` build:
+  - no formal bridge
+  - no `outputs/run_manifest.csv` writes
+  - no `outputs/raw_agent_logs/main/` writes
+- Added:
+  - `benchmark/prompts/research_agent_v3/stage0_planner.md`
+  - `benchmark/prompts/research_agent_v3/stage2_retrieval.md`
+  - `benchmark/prompts/research_agent_v3/stage3_candidates.md`
+  - `benchmark/prompts/research_agent_v3/stage4_critique.md`
+  - `benchmark/prompts/research_agent_v3/stage3b_response.md`
+  - `benchmark/prompts/research_agent_v3/stage4b_critique.md`
+  - `benchmark/prompts/research_agent_v3/stage5_final.md`
+  - `scripts/run_research_agent_v3.py`
+  - `tests/test_research_agent_v3_smoke.py`
+- `run_research_agent_v3.py` is intentionally a thin wrapper around the `v2` runner utilities rather than a forked copy of the retrieval/tool-count stack.
+
+### Tool-Use And Retrieval Lessons Preserved
+
+- Reused the corrected `sessionFile`-based tool accounting from `task33`.
+- Kept `OpenAlex` as runner-side seed generation rather than as a live OpenClaw tool dependency.
+- Kept `deepxiv` / `web_search` as the preferred live retrieval path.
+- Kept `semantic-scholar` optional rather than required, because stable `v2` behavior already showed that `deepxiv` is the reliable scholarly retrieval layer.
+
+### Smoke Result
+
+- Ran a real single-case smoke on:
+  - `benchmark/cases/C005_online_ad_measurement/agent_task_perturbed.md`
+- Output directory:
+  - `outputs/raw_agent_logs/research_agent_v3/C005_perturbed_20260601_173508`
+- Manifest summary:
+  - `planner_present = true`
+  - `retrieval_attempted = true`
+  - `retrieval_successful = true`
+  - `retrieval_tool_calls = 21`
+  - `debate_rounds_run = 1`
+  - `stop_rule_triggered_by = fixed_single_round_smoke_rule`
+  - all stages `ok`
+- New debate artifacts were produced and parsed successfully:
+  - `stage3b_response/artifact.json`
+  - `stage4b_critique/artifact.md`
+  - `stage4b_critique/artifact.meta.json`
+- `stage5_final/artifact.md` passed the canonical claim-evidence table check.
+
+### Interpretation Boundary
+
+- `task36` proves that the planner/debate state machine is now operational and auditable under the smoke-only boundary.
+- `task36` does **not** establish that `v3` improves over `v2`.
+- That comparison belongs to `task37-38`.
+
+## 2026-06-02 - Task 37 v3 Planner/Debate Formal Batch
+
+### Batch Completion
+
+- Completed a clean full rerun of `research_agent_v3_planner_debate` on the shared `10`-case `perturbed` set.
+- Formal `v3` rows in `outputs/run_manifest.csv` now total `10`, all `success`.
+- Formal raw logs now total `10` under:
+  - `outputs/raw_agent_logs/main/*__research_agent_v3_planner_debate__*.md`
+- Pipeline directories now total `10` under:
+  - `outputs/raw_agent_logs/research_agent_v3/`
+
+### Retrieval Metadata
+
+- All `10` formal `v3` rows record:
+  - `retrieval_attempted = true`
+  - `retrieval_successful = true`
+  - `retrieval_tool_calls > 0`
+- Retrieval tool-call counts by case:
+  - `C001 = 14`
+  - `C002 = 24`
+  - `C004 = 9`
+  - `C005 = 21`
+  - `C008 = 19`
+  - `C010 = 20`
+  - `C014 = 17`
+  - `C016 = 18`
+  - `C019 = 19`
+  - `C020 = 36`
+
+### Downstream Chain
+
+- Re-ran the downstream chain sequentially to avoid CSV read/write races:
+  - `scripts/extract_agent_claims.py`
+  - `scripts/build_first_pass_annotations.py`
+  - `scripts/build_second_labels_and_adjudication.py`
+  - `scripts/compute_benchmark_metrics.py`
+- `research_agent_v3_planner_debate` is now present in:
+  - `outputs/parsed_claims/claims_to_annotate.csv`
+  - `annotations/annotation_sheet.csv`
+  - `annotations/adjudicated_labels.csv`
+- Current row counts for `research_agent_v3_planner_debate`:
+  - claims-to-annotate: `79`
+  - annotation-sheet: `79`
+  - adjudicated-labels: `79`
+- Generated arm-specific metrics summary:
+  - `results/metrics_summary_research_agent_v3_planner_debate.csv`
+  - `results/metrics_summary_research_agent_v3_planner_debate.md`
+
+### Interpretation Boundary
+
+- `task37` establishes that the `v3` planner/debate arm is now a formal, repeatable benchmark condition rather than a smoke-only pipeline.
+- `task37` does **not** yet establish that `v3` improves over `v2`.
+- As with `v1` and `v2`, the current claim-level headline metrics for `v3` should be treated as provisional.
+- The main `v3 vs v1/v2` interpretation should remain scoped to `task38`.

@@ -1,0 +1,11 @@
+case_id,variant_id,input_file,enabled,notes
+C001,perturbed,benchmark/cases/C001_charitable_giving/agent_task_perturbed.md,false,already completed in task37
+C002,perturbed,benchmark/cases/C002_consumer_credit/agent_task_perturbed.md,false,already completed in task37
+C004,perturbed,benchmark/cases/C004_paid_search_effectiveness/agent_task_perturbed.md,true,task37 v3 continuation from c004
+C005,perturbed,benchmark/cases/C005_online_ad_measurement/agent_task_perturbed.md,true,task37 v3 continuation from c004
+C008,perturbed,benchmark/cases/C008_retail_tax_salience/agent_task_perturbed.md,true,task37 v3 continuation from c004
+C010,perturbed,benchmark/cases/C010_fertilizer_present_bias/agent_task_perturbed.md,true,task37 v3 continuation from c004
+C014,perturbed,benchmark/cases/C014_corruption_monitoring/agent_task_perturbed.md,true,task37 v3 continuation from c004
+C016,perturbed,benchmark/cases/C016_hiv_risk_information/agent_task_perturbed.md,true,task37 v3 continuation from c004
+C019,perturbed,benchmark/cases/C019_in_store_travel_distance/agent_task_perturbed.md,true,task37 v3 continuation from c004
+C020,perturbed,benchmark/cases/C020_price_ending_field_experiment/agent_task_perturbed.md,true,task37 v3 continuation from c004

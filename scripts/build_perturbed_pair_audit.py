@@ -11,6 +11,8 @@ OUTPUT_CSV = ROOT / "results" / "perturbed_mechanical_reuse.csv"
 OUTPUT_MD = ROOT / "results" / "perturbed_pair_audit.md"
 OUTPUT_V1_CSV = ROOT / "results" / "perturbed_mechanical_reuse_v1.csv"
 OUTPUT_V1_MD = ROOT / "results" / "perturbed_pair_audit_v1.md"
+OUTPUT_V2_CSV = ROOT / "results" / "perturbed_mechanical_reuse_v2.csv"
+OUTPUT_V2_MD = ROOT / "results" / "perturbed_pair_audit_v2.md"
 
 
 ROWS = [
@@ -219,6 +221,109 @@ ROWS_V1 = [
     },
 ]
 
+ROWS_V2 = [
+    {
+        "case_id": "C001",
+        "level2_run_id": "RUN_20260527_210840_01_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_141101_01_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "pre-contact state is no longer researcher-assigned; households self-select into pre-contact availability",
+        "level2_logic": "use variation in contact and avoidance frictions to separate social pressure from underlying willingness",
+        "perturbed_behavior": "agent rejects the base decomposition and replaces it with descriptive self-selection contrasts plus partial-identification bounds and sensitivity analysis",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The final memo no longer preserves a point-identified pressure-versus-altruism estimand and explicitly treats the perturbation as fatal to the base causal design.",
+    },
+    {
+        "case_id": "C002",
+        "level2_run_id": "RUN_20260527_215707_05_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_142014_02_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "borrowers are no longer cleanly blind to later terms at take-up",
+        "level2_logic": "separate adverse selection from repayment incentives using staged timing variation",
+        "perturbed_behavior": "agent abandons the channel-separation target and reframes the design around the reduced-form ITT of the initial offer rate on repayment",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The final memo explicitly states that the Karlan-Zinman style decomposition is not identified once later terms are anticipated, so the base selection-versus-incentive logic is not retained.",
+    },
+    {
+        "case_id": "C004",
+        "level2_run_id": "RUN_20260527_223907_09_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_143245_03_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "ad-availability variation is manager-chosen rather than exogenous",
+        "level2_logic": "use exogenous ad-availability variation to identify incremental downstream sales effects",
+        "perturbed_behavior": "agent rejects all causal candidates and keeps only descriptive partial-correlation analysis under explicit non-causal caveats",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The memo fully abandons the exogenous-assignment logic rather than trying to salvage causal ad-availability effects with a weakened observational design.",
+    },
+    {
+        "case_id": "C005",
+        "level2_run_id": "RUN_20260527_224724_11_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_145350_04_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "untreated opportunity-side logs are removed",
+        "level2_logic": "compare exposed and unexposed units within the same opportunity set to identify exposed-user lift",
+        "perturbed_behavior": "agent rejects exposure-level lift, rejects Wald-IV/LATE, keeps only campaign-assignment ITT plus predictive PIE as a non-causal budget-allocation supplement",
+        "mechanical_reuse": "no",
+        "audit_rationale": "Unlike v1, the final memo no longer preserves a secondary causal actual-exposure estimand; the base exposed-user logic is explicitly treated as not identified under the perturbation.",
+    },
+    {
+        "case_id": "C008",
+        "level2_run_id": "RUN_20260527_230420_15_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_150718_05_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "untreated comparison stores/products are no longer available in the original clean form",
+        "level2_logic": "use relative tax-visibility contrasts with untreated comparisons to isolate salience effects",
+        "perturbed_behavior": "agent abandons within-store treated-vs-untreated causal comparisons and keeps only descriptive demand-reallocation analysis",
+        "mechanical_reuse": "no",
+        "audit_rationale": "Unlike v1, the memo does not retain a secondary within-store DiD or salience-gradient causal story after the untreated comparison structure is removed.",
+    },
+    {
+        "case_id": "C010",
+        "level2_run_id": "RUN_20260527_231632_18_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_152208_06_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "later offer is known in advance, weakening timing-based procrastination separation",
+        "level2_logic": "use timing contrast between early small intervention and later known alternatives to diagnose present-bias/procrastination",
+        "perturbed_behavior": "agent narrows the target to the menu-announcement bundle ITT and explicitly rejects procrastination identification",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The memo no longer treats the timing contrast as identifying procrastination once the later offer is anticipated.",
+    },
+    {
+        "case_id": "C014",
+        "level2_run_id": "RUN_20260527_232816_21_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_153503_07_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "independent outcome measurement is removed; only official reports remain",
+        "level2_logic": "compare treatment effects on independently measured corruption-related outcomes",
+        "perturbed_behavior": "agent narrows the estimand to reporting-side ITT on officially reported outcomes and explicitly refuses corruption-reduction claims",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The memo fully absorbs the measurement breakdown and no longer interprets official records as clean corruption outcomes.",
+    },
+    {
+        "case_id": "C016",
+        "level2_run_id": "RUN_20260527_234026_24_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_154952_08_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "objective downstream outcome is removed, leaving selected self-reports",
+        "level2_logic": "contrast targeted information with generic curriculum and interpret downstream effects using objective outcomes",
+        "perturbed_behavior": "agent narrows to self-reported ITT plus sensitivity bounds and explicitly states that actual behavior change is not identified",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The final memo treats self-reports as a distinct reporting outcome rather than reusing the base interpretation of actual behavioral change.",
+    },
+    {
+        "case_id": "C019",
+        "level2_run_id": "RUN_20260527_235916_28_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_160120_09_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "clean pre-trip basket capture is removed",
+        "level2_logic": "combine pre-trip intent measurement with route variation to isolate route-induced incremental spending",
+        "perturbed_behavior": "agent downgrades to descriptive route-spending association and partial-identification diagnostics without claiming a causal route effect",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The memo preserves the same broad downgrade discipline as v1 and does not attempt to keep the base incremental-spending identification logic.",
+    },
+    {
+        "case_id": "C020",
+        "level2_run_id": "RUN_20260528_001055_31_openclaw_deepseekv4pro_isolated",
+        "perturbed_run_id": "RUN_20260601_161412_10_openclaw_deepseekv4pro_researchagentv2search",
+        "broken_condition": "price ending is bundled with markdown/sale framing",
+        "level2_logic": "hold underlying price constant while varying terminal-digit format to separate formatting from bargaining cues",
+        "perturbed_behavior": "agent rejects the standalone terminal-digit estimand and reframes the design around the compound bundle effect only",
+        "mechanical_reuse": "no",
+        "audit_rationale": "The final memo does not preserve the base mechanism-separation claim after price endings and promotion framing become perfectly bundled.",
+    },
+]
+
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -254,6 +359,9 @@ def main() -> None:
     if ROWS_V1:
         write_csv(OUTPUT_V1_CSV, ROWS_V1)
         write_markdown(OUTPUT_V1_MD, ROWS_V1, "# Perturbed Pair Audit (research_agent_v1)")
+    if ROWS_V2:
+        write_csv(OUTPUT_V2_CSV, ROWS_V2)
+        write_markdown(OUTPUT_V2_MD, ROWS_V2, "# Perturbed Pair Audit (research_agent_v2_search)")
 
 
 if __name__ == "__main__":

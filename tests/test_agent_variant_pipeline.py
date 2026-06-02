@@ -1,5 +1,6 @@
 import csv
 import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -29,6 +30,255 @@ def write_csv(path: Path, fieldnames: list[str], rows: list[dict[str, str]]) -> 
 
 
 class AgentVariantPipelineTests(unittest.TestCase):
+    def test_compute_metrics_special_cases_v2_perturbed_audit_path(self) -> None:
+        module = load_script_module("scripts/compute_benchmark_metrics.py", "compute_benchmark_metrics_paths")
+        self.assertEqual(
+            module.perturbed_audit_path_for_variant("research_agent_v1").name,
+            "perturbed_mechanical_reuse_v1.csv",
+        )
+        self.assertEqual(
+            module.perturbed_audit_path_for_variant("research_agent_v2_search").name,
+            "perturbed_mechanical_reuse_v2.csv",
+        )
+
+    def test_postprocess_uses_session_file_as_tool_truth_source(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            manifest_path = repo_root / "outputs" / "run_manifest.csv"
+            write_csv(
+                manifest_path,
+                [
+                    "run_id",
+                    "case_id",
+                    "variant_id",
+                    "level",
+                    "agent_name",
+                    "agent_variant",
+                    "model",
+                    "model_provider",
+                    "openclaw_build_or_version",
+                    "temperature",
+                    "top_p",
+                    "max_tokens",
+                    "seed",
+                    "tools_enabled",
+                    "closed_book",
+                    "channel",
+                    "timestamp",
+                    "input_file",
+                    "raw_output_file",
+                    "status",
+                    "contamination_status",
+                    "contamination_reason",
+                    "notes",
+                ],
+                [],
+            )
+
+            session_path = repo_root / "tmp" / "sess123.jsonl"
+            session_path.parent.mkdir(parents=True, exist_ok=True)
+            session_path.write_text(
+                "\n".join(
+                    [
+                        '{"type":"message","message":{"role":"assistant","content":[{"type":"toolCall","id":"call_1","name":"web_search","arguments":{"query":"q"}}]}}',
+                        '{"type":"message","message":{"role":"toolResult","toolCallId":"call_1","toolName":"web_search","content":[{"type":"text","text":"ok"}]}}',
+                    ]
+                )
+                + "\n"
+            )
+
+            json_path = repo_root / "run.json"
+            json_path.write_text(
+                json.dumps(
+                    {
+                        "payloads": [{"text": "final output"}],
+                        "meta": {
+                            "durationMs": 1234,
+                            "agentMeta": {
+                                "sessionId": "sess123",
+                                "sessionFile": str(session_path),
+                                "model": "deepseek-v4-pro",
+                                "provider": "deepseek",
+                            },
+                        },
+                    }
+                )
+            )
+            stderr_path = repo_root / "run.stderr"
+            stderr_path.write_text("")
+
+            env = os.environ.copy()
+            env["OPENCLAW_RUN_EXIT_CODE"] = "0"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(REPO_ROOT / "scripts" / "postprocess_openclaw_run.py"),
+                    "--repo-root",
+                    str(repo_root),
+                    "--json-path",
+                    "run.json",
+                    "--stderr-path",
+                    "run.stderr",
+                    "--run-id",
+                    "RUN_SESSION_TRUTH",
+                    "--case-id",
+                    "C001",
+                    "--variant-id",
+                    "perturbed",
+                    "--level",
+                    "perturbed",
+                    "--split",
+                    "main",
+                    "--input-file",
+                    "benchmark/cases/C001/agent_task_perturbed.md",
+                    "--session-id",
+                    "sess123",
+                    "--timestamp",
+                    "2026-06-01T12:00:00+08:00",
+                    "--timeout-seconds",
+                    "1800",
+                    "--thinking-level",
+                    "medium",
+                ],
+                check=True,
+                cwd=REPO_ROOT,
+                env=env,
+            )
+
+            with manifest_path.open(newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(len(rows), 1)
+            self.assertIn("actual tool use=web_search", rows[0]["contamination_reason"])
+
+            raw_output_rel = rows[0]["raw_output_file"]
+            raw_output_text = (repo_root / raw_output_rel).read_text()
+            self.assertIn("actual tool use: web_search", raw_output_text)
+            self.assertIn("toolCall count: 1", raw_output_text)
+            self.assertIn("toolResult count: 1", raw_output_text)
+
+    def test_postprocess_upgrades_manifest_header_for_retrieval_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            manifest_path = repo_root / "outputs" / "run_manifest.csv"
+            write_csv(
+                manifest_path,
+                [
+                    "run_id",
+                    "case_id",
+                    "variant_id",
+                    "level",
+                    "agent_name",
+                    "agent_variant",
+                    "model",
+                    "model_provider",
+                    "openclaw_build_or_version",
+                    "temperature",
+                    "top_p",
+                    "max_tokens",
+                    "seed",
+                    "tools_enabled",
+                    "closed_book",
+                    "channel",
+                    "timestamp",
+                    "input_file",
+                    "raw_output_file",
+                    "status",
+                    "contamination_status",
+                    "contamination_reason",
+                    "notes",
+                ],
+                [],
+            )
+
+            session_path = repo_root / "tmp" / "sess456.jsonl"
+            session_path.parent.mkdir(parents=True, exist_ok=True)
+            session_path.write_text(
+                "\n".join(
+                    [
+                        '{"type":"message","message":{"role":"assistant","content":[{"type":"toolCall","id":"call_1","name":"web_search","arguments":{"query":"q"}}]}}',
+                        '{"type":"message","message":{"role":"toolResult","toolCallId":"call_1","toolName":"web_search","content":[{"type":"text","text":"ok"}]}}',
+                    ]
+                )
+                + "\n"
+            )
+
+            json_path = repo_root / "run.json"
+            json_path.write_text(
+                json.dumps(
+                    {
+                        "payloads": [{"text": "final output"}],
+                        "meta": {
+                            "durationMs": 1234,
+                            "agentMeta": {
+                                "sessionId": "sess456",
+                                "sessionFile": str(session_path),
+                                "model": "deepseek-v4-pro",
+                                "provider": "deepseek",
+                            },
+                        },
+                    }
+                )
+            )
+            stderr_path = repo_root / "run.stderr"
+            stderr_path.write_text("")
+
+            env = os.environ.copy()
+            env["OPENCLAW_RUN_EXIT_CODE"] = "0"
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(REPO_ROOT / "scripts" / "postprocess_openclaw_run.py"),
+                    "--repo-root",
+                    str(repo_root),
+                    "--json-path",
+                    "run.json",
+                    "--stderr-path",
+                    "run.stderr",
+                    "--run-id",
+                    "RUN_MANIFEST_UPGRADE",
+                    "--case-id",
+                    "C005",
+                    "--variant-id",
+                    "perturbed",
+                    "--level",
+                    "perturbed",
+                    "--split",
+                    "main",
+                    "--input-file",
+                    "benchmark/cases/C005/agent_task_perturbed.md",
+                    "--session-id",
+                    "sess456",
+                    "--timestamp",
+                    "2026-06-01T12:00:00+08:00",
+                    "--timeout-seconds",
+                    "1800",
+                    "--thinking-level",
+                    "medium",
+                    "--retrieval-attempted-override",
+                    "true",
+                    "--retrieval-successful-override",
+                    "true",
+                    "--retrieval-tool-calls-override",
+                    "5",
+                    "--retrieval-failure-reason-override",
+                    "",
+                ],
+                check=True,
+                cwd=REPO_ROOT,
+                env=env,
+            )
+
+            with manifest_path.open(newline="") as handle:
+                reader = csv.DictReader(handle)
+                rows = list(reader)
+                fieldnames = reader.fieldnames or []
+            self.assertIn("retrieval_attempted", fieldnames)
+            self.assertIn("retrieval_successful", fieldnames)
+            self.assertIn("retrieval_tool_calls", fieldnames)
+            self.assertEqual(rows[0]["retrieval_attempted"], "true")
+            self.assertEqual(rows[0]["retrieval_successful"], "true")
+            self.assertEqual(rows[0]["retrieval_tool_calls"], "5")
+
     def test_postprocess_records_agent_variant_and_variant_filename(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             repo_root = Path(tmpdir)

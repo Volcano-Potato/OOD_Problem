@@ -140,6 +140,96 @@
     - `1/10` case 为 `1/2`
   - 解释上，这意味着 baseline `level2` 的主要问题更像是后续 claim calibration / overreach，而不是简单 threat blindness
 - `task32` 尚未开始。
+- `task33` 已完成：
+  - `research_agent_v2` 的 runner、prompt、bridge、tests 已建立
+  - runner-side `OpenAlex` scholarly seed 已接通，使用运行时环境变量：
+    - `OPENALEX_API_KEY`
+    - `OPENALEX_EMAIL`
+  - 仓库根目录的 `.benchmark.local.env` 现可作为默认本地凭据文件，由 `run_research_agent_v2.py` 自动加载；该文件已被 `.gitignore` 排除
+  - 已修正 `task33` 的工具计数 bug：`sessionFile` 现为第一真源
+  - `C001_perturbed` 的 v2 smoke test 已完整通过四阶段 pipeline
+  - `stage2_retrieval` 现可正确记录真实 live retrieval：
+    - `retrieval_tool_calls = 15`
+    - `retrieval_successful = true`
+  - v2 bridge 也已修正为按整条 pipeline 聚合工具使用，而不是只看 `stage5_final`
+- `task34` 已完成：
+  - `research_agent_v2_search` 的 `10` 条 `perturbed` 正式 batch 已完成
+  - `outputs/raw_agent_logs/main/` 中现有 `10` 条 `*__research_agent_v2_search__*.md` formal raw logs
+  - `outputs/run_manifest.csv` 中现有 `10` 条 `research_agent_v2_search` success rows
+  - 每条 row 均已记录 retrieval metadata：
+    - `retrieval_attempted = true`
+    - `retrieval_successful = true`
+    - `retrieval_tool_calls > 0`
+  - v2 arm 已接入 extraction / annotation / adjudication / metrics 链
+  - 已生成：
+    - `results/metrics_summary_research_agent_v2_search.csv`
+    - `results/metrics_summary_research_agent_v2_search.md`
+  - 解释上应把这些文件视为 `task34` 的 arm-level downstream artifacts
+  - retrieval 是否相对 `v1` 带来实质改善，应留待 `task35` 做正式分析
+- `task35` 已完成：
+  - 已完成 `research_agent_v2_search` 的 paired manual audit：
+    - `results/perturbed_mechanical_reuse_v2.csv`
+    - `results/perturbed_pair_audit_v2.md`
+  - headline 结果：
+    - `research_agent_v1 perturbed mechanical reuse = 2/10`
+    - `research_agent_v2_search perturbed mechanical reuse = 0/10`
+  - 已完成 retrieval usefulness audit：
+    - `results/retrieval_usefulness_audit.csv`
+    - `results/retrieval_usefulness_summary.md`
+  - 当前 retrieval 行为总结：
+    - retrieval attempted `10/10`
+    - retrieval successful `10/10`
+    - zero-tool-use runs `0/10`
+    - usefulness labels: `helpful 6 / neutral 3 / noisy 1 / failed 0`
+  - 已生成：
+    - `results/research_agent_v2_vs_v1.md`
+  - 当前最合理的结论是：
+    - `v2` 相对 `v1` 在 perturbed 子集上提供了真实且有增量价值的 retrieval layer
+    - 但该价值集中在少数关键 residual-reuse cases（尤其 `C005`, `C008`）和 measurement-heavy cases（`C014`, `C016`）
+  - 推荐结论：
+    - `go to v3`, 但把 `v3` 视为 clean optional ablation，而不是因为 `v2` 仍未修好
+- `task36` 已完成：
+  - 已新增 smoke-only `research_agent_v3_planner_debate` pipeline：
+    - `Stage 0 planner`
+    - `Stage 2 retrieval`
+    - `Stage 3 candidates`
+    - `Stage 4 critique`
+    - `Stage 3b response`
+    - `Stage 4b critique`
+    - `Stage 5 final`
+  - 已新增：
+    - `benchmark/prompts/research_agent_v3/`
+    - `scripts/run_research_agent_v3.py`
+    - `tests/test_research_agent_v3_smoke.py`
+  - 已完成单 case smoke：
+    - `outputs/raw_agent_logs/research_agent_v3/C005_perturbed_20260601_173508`
+  - smoke 结果：
+    - `planner_present = true`
+    - `retrieval_successful = true`
+    - `retrieval_tool_calls = 21`
+    - `debate_rounds_run = 1`
+    - `stop_rule_triggered_by = fixed_single_round_smoke_rule`
+  - 当前 `v3` 仍是 smoke-only：
+    - 未写 `outputs/run_manifest.csv`
+    - 未写 `outputs/raw_agent_logs/main/`
+    - 尚未进入 `task37`
+- `task37` 已完成：
+  - 已完成 `research_agent_v3_planner_debate` 的 clean full rerun：
+    - `10` 条 `perturbed` 正式 batch 全部成功
+  - `outputs/raw_agent_logs/research_agent_v3/` 中现有 `10` 条 pipeline 目录
+  - `outputs/raw_agent_logs/main/` 中现有 `10` 条 `*__research_agent_v3_planner_debate__*.md` formal raw logs
+  - `outputs/run_manifest.csv` 中现有 `10` 条 `research_agent_v3_planner_debate` success rows
+  - 每条 row 均已记录 retrieval metadata：
+    - `retrieval_attempted = true`
+    - `retrieval_successful = true`
+    - `retrieval_tool_calls > 0`
+  - v3 arm 已接入 extraction / annotation / adjudication / metrics 链
+  - 已生成：
+    - `results/metrics_summary_research_agent_v3_planner_debate.csv`
+    - `results/metrics_summary_research_agent_v3_planner_debate.md`
+  - 解释上应把这些文件视为 `task37` 的 arm-level downstream artifacts
+  - `v3` 的 claim-level headline metrics 目前仍应视为 provisional，不应替代后续 `task38` 的 paired audit / ablation comparison
+- `task38` 尚未开始。
 
 当前最重要的主结论是：
 
@@ -151,11 +241,28 @@
 - `task31` 的扩展性结论是：
   - baseline `level2` threat-recognition audit 为 `19/20`
   - 因而主线弱点更像是 threat-to-claim alignment，而不是 threat recognition 缺失
+- `task34` 当前只证明：
+  - `research_agent_v2_search` 已能稳定完成 `10` 条 `perturbed` retrieval-augmented batch
+  - retrieval metadata 已被记录并接入正式评测链
+- `task35` 的扩展性结论是：
+  - `research_agent_v2_search` 将 `perturbed mechanical reuse` 从 `v1` 的 `2/10` 降到 `0/10`
+  - retrieval 是真实发生且多数情况下有帮助的，而不是名义上的 tool exposure
+  - 但 `metrics_summary_research_agent_v2_search.csv` 中的 `Mean Claim Score = 1.0` 仍不应作为 headline 结果引用
+- `task36` 当前只证明：
+  - `research_agent_v3_planner_debate` 的 planner/debate 状态机已跑通
+  - 单轮 debate 与 stop rule 可被稳定记录和审计
+  - `v3` smoke-only 形态是稳定可运行的
+- `task37` 当前只证明：
+  - `research_agent_v3_planner_debate` 已能稳定完成 `10` 条 `perturbed` formal batch
+  - planner / retrieval / debate metadata 已进入正式评测链
+  - `v3` claim-level headline metrics 已生成，但仍不应作为主结果引用
+  - `v3` 是否进一步优于 `v2`，应留待 `task38`
 
 目前已经在全部 agent-facing task packet 的 `Task Rule` 中加入 anti-reconstruction 约束，并完成了主矩阵、level1 补跑、paired perturbed audit、首轮 `research_agent_v1` intervention study，以及 baseline `level2` threat-recognition audit。后续若继续推进，应转向：
 
 - 课程展示版裁剪或论文写作润色
 - `task32` no-solution 扩展
+- `task38` v3 planner/debate ablation
 - 或进一步扩展新的 agent arm / 新 case
 
 ## 后续扩展方向参考
