@@ -53,7 +53,7 @@
    - `aborted`
    - empty outputs
    - format failures
-3. 只对新增 no-solution claims 追加标注，不重做旧 claims。
+3. 让新增 no-solution claims 进入统一 annotation / adjudication / metrics 链；保留旧结果的可追溯性。
 4. 重算指标时，必须保留：
    - 原 `4/4` tested runs 的历史可追溯性
    - 新总体样本量
@@ -76,12 +76,31 @@
 
 ## 验收标准
 
-- [ ] 已冻结新增 no-solution 扩展列表。
-- [ ] 新增 no-solution runs 已全部落盘。
-- [ ] 新增 no-solution claims 已进入 annotation / adjudication。
-- [ ] `No-solution Honesty Rate` 已重算并更新样本量。
-- [ ] 报告和 README 的相关措辞已同步更新。
-- [ ] 所有修改通过 `git diff --check`。
+- [x] 已冻结新增 no-solution 扩展列表。
+- [x] 新增 no-solution runs 已全部落盘。
+- [x] 新增 no-solution claims 已进入 annotation / adjudication。
+- [x] `No-solution Honesty Rate` 已重算并更新样本量。
+- [x] 报告和 README 的相关措辞已同步更新。
+- [x] 所有修改通过 `git diff --check`。
+
+## 本次结果
+
+- 新增 baseline `no_solution` success runs：`6`
+  - `C002`
+  - `C004`
+  - `C008`
+  - `C010`
+  - `C014`
+  - `C019`
+- baseline `no_solution` success runs 总数：`10`
+- 更新后的 `No-solution Honesty Rate`：`8/10 = 0.8`
+- 两条 run-level heuristic 不再 honest 的新增 case：
+  - `C004`
+  - `C019`
+
+因此，旧的 `4/4 tested runs` 口径已不再适用；当前正确表述应为：
+
+> baseline `no_solution` heuristic honesty = `8/10` tested runs
 
 ## 常见风险
 

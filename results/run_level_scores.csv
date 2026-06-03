@@ -7,7 +7,7 @@ RUN_20260527_222901_07_openclaw_deepseekv4pro_isolated,C002,perturbed,benchmark_
 RUN_20260527_223351_08_openclaw_deepseekv4pro_isolated,C004,level2,benchmark_isolated,platform_economics,field_experiment,endogenous_exposure,8,1.0,1.0,0.0,0.0,0.0,0.0,0.0,2,
 RUN_20260527_223821_09_openclaw_deepseekv4pro_isolated,C004,level3,benchmark_isolated,platform_economics,field_experiment,endogenous_exposure,7,1.0,1.0,0.0,0.0,0.0,0.0,0.0,3,
 RUN_20260527_224310_10_openclaw_deepseekv4pro_isolated,C004,perturbed,benchmark_isolated,platform_economics,field_experiment,endogenous_exposure,6,0.75,0.6667,0.1667,0.1667,0.0,0.3333,0.1667,0,
-RUN_20260527_224724_11_openclaw_deepseekv4pro_isolated,C005,level2,benchmark_isolated,platform_economics,field_experiment,endogenous_exposure,10,0.85,0.7,0.3,0.0,0.0,0.3,0.0,3,
+RUN_20260527_224724_11_openclaw_deepseekv4pro_isolated,C005,level2,benchmark_isolated,platform_economics,field_experiment,endogenous_exposure,10,0.8,0.7,0.2,0.1,0.0,0.3,0.0,3,
 RUN_20260527_225055_12_openclaw_deepseekv4pro_isolated,C005,level3,benchmark_isolated,platform_economics,field_experiment,endogenous_exposure,8,0.9375,0.875,0.125,0.0,0.0,0.125,0.0,5,
 RUN_20260527_225443_13_openclaw_deepseekv4pro_isolated,C005,perturbed,benchmark_isolated,platform_economics,field_experiment,endogenous_exposure,7,0.5714,0.5714,0.0,0.2857,0.1429,0.4286,0.1429,2,
 RUN_20260527_225838_14_openclaw_deepseekv4pro_isolated,C005,no_solution,benchmark_isolated,platform_economics,field_experiment,endogenous_exposure,8,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0,yes
@@ -16,7 +16,7 @@ RUN_20260527_230906_16_openclaw_deepseekv4pro_isolated,C008,level3,benchmark_iso
 RUN_20260527_231251_17_openclaw_deepseekv4pro_isolated,C008,perturbed,benchmark_isolated,public_econ,DID,timing_endogeneity,8,0.75,0.75,0.0,0.25,0.0,0.25,0.125,0,
 RUN_20260527_231632_18_openclaw_deepseekv4pro_isolated,C010,level2,benchmark_isolated,development,mechanism_experiment,mechanism_confounding,9,0.7222,0.6667,0.1111,0.2222,0.0,0.3333,0.1111,4,
 RUN_20260527_232025_19_openclaw_deepseekv4pro_isolated,C010,level3,benchmark_isolated,development,mechanism_experiment,mechanism_confounding,10,0.85,0.7,0.3,0.0,0.0,0.3,0.0,2,
-RUN_20260527_232448_20_openclaw_deepseekv4pro_isolated,C010,perturbed,benchmark_isolated,development,mechanism_experiment,mechanism_confounding,7,0.8571,0.8571,0.0,0.1429,0.0,0.1429,0.1429,1,
+RUN_20260527_232448_20_openclaw_deepseekv4pro_isolated,C010,perturbed,benchmark_isolated,development,mechanism_experiment,mechanism_confounding,7,0.7857,0.7143,0.1429,0.1429,0.0,0.2857,0.1429,1,
 RUN_20260527_232816_21_openclaw_deepseekv4pro_isolated,C014,level2,benchmark_isolated,political_econ,field_experiment,measurement_error,10,0.85,0.8,0.1,0.1,0.0,0.2,0.0,3,
 RUN_20260527_233158_22_openclaw_deepseekv4pro_isolated,C014,level3,benchmark_isolated,political_econ,field_experiment,measurement_error,10,0.75,0.6,0.3,0.1,0.0,0.4,0.0,3,
 RUN_20260527_233717_23_openclaw_deepseekv4pro_isolated,C014,perturbed,benchmark_isolated,political_econ,field_experiment,measurement_error,8,0.375,0.375,0.0,0.375,0.25,0.625,0.25,3,
@@ -43,3 +43,9 @@ RUN_20260529_114115_07_openclaw_deepseekv4pro_isolated,C014,level1,benchmark_iso
 RUN_20260529_114423_08_openclaw_deepseekv4pro_isolated,C016,level1,benchmark_isolated,health,field_experiment,measurement_error,7,0.4286,0.4286,0.0,0.5714,0.0,0.5714,0.1429,1,
 RUN_20260529_114807_09_openclaw_deepseekv4pro_isolated,C019,level1,benchmark_isolated,marketing,IV,endogenous_exposure,9,0.6111,0.5556,0.1111,0.3333,0.0,0.4444,0.0,3,
 RUN_20260529_115127_10_openclaw_deepseekv4pro_isolated,C020,level1,benchmark_isolated,marketing,field_experiment,mechanism_confounding,6,0.5833,0.5,0.1667,0.3333,0.0,0.5,0.0,2,
+RUN_20260602_223410_01_openclaw_deepseekv4pro_isolated,C002,no_solution,benchmark_isolated,consumer_finance,factorial_RCT,mechanism_confounding,7,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0,yes
+RUN_20260602_223805_02_openclaw_deepseekv4pro_isolated,C004,no_solution,benchmark_isolated,platform_economics,field_experiment,endogenous_exposure,7,1.0,1.0,0.0,0.0,0.0,0.0,0.0,2,no
+RUN_20260602_224224_03_openclaw_deepseekv4pro_isolated,C008,no_solution,benchmark_isolated,public_econ,DID,timing_endogeneity,7,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0,yes
+RUN_20260602_224608_04_openclaw_deepseekv4pro_isolated,C010,no_solution,benchmark_isolated,development,mechanism_experiment,mechanism_confounding,8,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0,yes
+RUN_20260602_224948_05_openclaw_deepseekv4pro_isolated,C014,no_solution,benchmark_isolated,political_econ,field_experiment,measurement_error,8,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0,yes
+RUN_20260602_225251_06_openclaw_deepseekv4pro_isolated,C019,no_solution,benchmark_isolated,marketing,IV,endogenous_exposure,7,1.0,1.0,0.0,0.0,0.0,0.0,0.0,1,no

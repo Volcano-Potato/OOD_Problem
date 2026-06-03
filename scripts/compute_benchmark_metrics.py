@@ -16,10 +16,12 @@ FIGURES_DIR = RESULTS_DIR / "figures"
 METRICS_SUMMARY_CSV = RESULTS_DIR / "metrics_summary.csv"
 METRICS_SUMMARY_MD = RESULTS_DIR / "metrics_summary.md"
 ERROR_COUNTS_CSV = RESULTS_DIR / "error_type_counts.csv"
+ERROR_COUNTS_BY_VARIANT_CSV = RESULTS_DIR / "error_type_counts_by_agent_variant.csv"
 CASE_LEVEL_CSV = RESULTS_DIR / "case_level_scores.csv"
 RUN_LEVEL_CSV = RESULTS_DIR / "run_level_scores.csv"
 GROUPED_CSV = RESULTS_DIR / "grouped_metrics.csv"
 PERTURBED_AUDIT_CSV = RESULTS_DIR / "perturbed_mechanical_reuse.csv"
+ABLATION_SUMMARY_CSV = RESULTS_DIR / "research_agent_ablation_summary.csv"
 DEFAULT_AGENT_VARIANT = "benchmark_isolated"
 
 CLAIM_SCORE = {
@@ -84,6 +86,8 @@ def perturbed_audit_path_for_variant(agent_variant: str) -> Path:
         return RESULTS_DIR / "perturbed_mechanical_reuse_v1.csv"
     if agent_variant == "research_agent_v2_search":
         return RESULTS_DIR / "perturbed_mechanical_reuse_v2.csv"
+    if agent_variant == "research_agent_v3_planner_debate":
+        return RESULTS_DIR / "perturbed_mechanical_reuse_v3.csv"
     return RESULTS_DIR / f"perturbed_mechanical_reuse_{metric_suffix(agent_variant)}.csv"
 
 
@@ -475,6 +479,34 @@ def build_error_counts(rows: list[dict[str, object]]) -> list[dict[str, object]]
     ]
 
 
+def build_error_counts_by_agent_variant(rows: list[dict[str, object]]) -> list[dict[str, object]]:
+    ordered_variants = [
+        DEFAULT_AGENT_VARIANT,
+        "research_agent_v1",
+        "research_agent_v2_search",
+        "research_agent_v3_planner_debate",
+    ]
+    ordered_errors = ["none", "Overclaim", "Unsupported Claim", "Contradiction"]
+    output: list[dict[str, object]] = []
+    for agent_variant in ordered_variants:
+        subset = [row for row in rows if str(row["agent_variant"]) == agent_variant]
+        if not subset:
+            continue
+        counts = Counter(str(r["final_error_type"]) for r in subset)
+        total = len(subset)
+        for error_type in ordered_errors:
+            output.append(
+                {
+                    "agent_variant": agent_variant,
+                    "error_type": error_type,
+                    "count": counts.get(error_type, 0),
+                    "rate": round(rate(counts.get(error_type, 0), total), 4),
+                    "n_claims": total,
+                }
+            )
+    return output
+
+
 def build_grouped_metrics(rows: list[dict[str, object]], run_level: list[dict[str, object]]) -> list[dict[str, object]]:
     out: list[dict[str, object]] = []
     claim_groups = [
@@ -522,6 +554,285 @@ def build_grouped_metrics(rows: list[dict[str, object]], run_level: list[dict[st
             }
         )
     return out
+
+
+def load_ablation_summary() -> list[dict[str, object]]:
+    if not ABLATION_SUMMARY_CSV.exists():
+        return []
+    rows: list[dict[str, object]] = []
+    for row in read_csv(ABLATION_SUMMARY_CSV):
+        rows.append(
+            {
+                "arm": row["arm"],
+                "mechanical_reuse_yes_count": int(row["mechanical_reuse_yes_count"]),
+                "mechanical_reuse_rate": float(row["mechanical_reuse_rate"]),
+                "tool_use_rate": float(row["tool_use_rate"]),
+                "retrieval_success_rate": float(row["retrieval_success_rate"]),
+                "planner_usage_rate": float(row["planner_usage_rate"]),
+                "mean_debate_rounds": float(row["mean_debate_rounds"]),
+                "mean_retrieval_tool_calls": float(row["mean_retrieval_tool_calls"]),
+                "mean_pipeline_duration_sec": float(row["mean_pipeline_duration_sec"]),
+                "pipeline_complexity_note": row["pipeline_complexity_note"],
+                "headline_reading": row["headline_reading"],
+            }
+        )
+    return rows
+
+
+def format_arm_label(arm: str) -> str:
+    mapping = {
+        "baseline": "Baseline",
+        "research_agent_v1": "v1",
+        "research_agent_v2_search": "v2",
+        "research_agent_v3_planner_debate": "v3",
+    }
+    return mapping.get(arm, arm)
+
+
+def make_ablation_ladder_figure(ablation_rows: list[dict[str, object]]) -> None:
+    if not ablation_rows:
+        return
+    ordered = ["baseline", "research_agent_v1", "research_agent_v2_search", "research_agent_v3_planner_debate"]
+    rows = [row for arm in ordered for row in ablation_rows if str(row["arm"]) == arm]
+    output_rows = [
+        {
+            "arm": format_arm_label(str(row["arm"])),
+            "mechanical_reuse_yes_count": int(row["mechanical_reuse_yes_count"]),
+            "mechanical_reuse_rate": round(float(row["mechanical_reuse_rate"]), 4),
+        }
+        for row in rows
+    ]
+    write_csv(
+        FIGURES_DIR / "research_agent_ablation_ladder.csv",
+        output_rows,
+        ["arm", "mechanical_reuse_yes_count", "mechanical_reuse_rate"],
+    )
+
+    width, height = 920, 560
+    margin_left, margin_bottom, margin_top = 96, 96, 144
+    plot_w, plot_h = width - margin_left - 48, height - margin_bottom - margin_top
+    colors = {
+        "baseline": "#7B4651",
+        "research_agent_v1": "#C78B47",
+        "research_agent_v2_search": "#2F6B5F",
+        "research_agent_v3_planner_debate": "#7E97C2",
+    }
+    grid = "#E2E8F0"
+    text_dark = "#1F2937"
+    text_mid = "#5B6472"
+    accent_fill = "#F5F8FC"
+    accent_line = "#D6E1EE"
+    body = [
+        f'<rect x="28" y="18" width="{width-56}" height="84" rx="16" fill="{accent_fill}" stroke="{accent_line}"/>',
+        f'<text x="40" y="44" font-size="13" font-weight="700" fill="{colors["research_agent_v2_search"]}">Main Result</text>',
+        f'<text x="40" y="68" font-size="24" font-weight="700" fill="{text_dark}">Mechanical reuse falls from 9/10 at baseline to 0/10 by v2.</text>',
+        f'<text x="40" y="90" font-size="12" fill="{text_mid}">Paired perturbed audit; lower is better. v3 matches v2 on accuracy but adds no further headline reduction.</text>',
+        f'<line x1="{margin_left}" y1="{height-margin_bottom}" x2="{width-24}" y2="{height-margin_bottom}" stroke="{text_dark}" stroke-width="1.4"/>',
+        f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" y2="{height-margin_bottom}" stroke="{text_dark}" stroke-width="1.4"/>',
+        f'<text x="28" y="{margin_top + plot_h/2}" transform="rotate(-90 28 {margin_top + plot_h/2})" text-anchor="middle" font-size="13" fill="{text_dark}">Mechanical Reuse Rate</text>',
+    ]
+    for tick in range(6):
+        y_val = tick / 5
+        y = height - margin_bottom - plot_h * y_val
+        body.append(f'<line x1="{margin_left}" y1="{y}" x2="{width-24}" y2="{y}" stroke="{grid}" stroke-width="1"/>')
+        body.append(f'<text x="{margin_left-10}" y="{y+4}" text-anchor="end" font-size="11" fill="{text_mid}">{y_val:.1f}</text>')
+    bar_w = plot_w / (len(rows) * 1.45)
+    for i, row in enumerate(rows):
+        rate_value = float(row["mechanical_reuse_rate"])
+        count_value = int(row["mechanical_reuse_yes_count"])
+        arm = str(row["arm"])
+        x = margin_left + (i + 0.28) * bar_w
+        h = plot_h * rate_value
+        y = height - margin_bottom - h
+        label = format_arm_label(arm)
+        fill = colors[arm]
+        highlight = arm == "research_agent_v2_search"
+        bar_height = h if h > 0 else 3
+        body.append(
+            f'<rect x="{x}" y="{height-margin_bottom-bar_height}" width="{bar_w*0.82}" height="{bar_height}" '
+            f'rx="10" fill="{fill}" fill-opacity="0.96" '
+            f'stroke="{"#154E43" if highlight else fill}" stroke-width="{"2.2" if highlight else "0"}"/>'
+        )
+        if highlight:
+            body.append(
+                f'<rect x="{x-10}" y="{margin_top+14}" width="{bar_w*0.82+20}" height="34" rx="10" fill="#E4F3EE" stroke="#2F6B5F" stroke-width="1.2"/>'
+            )
+            body.append(
+                f'<text x="{x + bar_w*0.41}" y="{margin_top+36}" text-anchor="middle" font-size="12" font-weight="700" fill="#20584D">Recommended default: v2</text>'
+            )
+        if arm == "research_agent_v3_planner_debate":
+            body.append(
+                f'<text x="{x + bar_w*0.41}" y="{margin_top+34}" text-anchor="middle" font-size="11" fill="{text_mid}">same 0/10, higher cost</text>'
+            )
+        body.append(f'<text x="{x + bar_w*0.41}" y="{height-margin_bottom+28}" text-anchor="middle" font-size="12" font-weight="700" fill="{text_dark}">{label}</text>')
+        body.append(f'<text x="{x + bar_w*0.41}" y="{max(y-20, margin_top-10)}" text-anchor="middle" font-size="17" font-weight="700" fill="{fill}">{count_value}/10</text>')
+        body.append(f'<text x="{x + bar_w*0.41}" y="{max(y-4, margin_top+10)}" text-anchor="middle" font-size="11" fill="{text_mid}">{rate_value:.0%} reuse</text>')
+    write_svg(FIGURES_DIR / "research_agent_ablation_ladder.svg", width, height, body)
+
+
+def make_cost_benefit_figure(ablation_rows: list[dict[str, object]]) -> None:
+    if not ablation_rows:
+        return
+    ordered = ["baseline", "research_agent_v1", "research_agent_v2_search", "research_agent_v3_planner_debate"]
+    rows = [row for arm in ordered for row in ablation_rows if str(row["arm"]) == arm]
+    output_rows = [
+        {
+            "arm": format_arm_label(str(row["arm"])),
+            "mean_pipeline_duration_sec": round(float(row["mean_pipeline_duration_sec"]), 3),
+            "mechanical_reuse_rate": round(float(row["mechanical_reuse_rate"]), 4),
+            "mean_retrieval_tool_calls": round(float(row["mean_retrieval_tool_calls"]), 3),
+        }
+        for row in rows
+    ]
+    write_csv(
+        FIGURES_DIR / "research_agent_cost_benefit.csv",
+        output_rows,
+        ["arm", "mean_pipeline_duration_sec", "mechanical_reuse_rate", "mean_retrieval_tool_calls"],
+    )
+
+    width, height = 980, 560
+    margin_left, margin_bottom, margin_top = 98, 92, 146
+    plot_w, plot_h = width - margin_left - 70, height - margin_bottom - margin_top
+    x_max = max(float(row["mean_pipeline_duration_sec"]) for row in rows) if rows else 1.0
+    x_max = max(x_max, 1.0)
+    colors = {
+        "baseline": "#7B4651",
+        "research_agent_v1": "#C78B47",
+        "research_agent_v2_search": "#2F6B5F",
+        "research_agent_v3_planner_debate": "#7E97C2",
+    }
+    text_dark = "#1F2937"
+    text_mid = "#5B6472"
+    grid = "#D9DEE7"
+    display_offsets = {
+        "baseline": 0.08,
+        "research_agent_v1": 0.15,
+    }
+    body = [
+        f'<rect x="28" y="18" width="{width-56}" height="86" rx="16" fill="#F5F8FC" stroke="#D6E1EE"/>',
+        f'<text x="40" y="44" font-size="13" font-weight="700" fill="{colors["research_agent_v2_search"]}">Efficiency Frontier</text>',
+        f'<text x="40" y="68" font-size="24" font-weight="700" fill="{text_dark}">v2 sits on the best cost–benefit frontier.</text>',
+        f'<text x="40" y="90" font-size="12" fill="{text_mid}">x-axis: mean pipeline duration. y-axis: perturbed mechanical reuse. Bubble size encodes mean retrieval tool calls.</text>',
+        f'<line x1="{margin_left}" y1="{height-margin_bottom}" x2="{width-24}" y2="{height-margin_bottom}" stroke="{text_dark}" stroke-width="1.4"/>',
+        f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" y2="{height-margin_bottom}" stroke="{text_dark}" stroke-width="1.4"/>',
+        f'<text x="{width/2}" y="{height-26}" text-anchor="middle" font-size="13" fill="{text_dark}">Mean Pipeline Duration (seconds)</text>',
+        f'<text x="28" y="{margin_top + plot_h/2}" transform="rotate(-90 28 {margin_top + plot_h/2})" text-anchor="middle" font-size="13" fill="{text_dark}">Mechanical Reuse Rate</text>',
+    ]
+    for tick in range(6):
+        frac = tick / 5
+        x_val = round(x_max * frac)
+        x = margin_left + plot_w * frac
+        body.append(f'<line x1="{x}" y1="{margin_top}" x2="{x}" y2="{height-margin_bottom}" stroke="{grid}" stroke-width="1"/>')
+        body.append(f'<text x="{x}" y="{height-margin_bottom+24}" text-anchor="middle" font-size="11" fill="{text_mid}">{x_val}</text>')
+        y_val = frac
+        y = height - margin_bottom - plot_h * y_val
+        body.append(f'<line x1="{margin_left}" y1="{y}" x2="{width-24}" y2="{y}" stroke="{grid}" stroke-width="1"/>')
+        body.append(f'<text x="{margin_left-10}" y="{y+4}" text-anchor="end" font-size="11" fill="{text_mid}">{y_val:.1f}</text>')
+    for row in rows:
+        arm = str(row["arm"])
+        x_value = float(row["mean_pipeline_duration_sec"])
+        y_value = float(row["mechanical_reuse_rate"])
+        tool_calls = float(row["mean_retrieval_tool_calls"])
+        effective_frac = x_value / x_max if x_max else 0.0
+        if x_value == 0.0:
+            effective_frac = display_offsets.get(arm, 0.0)
+        x = margin_left + plot_w * effective_frac
+        y = height - margin_bottom - plot_h * y_value
+        radius = 7 + min(tool_calls, 40.0) * 0.18
+        fill = colors[arm]
+        label = format_arm_label(arm)
+        body.append(f'<circle cx="{x}" cy="{y}" r="{radius+4:.1f}" fill="none" stroke="{"#2F6B5F" if arm=="research_agent_v2_search" else "transparent"}" stroke-width="2.2"/>')
+        body.append(f'<circle cx="{x}" cy="{y}" r="{radius:.1f}" fill="{fill}" fill-opacity="0.86" stroke="white" stroke-width="2"/>')
+        body.append(f'<text x="{x}" y="{y - radius - 12}" text-anchor="middle" font-size="12" font-weight="700" fill="{text_dark}">{label}</text>')
+        duration_label = "0s" if x_value == 0.0 else f"{x_value:.0f}s"
+        body.append(f'<text x="{x}" y="{y + radius + 18}" text-anchor="middle" font-size="11" fill="{text_mid}">{duration_label} • {y_value:.0%}</text>')
+        if arm == "research_agent_v2_search":
+            body.append(f'<path d="M {x-18} {y-18} L {x-126} {y-78}" stroke="#2F6B5F" stroke-width="1.6" fill="none"/>')
+            body.append(f'<rect x="{x-286}" y="{y-96}" width="154" height="42" rx="10" fill="#E8F4EF" stroke="#B8DCCF"/>')
+            body.append(f'<text x="{x-209}" y="{y-78}" text-anchor="middle" font-size="11" font-weight="700" fill="#20584D">Same 0/10 as v3</text>')
+            body.append(f'<text x="{x-209}" y="{y-63}" text-anchor="middle" font-size="11" fill="#20584D">with lower runtime and fewer tool calls</text>')
+        if arm == "research_agent_v3_planner_debate":
+            body.append(f'<path d="M {x-16} {y-20} L {x-88} {y-64}" stroke="#7E97C2" stroke-width="1.4" fill="none"/>')
+            body.append(f'<text x="{x-94}" y="{y-68}" text-anchor="end" font-size="11" fill="#5F7398">extra process without</text>')
+            body.append(f'<text x="{x-94}" y="{y-53}" text-anchor="end" font-size="11" fill="#5F7398">extra headline gain</text>')
+    body.append(f'<text x="{width-300}" y="118" font-size="11" fill="{text_mid}">bubble size = mean retrieval tool calls</text>')
+    write_svg(FIGURES_DIR / "research_agent_cost_benefit.svg", width, height, body)
+
+
+def make_stage_metadata_figure(ablation_rows: list[dict[str, object]]) -> None:
+    if not ablation_rows:
+        return
+    ordered = ["baseline", "research_agent_v1", "research_agent_v2_search", "research_agent_v3_planner_debate"]
+    rows = [row for arm in ordered for row in ablation_rows if str(row["arm"]) == arm]
+    output_rows = []
+    for row in rows:
+        output_rows.append(
+            {
+                "arm": format_arm_label(str(row["arm"])),
+                "tool_use_rate": round(float(row["tool_use_rate"]), 4),
+                "retrieval_success_rate": round(float(row["retrieval_success_rate"]), 4),
+                "planner_usage_rate": round(float(row["planner_usage_rate"]), 4),
+                "mean_debate_rounds": round(float(row["mean_debate_rounds"]), 4),
+                "mean_retrieval_tool_calls": round(float(row["mean_retrieval_tool_calls"]), 4),
+            }
+        )
+    write_csv(
+        FIGURES_DIR / "research_agent_stage_metadata.csv",
+        output_rows,
+        [
+            "arm",
+            "tool_use_rate",
+            "retrieval_success_rate",
+            "planner_usage_rate",
+            "mean_debate_rounds",
+            "mean_retrieval_tool_calls",
+        ],
+    )
+
+    width, height = 1040, 430
+    left, top = 38, 132
+    row_h = 52
+    body = [
+        f'<rect x="28" y="18" width="{width-56}" height="88" rx="16" fill="#F5F8FC" stroke="#D6E1EE"/>',
+        f'<text x="40" y="44" font-size="13" font-weight="700" fill="#2F6B5F">Process Evidence</text>',
+        f'<text x="40" y="68" font-size="20" font-weight="700" fill="#1F2937">Retrieval drives the main gain; planner and debate mostly add process overhead.</text>',
+        f'<text x="40" y="90" font-size="12" fill="#5B6472">Filled cells mark stage usage rates. Bars summarize mean rounds or retrieval calls.</text>',
+    ]
+    headers = ["Arm", "Tool Use", "Retrieval Success", "Planner Usage", "Debate Rounds", "Retrieval Calls"]
+    col_x = [left, 176, 314, 484, 666, 844]
+    col_w = [116, 112, 148, 138, 138, 138]
+    for header, x, w in zip(headers, col_x, col_w):
+        body.append(f'<text x="{x + w/2}" y="{top-14}" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">{svg_escape(header)}</text>')
+    max_calls = max(float(r["mean_retrieval_tool_calls"]) for r in output_rows) or 1.0
+    max_rounds = max(float(r["mean_debate_rounds"]) for r in output_rows) or 1.0
+    row_fills = {"v2": "#F4FBF8", "v3": "#F4F8FD", "Baseline": "#FFFFFF", "v1": "#FFFFFF"}
+    for idx, row in enumerate(output_rows):
+        y = top + idx * row_h
+        arm = str(row["arm"])
+        fill = row_fills.get(arm, "#FFFFFF")
+        body.append(f'<line x1="{left-10}" y1="{y+34}" x2="{width-46}" y2="{y+34}" stroke="#EEF2F7"/>')
+        if arm in {"v2", "v3"}:
+            body.append(f'<rect x="{left-10}" y="{y-10}" width="956" height="{row_h-6}" rx="12" fill="{fill}" stroke="{"#2F6B5F" if arm=="v2" else "#7E97C2"}" stroke-width="1"/>')
+        body.append(f'<text x="{col_x[0] + 8}" y="{y+23}" font-size="13" font-weight="700" fill="#1F2937">{svg_escape(arm)}</text>')
+        for x, w, value in [
+            (col_x[1], col_w[1], float(row["tool_use_rate"])),
+            (col_x[2], col_w[2], float(row["retrieval_success_rate"])),
+            (col_x[3], col_w[3], float(row["planner_usage_rate"])),
+        ]:
+            alpha = 0.12 + 0.72 * value
+            body.append(f'<rect x="{x}" y="{y-6}" width="{w}" height="30" rx="9" fill="#2F6B5F" fill-opacity="{alpha:.2f}" stroke="#D6E4DF"/>')
+            body.append(f'<text x="{x + w/2}" y="{y+15}" text-anchor="middle" font-size="12" font-weight="700" fill="#1F2937">{value:.0%}</text>')
+        rounds = float(row["mean_debate_rounds"])
+        rounds_w = col_w[4] * (rounds / max_rounds if max_rounds else 0.0)
+        body.append(f'<rect x="{col_x[4]}" y="{y-6}" width="{col_w[4]}" height="30" rx="9" fill="#F1F5F9" stroke="#D6DEE8"/>')
+        body.append(f'<rect x="{col_x[4]}" y="{y-6}" width="{rounds_w}" height="30" rx="9" fill="#7E97C2"/>')
+        body.append(f'<text x="{col_x[4] + col_w[4]/2}" y="{y+15}" text-anchor="middle" font-size="12" font-weight="700" fill="#1F2937">{rounds:.1f}</text>')
+        calls = float(row["mean_retrieval_tool_calls"])
+        calls_w = col_w[5] * (calls / max_calls if max_calls else 0.0)
+        body.append(f'<rect x="{col_x[5]}" y="{y-6}" width="{col_w[5]}" height="30" rx="9" fill="#F1F5F9" stroke="#D6DEE8"/>')
+        body.append(f'<rect x="{col_x[5]}" y="{y-6}" width="{calls_w}" height="30" rx="9" fill="#2F6B5F" fill-opacity="0.88"/>')
+        body.append(f'<text x="{col_x[5] + col_w[5]/2}" y="{y+15}" text-anchor="middle" font-size="12" font-weight="700" fill="#1F2937">{calls:.1f}</text>')
+    write_svg(FIGURES_DIR / "research_agent_stage_metadata.svg", width, height, body)
 
 
 def make_information_gradient_figure(run_level: list[dict[str, object]]) -> None:
@@ -596,6 +907,91 @@ def make_error_type_figure(error_rows: list[dict[str, object]]) -> None:
         body.append(f'<text x="{x + bar_w/2}" y="{height-margin_bottom+32}" text-anchor="middle" font-size="12">{svg_escape(row["error_type"])}</text>')
         body.append(f'<text x="{x + bar_w/2}" y="{y-8}" text-anchor="middle" font-size="12">{count}</text>')
     write_svg(FIGURES_DIR / "error_type_distribution.svg", width, height, body)
+
+
+def make_error_type_by_agent_variant_figure(error_rows: list[dict[str, object]]) -> None:
+    write_csv(
+        FIGURES_DIR / "error_type_by_agent_variant.csv",
+        error_rows,
+        ["agent_variant", "error_type", "count", "rate", "n_claims"],
+    )
+
+    rows = [r for r in error_rows if r["error_type"] != "none"]
+    variants = [
+        DEFAULT_AGENT_VARIANT,
+        "research_agent_v1",
+        "research_agent_v2_search",
+        "research_agent_v3_planner_debate",
+    ]
+    labels = {
+        DEFAULT_AGENT_VARIANT: "Baseline",
+        "research_agent_v1": "v1",
+        "research_agent_v2_search": "v2",
+        "research_agent_v3_planner_debate": "v3",
+    }
+    error_types = ["Overclaim", "Unsupported Claim", "Contradiction"]
+    counts_by_key = {
+        (str(row["agent_variant"]), str(row["error_type"])): int(row["count"]) for row in rows
+    }
+    max_rate = max((float(row["rate"]) for row in rows), default=0.15)
+    max_rate = max(max_rate, 0.15)
+    width, height = 1040, 540
+    margin_left, margin_bottom, margin_top = 92, 94, 144
+    plot_w, plot_h = width - margin_left - 90, height - margin_bottom - margin_top
+    group_w = plot_w / len(error_types)
+    bar_w = group_w / (len(variants) + 1)
+    colors = {
+        DEFAULT_AGENT_VARIANT: "#7B4651",
+        "research_agent_v1": "#C78B47",
+        "research_agent_v2_search": "#2F6B5F",
+        "research_agent_v3_planner_debate": "#7E97C2",
+    }
+    body = [
+        f'<rect x="28" y="18" width="{width-56}" height="86" rx="16" fill="#F8F4F4" stroke="#E7DADB"/>',
+        f'<text x="40" y="44" font-size="13" font-weight="700" fill="{colors["research_agent_v2_search"]}">Claim-Level Pattern</text>',
+        f'<text x="40" y="68" font-size="24" font-weight="700" fill="#1F2937">The baseline arm carries nearly all claim-level errors.</text>',
+        f'<text x="40" y="90" font-size="12" fill="#5B6472">Rates are shown on the y-axis; raw counts are printed above each bar. Intervention arms remain at zero across these error classes.</text>',
+        f'<line x1="{margin_left}" y1="{height-margin_bottom}" x2="{width-26}" y2="{height-margin_bottom}" stroke="#1F2937" stroke-width="1.4"/>',
+        f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" y2="{height-margin_bottom}" stroke="#1F2937" stroke-width="1.4"/>',
+        f'<text x="28" y="{margin_top + plot_h/2}" transform="rotate(-90 28 {margin_top + plot_h/2})" text-anchor="middle" font-size="13" fill="#1F2937">Error Rate Among Claims</text>',
+    ]
+    for tick in range(6):
+        val = max_rate * tick / 5
+        y = height - margin_bottom - plot_h * (val / max_rate if max_rate else 0)
+        body.append(f'<line x1="{margin_left}" y1="{y}" x2="{width-26}" y2="{y}" stroke="#D9DEE7" stroke-width="1"/>')
+        body.append(f'<text x="{margin_left-10}" y="{y+4}" text-anchor="end" font-size="11" fill="#5B6472">{val:.0%}</text>')
+
+    for error_index, error_type in enumerate(error_types):
+        group_left = margin_left + error_index * group_w
+        body.append(
+            f'<text x="{group_left + group_w/2}" y="{height-margin_bottom+30}" text-anchor="middle" font-size="12" font-weight="700" fill="#374151">{svg_escape(error_type)}</text>'
+        )
+        for variant_index, agent_variant in enumerate(variants):
+            count = counts_by_key.get((agent_variant, error_type), 0)
+            matching = next((r for r in rows if str(r["agent_variant"]) == agent_variant and str(r["error_type"]) == error_type), None)
+            rate_value = float(matching["rate"]) if matching else 0.0
+            x = group_left + (variant_index + 0.5) * bar_w
+            h = plot_h * (rate_value / max_rate if max_rate else 0)
+            y = height - margin_bottom - h
+            if agent_variant == DEFAULT_AGENT_VARIANT:
+                body.append(f'<rect x="{x-6}" y="{margin_top-10}" width="{bar_w*0.8+12}" height="{plot_h+18}" rx="10" fill="#FCF7F7"/>')
+            body.append(
+                f'<rect x="{x}" y="{height-margin_bottom-max(h, 3)}" width="{bar_w*0.8}" height="{max(h, 3)}" rx="8" fill="{colors[agent_variant]}" fill-opacity="0.95"/>'
+            )
+            body.append(
+                f'<text x="{x + bar_w*0.4}" y="{max(y-20, margin_top-10)}" text-anchor="middle" font-size="12" font-weight="700" fill="{colors[agent_variant]}">{rate_value:.0%}</text>'
+            )
+            body.append(
+                f'<text x="{x + bar_w*0.4}" y="{max(y-5, margin_top+9)}" text-anchor="middle" font-size="10" fill="#5B6472">n={count}</text>'
+            )
+
+    legend_x = width - 208
+    legend_y = 116
+    for idx, agent_variant in enumerate(variants):
+        y = legend_y + idx * 20
+        body.append(f'<rect x="{legend_x}" y="{y}" width="12" height="12" fill="{colors[agent_variant]}"/>')
+        body.append(f'<text x="{legend_x + 20}" y="{y + 11}" font-size="12" fill="#374151">{labels[agent_variant]}</text>')
+    write_svg(FIGURES_DIR / "error_type_by_agent_variant.svg", width, height, body)
 
 
 def make_case_error_heatmap(rows: list[dict[str, object]]) -> None:
@@ -772,6 +1168,7 @@ def main() -> None:
     baseline_run_level = build_run_level(baseline_labels)
     case_level = build_case_level(baseline_labels)
     error_counts = build_error_counts(baseline_labels)
+    error_counts_by_variant = build_error_counts_by_agent_variant(labels_all)
     grouped_metrics = build_grouped_metrics(labels_all, run_level_all)
     metrics_rows = compute_metrics(
         baseline_labels,
@@ -786,6 +1183,11 @@ def main() -> None:
         ["metric", "scope", "numerator", "denominator", "value", "formula", "notes"],
     )
     write_csv(ERROR_COUNTS_CSV, error_counts, ["error_type", "count", "rate"])
+    write_csv(
+        ERROR_COUNTS_BY_VARIANT_CSV,
+        error_counts_by_variant,
+        ["agent_variant", "error_type", "count", "rate", "n_claims"],
+    )
     write_csv(
         CASE_LEVEL_CSV,
         case_level,
@@ -837,8 +1239,13 @@ def main() -> None:
 
     make_information_gradient_figure(baseline_run_level)
     make_error_type_figure(error_counts)
+    make_error_type_by_agent_variant_figure(error_counts_by_variant)
     make_case_error_heatmap(baseline_labels)
     make_perturbed_downgrade_figure(baseline_run_level)
+    ablation_rows = load_ablation_summary()
+    make_ablation_ladder_figure(ablation_rows)
+    make_cost_benefit_figure(ablation_rows)
+    make_stage_metadata_figure(ablation_rows)
     write_metrics_markdown(metrics_rows, METRICS_SUMMARY_MD, DEFAULT_AGENT_VARIANT)
 
     other_variants = sorted(

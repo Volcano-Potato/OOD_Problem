@@ -139,7 +139,7 @@
     - `9/10` case 为 `2/2`
     - `1/10` case 为 `1/2`
   - 解释上，这意味着 baseline `level2` 的主要问题更像是后续 claim calibration / overreach，而不是简单 threat blindness
-- `task32` 尚未开始。
+- `task32` 已完成，baseline `no_solution` 已扩到主集全覆盖。
 - `task33` 已完成：
   - `research_agent_v2` 的 runner、prompt、bridge、tests 已建立
   - runner-side `OpenAlex` scholarly seed 已接通，使用运行时环境变量：
@@ -229,13 +229,35 @@
     - `results/metrics_summary_research_agent_v3_planner_debate.md`
   - 解释上应把这些文件视为 `task37` 的 arm-level downstream artifacts
   - `v3` 的 claim-level headline metrics 目前仍应视为 provisional，不应替代后续 `task38` 的 paired audit / ablation comparison
-- `task38` 尚未开始。
+- `task38` 已完成：
+  - 已生成：
+    - `results/perturbed_mechanical_reuse_v3.csv`
+    - `results/perturbed_pair_audit_v3.md`
+    - `results/research_agent_v3_vs_v1_v2.md`
+    - `results/research_agent_ablation_summary.csv`
+    - `results/research_agent_ablation_summary.md`
+  - `v3` paired audit headline：
+    - `research_agent_v3_planner_debate perturbed mechanical reuse = 0/10`
+  - 统一 ablation headline：
+    - baseline `9/10`
+    - `v1` `2/10`
+    - `v2` `0/10`
+    - `v3` `0/10`
+  - `v3` 运行元数据总结：
+    - planner present `10/10`
+    - retrieval success `10/10`
+    - mean debate rounds `1.0`
+    - mean retrieval tool calls `19.7`
+    - mean pipeline duration `899.7s`
+  - 最终推荐配置：
+    - 默认推荐 `research_agent_v2_search`
+    - `research_agent_v3_planner_debate` 保留为诊断 / ablation arm，不作为默认升级配置
 
 当前最重要的主结论是：
 
 - `level1 -> level2` 有明显提升，而 `level2 -> level3` 基本持平
 - `perturbed` 的配对审计显示 `9/10` case 存在 broken-identification 下的 mechanical reuse
-- `no_solution` 结果应限定表述为 `4/4 tested runs`，而不是无条件 headline rate
+- `no_solution` 结果当前应表述为 baseline heuristic honesty `8/10` tested runs，而不是无条件 headline rate
 - `task30` 的扩展性结论是：
   - critic-and-reconcile intervention 在 `10` 条 `perturbed` case 上把 mechanical reuse 从 `9/10` 降到了 `2/10`
 - `task31` 的扩展性结论是：
@@ -256,13 +278,18 @@
   - `research_agent_v3_planner_debate` 已能稳定完成 `10` 条 `perturbed` formal batch
   - planner / retrieval / debate metadata 已进入正式评测链
   - `v3` claim-level headline metrics 已生成，但仍不应作为主结果引用
-  - `v3` 是否进一步优于 `v2`，应留待 `task38`
+  - `v3` 已进入可比较的正式条件
+- `task38` 的扩展性结论是：
+  - `v3` 在当前 `10` 条 `perturbed` 子集上没有提供超出 `v2` 的额外 headline 改善
+  - planner/debate 的主要价值是更强的 auditability 和 response trace，而不是更好的默认结果
+  - 因而默认推荐应停在 `v2`，而不是继续升级到 `v3`
 
 目前已经在全部 agent-facing task packet 的 `Task Rule` 中加入 anti-reconstruction 约束，并完成了主矩阵、level1 补跑、paired perturbed audit、首轮 `research_agent_v1` intervention study，以及 baseline `level2` threat-recognition audit。后续若继续推进，应转向：
 
 - 课程展示版裁剪或论文写作润色
-- `task32` no-solution 扩展
-- `task38` v3 planner/debate ablation
+- 汇报版裁剪、论文写作润色或最终归档
+- 或进一步扩展新的 agent arm / 新 case
+- 汇报版裁剪、论文写作润色或最终归档
 - 或进一步扩展新的 agent arm / 新 case
 
 ## 后续扩展方向参考

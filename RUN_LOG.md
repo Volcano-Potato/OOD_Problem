@@ -1500,3 +1500,730 @@ def extract_tool_call_counts(data: dict) -> dict[str, int]:
 - `task37` does **not** yet establish that `v3` improves over `v2`.
 - As with `v1` and `v2`, the current claim-level headline metrics for `v3` should be treated as provisional.
 - The main `v3 vs v1/v2` interpretation should remain scoped to `task38`.
+
+## 2026-06-02 - Task 38 v3 vs v1/v2 Ablation
+
+### v3 Paired Audit
+
+- Extended the paired perturbed audit to `research_agent_v3_planner_debate`.
+- Generated:
+  - `results/perturbed_mechanical_reuse_v3.csv`
+  - `results/perturbed_pair_audit_v3.md`
+- `v3` paired-audit headline:
+  - `0/10` perturbed cases show mechanical reuse
+
+### Unified Ablation Summary
+
+- Generated:
+  - `results/research_agent_ablation_summary.csv`
+  - `results/research_agent_ablation_summary.md`
+  - `results/research_agent_v3_vs_v1_v2.md`
+- Unified headline across the four arms:
+  - baseline: `9/10`
+  - `research_agent_v1`: `2/10`
+  - `research_agent_v2_search`: `0/10`
+  - `research_agent_v3_planner_debate`: `0/10`
+
+### Complexity-vs-Benefit Reading
+
+- `v3` adds real structure beyond `v2`:
+  - planner present `10/10`
+  - retrieval success `10/10`
+  - mean debate rounds `1.0`
+  - mean resolved focus points per case `3.0`
+  - unresolved-focus-point cases `0/10`
+- But the main benchmark signal does not improve beyond `v2`:
+  - `v2`: `0/10`
+  - `v3`: `0/10`
+- `v3` is also more expensive:
+  - mean retrieval tool calls:
+    - `v2 = 16.7`
+    - `v3 = 19.7`
+  - mean pipeline duration:
+    - `v2 = 789.9s`
+    - `v3 = 899.7s`
+
+### Final Recommendation
+
+- Default recommended intervention arm:
+  - `research_agent_v2_search`
+- Reason:
+  - it reaches the best current paired-audit headline
+  - unlike `v1`, it eliminates the last residual reuse cases
+  - unlike `v3`, it does so without the extra planner/debate overhead
+- Recommended role for `v3`:
+  - keep as a diagnostic / ablation arm
+  - use when explicit planner and critique-response traces are useful
+  - do not treat it as the default upgraded configuration on the current benchmark slice
+
+### Metrics Caveat
+
+- Re-ran `scripts/build_perturbed_pair_audit.py` and `scripts/compute_benchmark_metrics.py` after wiring `v3` into the paired-audit path map.
+- `results/metrics_summary_research_agent_v3_planner_debate.csv` now correctly reports:
+  - `Perturbed Mechanical Reuse Rate = 0/10`
+- The broader claim-level headline metrics for `v3` remain provisional and should not replace the paired audit as the primary comparison basis.
+
+## 2026-06-02 - Intervention Figure Pack
+
+### Goal
+
+- Add a compact figure set for the intervention ladder so the repository has visual support not just for the frozen baseline, but also for `v1/v2/v3`.
+
+### What Was Added
+
+- Extended `scripts/compute_benchmark_metrics.py` to render three new SVG figures and their source CSV tables under `results/figures/`:
+  - `research_agent_ablation_ladder.{csv,svg}`
+  - `research_agent_cost_benefit.{csv,svg}`
+  - `research_agent_stage_metadata.{csv,svg}`
+
+### Figure Roles
+
+- `research_agent_ablation_ladder.svg`
+  - headline step-down view:
+    - baseline `9/10`
+    - `v1` `2/10`
+    - `v2` `0/10`
+    - `v3` `0/10`
+- `research_agent_cost_benefit.svg`
+  - cost-vs-benefit view showing why `v2` remains the default recommendation over `v3`
+- `research_agent_stage_metadata.svg`
+  - compact metadata summary for tool use, retrieval success, planner usage, debate rounds, and retrieval call volume
+
+### Documentation Sync
+
+- Updated figure index and main entry points:
+  - `results/figures/README.md`
+  - `README.md`
+  - `report/research_report.md`
+
+### Verification
+
+- Re-ran:
+  - `python3 scripts/compute_benchmark_metrics.py`
+- Checked generated outputs exist and are readable:
+  - `results/figures/research_agent_ablation_ladder.svg`
+  - `results/figures/research_agent_cost_benefit.svg`
+  - `results/figures/research_agent_stage_metadata.svg`
+
+## 2026-06-02 - Error Counts By Agent Variant
+
+### Goal
+
+- Add a baseline-vs-`v1/v2/v3` error-type count view so intervention arms have an explicit error-pattern table and figure, not just arm-specific metrics summaries.
+
+### What Was Added
+
+- Extended `scripts/compute_benchmark_metrics.py` to emit:
+  - `results/error_type_counts_by_agent_variant.csv`
+  - `results/figures/error_type_by_agent_variant.csv`
+  - `results/figures/error_type_by_agent_variant.svg`
+
+### Reading
+
+- baseline:
+  - `Overclaim = 51`
+  - `Unsupported Claim = 41`
+  - `Contradiction = 7`
+- `research_agent_v1`:
+  - all `77/77` adjudicated claims currently labeled `none`
+- `research_agent_v2_search`:
+  - all `77/77` adjudicated claims currently labeled `none`
+- `research_agent_v3_planner_debate`:
+  - all `79/79` adjudicated claims currently labeled `none`
+
+### Interpretation Boundary
+
+- These variant-level error counts are useful descriptive support, but they still should not displace paired `mechanical_reuse` audit as the primary intervention headline.
+- The intervention arms remain strongest when read through:
+  - paired manual audit
+  - retrieval / planner / debate metadata
+  - arm-level ablation summary
+
+### Verification
+
+- Re-ran:
+  - `python3 scripts/compute_benchmark_metrics.py`
+  - `python3 -m unittest tests/test_agent_variant_pipeline.py -v`
+- Verified new files are present and internally consistent.
+
+## 2026-06-02 - Task 32 No-solution Main-Set Extension
+
+### Goal
+
+- Extend baseline `no_solution` coverage from the earlier `4`-run subset to the full 10-case main set, then reconnect the new runs to the claim / annotation / metrics chain.
+
+### What Was Added
+
+- Created:
+  - `benchmark/run_configs/no_solution_extension_batch_spec.csv`
+- Ran baseline `benchmark_isolated` no-solution extension batch for:
+  - `C002`
+  - `C004`
+  - `C008`
+  - `C010`
+  - `C014`
+  - `C019`
+
+### Downstream Refresh
+
+- Re-ran:
+  - `python3 scripts/extract_agent_claims.py`
+  - `python3 scripts/build_first_pass_annotations.py`
+  - `python3 scripts/build_second_labels_and_adjudication.py`
+  - `python3 scripts/compute_benchmark_metrics.py`
+
+### Updated Outcome
+
+- baseline `no_solution` success runs:
+  - from `4` to `10`
+- updated heuristic no-solution honesty:
+  - `8/10 = 0.8`
+- run-level heuristic failures within the expanded set:
+  - `C004`
+  - `C019`
+
+### Interpretation Change
+
+- The earlier `4/4 tested runs` wording is no longer current.
+- The correct current baseline statement is:
+  - `8/10` tested `no_solution` runs avoided supported or partially supported causal claims under the current heuristic.
+
+### Verification
+
+- Confirmed `outputs/run_manifest.csv` now contains `10` successful baseline `no_solution` rows plus one historical aborted row.
+- Confirmed `results/metrics_summary.csv` now reports:
+  - `No-solution Honesty Rate = 8 / 10 = 0.8`
+
+## 2026-06-02 - Task 39 Axis A Canonical Input Index
+
+### Goal
+
+- Freeze a script-readable canonical input list for `task39` Axis A before any judge-packet packaging work.
+
+### What Was Added
+
+- Created:
+  - `outputs/report_quality_judge_packets/axis_a_report_index.csv`
+
+### Contents
+
+- One row per `perturbed` case for the `baseline / v1 / v2 / v3` comparison axis.
+- Each row records:
+  - the canonical `agent_task_perturbed.md`
+  - the baseline formal raw log
+  - the preferred `stage5_final/artifact.md` for `v1`, `v2`, and `v3`
+  - the corresponding formal raw logs for auditability
+  - the intended `rubric_key_path`
+  - case-specific notes for known path-selection edge cases
+
+### Important Notes Captured In The Index
+
+- `C001 v1`:
+  - ignore the older smoke artifact `20260531_162114`
+  - use the formal batch-aligned artifact `20260531_163414`
+- `C016 v2`:
+  - preferred artifact comes from rerun directory `20260601_164626`
+  - formal raw log remains `RUN_20260601_154952_08`
+
+### Scope Boundary
+
+- This index is only for `Axis A`.
+- No report text was copied or packaged yet.
+- No `Axis B` index was created in this step.
+
+## 2026-06-02 - Task 39 Axis B Canonical Input Index
+
+### Goal
+
+- Freeze a script-readable canonical input list for `task39` Axis B before any judge-packet packaging work.
+
+### What Was Added
+
+- Created:
+  - `outputs/report_quality_judge_packets/axis_b_report_index.csv`
+
+### Contents
+
+- One row per `baseline` `case × variant` combination across:
+  - `level1`
+  - `level2`
+  - `level3`
+  - `perturbed`
+  - `no_solution`
+- Total rows:
+  - `50`
+
+### Important Filtering Rule
+
+- `Axis B` uses only:
+  - `agent_variant = benchmark_isolated`
+  - `status = success`
+  - `raw_output_file` under `outputs/raw_agent_logs/main/`
+
+This is what keeps the index clean and excludes:
+
+- pilot `level2` runs
+- focused reruns
+- non-canonical historical rows
+
+### Important Notes Captured In The Index
+
+- All `level2` rows are explicitly frozen to the canonical main-run outputs and should not be replaced by older pilot or focused-rerun files.
+
+### Scope Boundary
+
+- This index is only for `Axis B`.
+- No report text was copied or packaged yet.
+
+## 2026-06-03 - Task 39 Rubric-Key Split Generation
+
+### Goal
+
+- Convert the single master rubric-key document into script-readable generated key files for both `Axis A` and `Axis B`, without yet building full judge prompts or full judge packets.
+
+### What Was Added
+
+- Created splitter script:
+  - `scripts/split_report_quality_rubric_keys.py`
+- Added parser regression test:
+  - `tests/test_report_quality_rubric_split.py`
+- Generated rubric-key outputs:
+  - `outputs/report_quality_judge_packets/rubric_keys/axis_a/`
+  - `outputs/report_quality_judge_packets/rubric_keys/axis_b/`
+- Generated manifest:
+  - `outputs/report_quality_judge_packets/rubric_keys/rubric_key_manifest.csv`
+
+### Generation Result
+
+- `Axis A` generated keys:
+  - `10`
+- `Axis B` generated keys:
+  - `50`
+- Total generated keys:
+  - `60`
+
+### Source Of Truth
+
+- Master document:
+  - `results/report_quality_rubric_keys.md`
+
+### Implementation Notes
+
+- `Axis A` keys are direct extracts of each case's `Perturbed key`.
+- `Axis B`:
+  - `level1/2/3` keys are generated from the shared `Base key` plus only the matching per-level ceiling note
+  - `perturbed` keys are direct extracts
+  - `no_solution` keys are direct extracts
+
+### Index Backfill
+
+- Backfilled generated `rubric_key_path` values into:
+  - `outputs/report_quality_judge_packets/axis_a_report_index.csv`
+  - `outputs/report_quality_judge_packets/axis_b_report_index.csv`
+
+### Verification
+
+- `python3 -m unittest tests/test_report_quality_rubric_split.py -v`
+- `python3 -m py_compile scripts/split_report_quality_rubric_keys.py`
+- `python3 scripts/split_report_quality_rubric_keys.py`
+- `git diff --check`
+
+### Scope Boundary
+
+- This step generated only `rubric key` files and their manifest.
+- It did **not** yet:
+  - extract final report bodies
+  - build complete judge packets
+  - create judge prompts
+  - run the external LLM judge
+
+## 2026-06-03 - Task 39 Judge-Packet Generation
+
+### Goal
+
+- Generate the full script-readable judge packets for `task39`, using the frozen task packets, split rubric keys, and cleaned final report bodies.
+
+### What Was Added
+
+- Created packet builder:
+  - `scripts/build_report_quality_judge_packets.py`
+- Added packet-generation regression test:
+  - `tests/test_report_quality_judge_packets.py`
+- Generated packet directories:
+  - `outputs/report_quality_judge_packets/axis_a/`
+  - `outputs/report_quality_judge_packets/axis_b/`
+- Generated packet manifest:
+  - `outputs/report_quality_judge_packets/judge_packet_manifest.csv`
+
+### Generation Result
+
+- `Axis A` absolute packets:
+  - `40`
+- `Axis A` within-case ranking packets:
+  - `10`
+- `Axis B` absolute packets:
+  - `50`
+- Total packet-manifest rows:
+  - `100`
+
+### Packet Structure
+
+- `Axis A` absolute packet:
+  - `outputs/report_quality_judge_packets/axis_a/<case_id>/<arm>/`
+- `Axis A` ranking packet:
+  - `outputs/report_quality_judge_packets/axis_a/<case_id>/within_case_ranking/`
+- `Axis B` absolute packet:
+  - `outputs/report_quality_judge_packets/axis_b/<case_id>_<variant_id>/`
+
+Each packet contains:
+
+- `task_packet.md`
+- `rubric_key.md`
+- `final_report.md` or `report_A.md` ... `report_D.md`
+- `packet_manifest.json`
+- `judge_input.md`
+
+### Cleaning Rule Applied
+
+- Baseline reports from `outputs/raw_agent_logs/main/*.md` were reduced to the text after `## Raw Agent Output`.
+- `v1` / `v2` / `v3` reports were taken from the preferred `stage5_final/artifact.md` paths recorded in the `Axis A` index.
+- No planner / critique / debate intermediate artifacts were copied into the packet directories.
+
+### Ranking Packet Rule
+
+- `Axis A` ranking packets use deterministic per-case A/B/C/D assignment derived from `case_id`, stored in:
+  - `outputs/report_quality_judge_packets/axis_a/<case_id>/within_case_ranking/packet_manifest.json`
+
+### Verification
+
+- `python3 -m unittest tests/test_report_quality_judge_packets.py -v`
+- `python3 -m py_compile scripts/build_report_quality_judge_packets.py`
+- `python3 scripts/build_report_quality_judge_packets.py`
+- `git diff --check`
+
+### Scope Boundary
+
+- This step generated only the packet inputs for later judging.
+- It did **not** yet:
+  - create the final webpage-chatbot prompt templates
+  - run the external LLM judge
+  - summarize score outputs
+
+### Later Convenience Layer
+
+- Packet generation was then extended so every packet directory also includes a fully concatenated:
+  - `judge_input.md`
+- `outputs/report_quality_judge_packets/judge_packet_manifest.csv` now includes:
+  - `judge_input_path`
+
+## 2026-06-03 - Task 39 Judge-Prompt Finalization
+
+### Goal
+
+- Freeze the actual webpage-chatbot prompt texts for `task39`, so later evaluation runs use fixed prompt files rather than ad-hoc prompt drafting.
+
+### What Was Added
+
+- Absolute-scoring prompt:
+  - `benchmark/prompts/report_quality_judge/absolute_scoring_prompt.md`
+- Axis A ranking prompt:
+  - `benchmark/prompts/report_quality_judge/axis_a_ranking_prompt.md`
+- Prompt sanity test:
+  - `tests/test_report_quality_judge_prompts.py`
+
+### Prompt Coverage
+
+- `absolute_scoring_prompt.md`
+  - 8 rubric dimensions
+  - 4 binary tags
+  - overall recommendation
+  - anti-length-bias rules
+  - `no_solution` special scoring rule
+  - JSON-only output contract
+
+- `axis_a_ranking_prompt.md`
+  - ranking over `Report A/B/C/D`
+  - anti-length-bias rules
+  - boundary-respecting ranking criteria
+  - JSON-only output contract
+
+### Verification
+
+- `python3 -m unittest tests/test_report_quality_judge_prompts.py -v`
+- `git diff --check`
+
+### Scope Boundary
+
+- This step finalized only the prompt files.
+- It did **not** yet:
+  - run the external judge
+  - collect score outputs
+  - build score summaries
+
+## 2026-06-03 - Task 39 Judge-Request Layer
+
+### Goal
+
+- Eliminate manual prompt-plus-input assembly at evaluation time by generating a single ready-to-paste `judge_request.md` per packet.
+
+### What Changed
+
+- Extended packet generation so every packet directory now contains:
+  - `judge_input.md`
+  - `judge_request.md`
+- Extended:
+  - `outputs/report_quality_judge_packets/judge_packet_manifest.csv`
+  with:
+  - `judge_request_path`
+  - `prompt_path`
+
+### Mapping Rule
+
+- `Axis A` and `Axis B` absolute packets use:
+  - `benchmark/prompts/report_quality_judge/absolute_scoring_prompt.md`
+- `Axis A` within-case ranking packets use:
+  - `benchmark/prompts/report_quality_judge/axis_a_ranking_prompt.md`
+
+### Verification
+
+- `python3 -m unittest tests/test_report_quality_judge_packets.py -v`
+- `python3 scripts/build_report_quality_judge_packets.py`
+- `git diff --check`
+
+## 2026-06-03 - Task 39 Gemini-Compatible Batch Runner
+
+### Goal
+
+- Add a reusable runner that can batch-read `judge_request.md` files and execute `task39` over a Gemini-compatible endpoint.
+
+### What Was Added
+
+- Runner:
+  - `scripts/run_report_quality_judge_batch.py`
+- Runner tests:
+  - `tests/test_report_quality_judge_runner.py`
+
+### Protocol
+
+- request style:
+  - Gemini-compatible `generateContent`
+- default base URL:
+  - `https://api.aigocode.com/v1beta`
+- packet source:
+  - `outputs/report_quality_judge_packets/judge_packet_manifest.csv`
+
+### Environment Variables
+
+- preferred:
+  - `LLM_JUDGE_API_KEY`
+  - `LLM_JUDGE_MODEL`
+  - `LLM_JUDGE_BASE_URL`
+- fallback:
+  - `AIGOCODE_API_KEY`
+  - `GEMINI_API_KEY`
+  - `GEMINI_MODEL`
+
+### Output Files
+
+- raw outputs:
+  - `outputs/report_quality_judge_raw/`
+- response manifest:
+  - `outputs/report_quality_judge_raw/response_manifest.csv`
+- parsed tables:
+  - `results/report_quality_axis_a_scores.csv`
+  - `results/report_quality_axis_a_rankings.csv`
+  - `results/report_quality_axis_b_scores.csv`
+
+### Verification
+
+- `python3 -m unittest tests/test_report_quality_judge_runner.py -v`
+- `python3 -m py_compile scripts/run_report_quality_judge_batch.py`
+- `git diff --check`
+
+### Scope Boundary
+
+- The runner was implemented and verified locally.
+- No live API run was executed in this step.
+
+## 2026-06-03 - Task 39 Local Judge Credential Persistence
+
+### Goal
+
+- Reuse judge credentials and model settings across runs without manual `export` commands.
+
+### What Changed
+
+- Extended:
+  - `scripts/run_report_quality_judge_batch.py`
+  so it auto-loads `.benchmark.local.env` before resolving CLI defaults.
+- Extended:
+  - `.benchmark.local.env.example`
+  with:
+  - `LLM_JUDGE_API_KEY`
+  - `LLM_JUDGE_MODEL`
+  - `LLM_JUDGE_BASE_URL`
+- Stored the current judge configuration in local-only:
+  - `.benchmark.local.env`
+
+### Verification
+
+- `python3 -m unittest tests/test_report_quality_judge_runner.py -v`
+- `python3 -m py_compile scripts/run_report_quality_judge_batch.py`
+- `git diff --check`
+
+### Scope Boundary
+
+- No live API run was executed in this step.
+
+## 2026-06-03 - Task 39 Anthropic-Compatible Judge Runner Support
+
+### Goal
+
+- Add Anthropic-compatible transport support so `task39` can run against Claude-style endpoints, not only Gemini-compatible endpoints.
+
+### What Changed
+
+- Extended:
+  - `scripts/run_report_quality_judge_batch.py`
+  with provider switching:
+  - `gemini`
+  - `anthropic`
+- Added:
+  - `LLM_JUDGE_PROVIDER`
+  - `ANTHROPIC_MODEL`
+  support
+- Switched the local default judge configuration to:
+  - Anthropic-compatible
+  - `claude-sonnet-4-6`
+  - `https://api.aigocode.com/v1`
+
+### Verification
+
+- `python3 -m unittest tests/test_report_quality_judge_runner.py -v`
+- `python3 -m py_compile scripts/run_report_quality_judge_batch.py`
+
+### Probe Result
+
+- A minimal Anthropic-compatible probe to:
+  - `https://api.aigocode.com/v1/messages`
+  still returned:
+  - `HTTP 403`
+  - `error code: 1010`
+
+### Scope Boundary
+
+- The provider support was implemented and verified locally.
+- A minimal live probe was executed.
+- A full batch rerun was not executed after the Anthropic probe failed at the gateway layer.
+
+## 2026-06-03 - Task 39 Absolute-Prompt Tightening and Smoke Recheck
+
+### Goal
+
+- Reduce ceiling effects in absolute report scoring by tightening the rubric and allowing decimal scores.
+
+### What Changed
+
+- Tightened:
+  - `benchmark/prompts/report_quality_judge/absolute_scoring_prompt.md`
+- Added:
+  - decimal score requirement (`1.0-5.0`)
+  - `ceiling_respected`
+  - `core_failure_present`
+  - explicit score anchors
+  - binding rules between failure tags and allowed scores
+- Extended:
+  - `scripts/run_report_quality_judge_batch.py`
+  result fields to retain:
+  - `ceiling_respected`
+  - `core_failure_present`
+
+### Verification
+
+- `python3 -m unittest tests/test_report_quality_judge_prompts.py tests/test_report_quality_judge_runner.py -v`
+- `python3 -m py_compile scripts/run_report_quality_judge_batch.py`
+- `git diff --check`
+
+### Smoke Recheck
+
+- Re-ran:
+  - `python3 scripts/run_report_quality_judge_batch.py --limit 1 --overwrite`
+- Transport still succeeded.
+- But the returned JSON still violated the tightened protocol:
+  - omitted `ceiling_respected`
+  - omitted `core_failure_present`
+  - returned integer scores instead of decimal scores
+  - returned `fatal_flaw_present = yes` together with `overall_recommendation = strong`
+
+### Conclusion
+
+- Prompt tightening alone improved protocol specificity but did not yet guarantee compliant structured outputs.
+- The next robustness layer should be response validation plus automatic retry / repair before treating `task39` outputs as stable.
+
+## 2026-06-03 - Task 39 Pairwise-First Simplification
+
+### Goal
+
+- Simplify `task39` so the main question becomes:
+  - is the challenger report better than baseline on the same perturbed case?
+
+### What Changed
+
+- Added:
+  - `benchmark/prompts/report_quality_judge/axis_a_pairwise_baseline_prompt.md`
+- Extended:
+  - `scripts/build_report_quality_judge_packets.py`
+  to generate:
+  - `axis_a/<case_id>/pairwise_vs_baseline_v1/`
+  - `axis_a/<case_id>/pairwise_vs_baseline_v2/`
+  - `axis_a/<case_id>/pairwise_vs_baseline_v3/`
+- Extended:
+  - `scripts/run_report_quality_judge_batch.py`
+  to parse `pairwise_vs_baseline` outputs and write:
+  - `results/report_quality_axis_a_pairwise_vs_baseline.csv`
+
+### Packet Counts
+
+- `Axis A` absolute packets:
+  - `40`
+- `Axis A` within-case ranking packets:
+  - `10`
+- `Axis A` pairwise-vs-baseline packets:
+  - `30`
+- `Axis B` absolute packets:
+  - `50`
+- total packet manifest rows:
+  - `130`
+
+### Verification
+
+- `python3 -m unittest tests/test_report_quality_judge_packets.py tests/test_report_quality_judge_prompts.py tests/test_report_quality_judge_runner.py -v`
+- `python3 scripts/build_report_quality_judge_packets.py`
+- `python3 -m py_compile scripts/build_report_quality_judge_packets.py scripts/run_report_quality_judge_batch.py`
+
+## 2026-06-03 - Figure Polish Pass For Main Ablation Charts
+
+### Goal
+
+- Improve the four most presentation-critical benchmark figures without changing any underlying data or metric logic.
+
+### Figures Updated
+
+- `results/figures/research_agent_ablation_ladder.svg`
+- `results/figures/research_agent_cost_benefit.svg`
+- `results/figures/research_agent_stage_metadata.svg`
+- `results/figures/error_type_by_agent_variant.svg`
+
+### What Changed
+
+- Reworked the visual hierarchy to make each figure's single main takeaway explicit in the title band.
+- Switched to a more restrained paper-facing palette and cleaner whitespace.
+- Highlighted `v2` as the recommended default arm while keeping `baseline` visually neutral and `v3` secondary.
+- Simplified zero-value and metadata-heavy regions so they support, rather than dominate, the comparison.
+- Performed a render-inspect-revise pass using local bitmap previews of the exported SVGs.
+
+### Verification
+
+- `python3 -m py_compile scripts/compute_benchmark_metrics.py`
+- `python3 scripts/compute_benchmark_metrics.py`
+- `git diff --check`

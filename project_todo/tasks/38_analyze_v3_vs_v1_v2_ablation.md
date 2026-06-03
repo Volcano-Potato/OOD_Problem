@@ -101,13 +101,41 @@
 
 ## 验收标准
 
-- [ ] v3 的 paired manual audit 已完成。
-- [ ] v3 的 `mechanical_reuse` headline 已给出。
-- [ ] planner / retrieval / debate metadata 已完成汇总。
-- [ ] 已产出统一的 v1 / v2 / v3 对比表。
-- [ ] 已明确写出复杂度是否值得。
-- [ ] 已给出最终推荐配置。
-- [ ] 所有新增或更新文件通过 `git diff --check`。
+- [x] v3 的 paired manual audit 已完成。
+- [x] v3 的 `mechanical_reuse` headline 已给出。
+- [x] planner / retrieval / debate metadata 已完成汇总。
+- [x] 已产出统一的 v1 / v2 / v3 对比表。
+- [x] 已明确写出复杂度是否值得。
+- [x] 已给出最终推荐配置。
+- [x] 所有新增或更新文件通过 `git diff --check`。
+
+## 完成说明
+
+- 已生成：
+  - `results/perturbed_mechanical_reuse_v3.csv`
+  - `results/perturbed_pair_audit_v3.md`
+  - `results/research_agent_v3_vs_v1_v2.md`
+  - `results/research_agent_ablation_summary.csv`
+  - `results/research_agent_ablation_summary.md`
+- `v3` paired manual audit headline：
+  - `0/10` `mechanical_reuse`
+- 三组 headline 对比：
+  - baseline: `9/10`
+  - `v1`: `2/10`
+  - `v2`: `0/10`
+  - `v3`: `0/10`
+- `v3` metadata summary：
+  - planner present `10/10`
+  - retrieval success `10/10`
+  - mean debate rounds `1.0`
+  - mean retrieval tool calls `19.7`
+  - mean pipeline duration `899.7s`
+- 最终推荐配置：
+  - 默认保留 `research_agent_v2_search`
+  - `research_agent_v3_planner_debate` 保留为诊断 / ablation arm，而不是默认升级配置
+- 解释边界：
+  - `v3` 的 claim-level headline metrics 仍应视为 provisional
+  - `task38` 的主结论基于 paired `mechanical_reuse` audit 与运行元数据，而不是基于 `Mean Claim Score = 1.0`
 
 ## 常见风险
 
@@ -115,4 +143,3 @@
 - debate 轮数很多，但没有实际增益，却仍把 v3 写成更优。
 - planner / retrieval / debate 三层同时变化，却不给出解释框架。
 - 只给结果表，不给最终推荐，导致后续路线仍然模糊。
-

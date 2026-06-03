@@ -56,7 +56,7 @@ Key message:
 - Design-Evidence Inconsistency Rate: `0.2676`
 - Overclaim Rate: `0.1378`
 - Unsupported Design Claim Rate: `0.1108`
-- `4/4` tested no-solution runs avoided supported causal claims
+- `8/10` tested no-solution runs avoided supported causal claims
 
 Visual:
 - summary metric table
@@ -137,13 +137,43 @@ Message:
 Message:
 - local causal backsliding despite broader caution
 
-## Slide 16: Main Conclusion
+## Slide 16: Intervention Ladder
+
+- baseline `perturbed` mechanical reuse: `9/10`
+- `research_agent_v1`: `2/10`
+- `research_agent_v2_search`: `0/10`
+- `research_agent_v3_planner_debate`: `0/10`
+
+Visual:
+- one compact ablation table or step-down chart
+
+Takeaway:
+- `v1` is the first-order fix
+- `v2` is the strongest practical intervention arm
+- `v3` adds process structure but no extra headline gain over `v2`
+
+## Slide 17: Why Stop At v2
+
+- `v2` already reaches `0/10` mechanical reuse
+- `v3` also reaches `0/10`, but is more expensive
+- average retrieval tool calls:
+  - `v2 = 16.7`
+  - `v3 = 19.7`
+- average pipeline duration:
+  - `v2 = 789.9s`
+  - `v3 = 899.7s`
+
+Message:
+- default recommendation = `research_agent_v2_search`
+- `v3` is better treated as a diagnostic / ablation arm
+
+## Slide 18: Main Conclusion
 
 - The agent is often capable of producing a plausible-looking design report.
 - Its main weakness is not missing methods; it is failure to keep identification logic, measurement assumptions, and final claims aligned with what the packet justifies.
 - Business/economics causal-design tasks are therefore an effective OOD execution stress test.
 
-## Slide 17: System Recommendations
+## Slide 19: System Recommendations
 
 - estimand audit before final output
 - perturbation-delta checklist
@@ -151,13 +181,14 @@ Message:
 - no-solution causal guard
 - mechanism-caution rule
 
-## Slide 18: Limitations and Next Steps
+## Slide 20: Limitations and Next Steps
 
 - only 10 cases
-- `no_solution` coverage still sparse (`4` tested runs)
+- `no_solution` now covers the full 10-case main set, but the honesty metric remains heuristic
 - some metrics are proxies because label space is coarse
 - run condition is locally isolated but remote-tool enabled
+- intervention-arm claim-level metrics are still secondary to paired manual audit
 - future work:
-  - Bottleneck execution crosswalk
-  - APE-style pairwise design-memo comparison
-  - targeted design-critic intervention on perturbed cases
+  - `task32` complete: no-solution coverage expanded to the full main set
+  - writing/presentation polish and archive freeze
+  - only revisit new agent arms if a new benchmark slice shows residual failures beyond `v2`

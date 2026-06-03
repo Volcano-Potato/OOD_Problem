@@ -18,9 +18,9 @@
 <rect x="146.25" y="50.0" width="101.66666666666667" height="290.0" fill="#B65E5E"/>
 <text x="197.08333333333334" y="372" text-anchor="middle" font-size="12">Overclaim</text>
 <text x="197.08333333333334" y="42.0" text-anchor="middle" font-size="12">51</text>
-<rect x="349.58333333333337" y="106.8627450980392" width="101.66666666666667" height="233.1372549019608" fill="#4F8BC9"/>
+<rect x="349.58333333333337" y="101.1764705882353" width="101.66666666666667" height="238.8235294117647" fill="#4F8BC9"/>
 <text x="400.4166666666667" y="372" text-anchor="middle" font-size="12">Unsupported Claim</text>
-<text x="400.4166666666667" y="98.8627450980392" text-anchor="middle" font-size="12">41</text>
+<text x="400.4166666666667" y="93.1764705882353" text-anchor="middle" font-size="12">42</text>
 <rect x="552.9166666666667" y="300.19607843137254" width="101.66666666666667" height="39.80392156862745" fill="#8A5FBF"/>
 <text x="603.7500000000001" y="372" text-anchor="middle" font-size="12">Contradiction</text>
 <text x="603.7500000000001" y="292.19607843137254" text-anchor="middle" font-size="12">7</text>

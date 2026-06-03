@@ -1,5 +1,5 @@
 error_type,count,rate
-none,271,0.7324
-Overclaim,51,0.1378
-Unsupported Claim,41,0.1108
-Contradiction,7,0.0189
+none,314,0.7585
+Overclaim,51,0.1232
+Unsupported Claim,42,0.1014
+Contradiction,7,0.0169

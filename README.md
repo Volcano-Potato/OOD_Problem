@@ -47,31 +47,36 @@ If you only want the shortest path through the repository:
 
 Headline numbers from the current main benchmark:
 
-- successful annotated main runs: `44`
-- total adjudicated claims: `370`
-- Mean Claim Score: `0.8014`
-- Design-Evidence Inconsistency Rate: `0.2676`
-- Overclaim Rate: `0.1378`
-- Unsupported Design Claim Rate: `0.1108`
-- all `4/4` tested `no_solution` runs avoided supported causal claims under the current heuristic
+- successful annotated main runs: `50`
+- total adjudicated claims: `414`
+- Mean Claim Score: `0.8200`
+- Design-Evidence Inconsistency Rate: `0.2415`
+- Overclaim Rate: `0.1232`
+- Unsupported Design Claim Rate: `0.1014`
+- `8/10` tested `no_solution` runs avoided supported causal claims under the current heuristic
 - `perturbed` mechanical reuse: `9/10`
 - `level1` mean run score: `0.6902`
-- `level2` mean run score: `0.8363`
+- `level2` mean run score: `0.8313`
 - `level3` mean run score: `0.8421`
-- `perturbed` mean run score: `0.7634`
+- `perturbed` mean run score: `0.7562`
 
 Main conclusion:
 
 > The benchmark's main signal is an execution weakness, not an ideation weakness: once a plausible design direction is on the table, the agent often fails to keep identification logic, measurement assumptions, and final claims aligned with what the packet actually justifies.
 
-Extension result after the frozen baseline:
+Intervention ladder after the frozen baseline:
 
-- first intervention arm: `research_agent_v1`
 - evaluation subset: `10` `perturbed` cases
 - baseline `perturbed` mechanical reuse: `9/10`
 - `research_agent_v1` `perturbed` mechanical reuse: `2/10`
+- `research_agent_v2_search` `perturbed` mechanical reuse: `0/10`
+- `research_agent_v3_planner_debate` `perturbed` mechanical reuse: `0/10`
 
-This intervention result should be read as a targeted follow-up experiment, not as a replacement for the frozen baseline headline.
+Reading:
+
+- `v1` is the first-order fix: critic-and-reconcile removes most broken-identification reuse.
+- `v2` is the default recommended intervention arm: adding explicit retrieval removes the last residual reuse cases.
+- `v3` is useful as a richer diagnostic arm, but it does not improve the headline beyond `v2` on the current `10`-case `perturbed` subset.
 
 Core output files:
 
@@ -82,7 +87,12 @@ Core output files:
 - [results/figures/perturbed_downgrade.svg](results/figures/perturbed_downgrade.svg)
 - [results/perturbed_pair_audit.md](results/perturbed_pair_audit.md)
 - [results/perturbed_pair_audit_v1.md](results/perturbed_pair_audit_v1.md)
+- [results/perturbed_pair_audit_v2.md](results/perturbed_pair_audit_v2.md)
+- [results/perturbed_pair_audit_v3.md](results/perturbed_pair_audit_v3.md)
 - [results/research_agent_v1_vs_baseline.md](results/research_agent_v1_vs_baseline.md)
+- [results/research_agent_v2_vs_v1.md](results/research_agent_v2_vs_v1.md)
+- [results/research_agent_v3_vs_v1_v2.md](results/research_agent_v3_vs_v1_v2.md)
+- [results/research_agent_ablation_summary.md](results/research_agent_ablation_summary.md)
 
 ## What This Repository Contains
 
@@ -108,8 +118,8 @@ The final benchmark package is documented in:
 
 - 10 main-set cases
 - 8 business/economics domains
-- 44 successful annotated main runs
-- 370 adjudicated claims
+- 50 successful annotated main runs
+- 414 adjudicated claims
 - agent-facing vs evaluator-only separation
 - `level1`, `level2`, `level3`, `perturbed`, `no_solution`
 - locally isolated but remote-tool-enabled OpenClaw run condition
@@ -184,9 +194,9 @@ The frozen main-run matrix contains:
 - 10 `level2` runs
 - 10 `level3` runs
 - 10 `perturbed` runs
-- 4 `no_solution` runs
+- 10 `no_solution` runs
 
-Successful annotated main runs: `44`
+Successful annotated main runs: `50`
 
 ## Current Status
 
@@ -200,12 +210,20 @@ The repository now has two result layers:
     - [results/perturbed_pair_audit.md](results/perturbed_pair_audit.md)
 - post-benchmark extensions
   - `task27-29` complete
-  - `task30` complete as a first intervention study on `perturbed` cases
+  - `task30` complete as the first intervention study on `perturbed` cases
   - `task31` complete as a light threat-recognition audit on baseline `level2`
-  - primary task30 files:
+  - `task33-38` complete as the retrieval/planner/debate ablation ladder
+  - primary intervention files:
     - [results/perturbed_mechanical_reuse_v1.csv](results/perturbed_mechanical_reuse_v1.csv)
     - [results/perturbed_pair_audit_v1.md](results/perturbed_pair_audit_v1.md)
+    - [results/perturbed_mechanical_reuse_v2.csv](results/perturbed_mechanical_reuse_v2.csv)
+    - [results/perturbed_pair_audit_v2.md](results/perturbed_pair_audit_v2.md)
+    - [results/perturbed_mechanical_reuse_v3.csv](results/perturbed_mechanical_reuse_v3.csv)
+    - [results/perturbed_pair_audit_v3.md](results/perturbed_pair_audit_v3.md)
     - [results/research_agent_v1_vs_baseline.md](results/research_agent_v1_vs_baseline.md)
+    - [results/research_agent_v2_vs_v1.md](results/research_agent_v2_vs_v1.md)
+    - [results/research_agent_v3_vs_v1_v2.md](results/research_agent_v3_vs_v1_v2.md)
+    - [results/research_agent_ablation_summary.md](results/research_agent_ablation_summary.md)
   - primary task31 files:
     - [results/threat_recognition_audit.csv](results/threat_recognition_audit.csv)
     - [results/threat_recognition_summary.md](results/threat_recognition_summary.md)
@@ -213,8 +231,12 @@ The repository now has two result layers:
 Important interpretation rule:
 
 - baseline headline metrics are frozen and should still be treated as the main benchmark result
-- `research_agent_v1` claim-level summary metrics are not yet fully publication-stable because the override system was originally tuned to the baseline run IDs
-- for `task30`, the paired manual `perturbed` audit is the primary evidence source
+- intervention-arm claim-level summary metrics remain less stable than the paired manual `perturbed` audits
+- for the intervention ladder, the primary evidence source is the paired manual `mechanical_reuse` audit plus run-level retrieval / planner / debate metadata
+- current default recommendation is:
+  - baseline for diagnosis
+  - `research_agent_v2_search` for the strongest practical intervention arm
+  - `research_agent_v3_planner_debate` only when richer diagnostic traces are needed
 
 ## Repository Layout
 
@@ -394,6 +416,10 @@ There are three common ways to use this repository:
 - [results/metrics_summary.md](results/metrics_summary.md)
 - [results/grouped_metrics.csv](results/grouped_metrics.csv)
 - [results/figures/](results/figures)
+- Intervention figure highlights:
+  - [results/figures/research_agent_ablation_ladder.svg](results/figures/research_agent_ablation_ladder.svg)
+  - [results/figures/research_agent_cost_benefit.svg](results/figures/research_agent_cost_benefit.svg)
+  - [results/figures/research_agent_stage_metadata.svg](results/figures/research_agent_stage_metadata.svg)
 
 ### Failure analysis
 
@@ -413,8 +439,8 @@ The strongest general pattern is that the agent is often able to produce a plaus
 
 The most important Task 26 update is that the information gradient is no longer flat by construction:
 
-- `level1 -> level2` shows a large improvement (`0.6902 -> 0.8363`)
-- `level2 -> level3` is nearly flat (`0.8363 -> 0.8421`)
+- `level1 -> level2` shows a large improvement (`0.6902 -> 0.8313`)
+- `level2 -> level3` is nearly flat (`0.8313 -> 0.8421`)
 
 That makes the benchmark story sharper: structured data and design information matter, but additional explicit threat hints did not produce a meaningful further gain in this round.
 

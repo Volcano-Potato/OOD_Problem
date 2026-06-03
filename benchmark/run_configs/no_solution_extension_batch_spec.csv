@@ -1,0 +1,7 @@
+case_id,variant_id,input_file,split,enabled,notes
+C002,no_solution,benchmark/cases/C002_consumer_credit/agent_task_no_solution.md,main,true,task32 no_solution extension
+C004,no_solution,benchmark/cases/C004_paid_search_effectiveness/agent_task_no_solution.md,main,true,task32 no_solution extension
+C008,no_solution,benchmark/cases/C008_retail_tax_salience/agent_task_no_solution.md,main,true,task32 no_solution extension
+C010,no_solution,benchmark/cases/C010_fertilizer_present_bias/agent_task_no_solution.md,main,true,task32 no_solution extension
+C014,no_solution,benchmark/cases/C014_corruption_monitoring/agent_task_no_solution.md,main,true,task32 no_solution extension
+C019,no_solution,benchmark/cases/C019_in_store_travel_distance/agent_task_no_solution.md,main,true,task32 no_solution extension

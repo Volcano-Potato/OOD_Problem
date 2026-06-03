@@ -91,7 +91,7 @@ After the Task 26 extension, the main matrix contained 44 successful annotated r
 - 10 `level2`
 - 10 `level3`
 - 10 `perturbed`
-- 4 `no_solution`
+- 10 `no_solution`
 
 There were also 2 historical aborted main-run manifest rows retained for audit purposes.
 
@@ -133,7 +133,7 @@ The most important headline numbers are:
 - Overclaim Rate: `0.1378`
 - Critical Design Omission Rate (proxy): `0.0432`
 - Mechanism Confounding Rate (proxy): `0.2914`
-- All `4/4` tested `no_solution` runs avoided supported causal claims under the current heuristic.
+- `8/10` tested `no_solution` runs avoided supported causal claims under the current heuristic.
 - `perturbed` mechanical reuse: `9/10`
 
 After Task 26, the information-gradient comparison is no longer limited to `level2` vs `level3`; it now spans `level1`, `level2`, and `level3`.
@@ -207,7 +207,7 @@ This is consistent with the qualitative finding that the agent struggles when me
 
 ### 7.5 No-solution Behavior
 
-The run-level no-solution honesty result should be stated cautiously: all `4/4` tested `no_solution` runs avoided supported or partially supported causal claims under the current heuristic.
+The run-level no-solution honesty result should be stated cautiously: `8/10` tested `no_solution` runs avoided supported or partially supported causal claims under the current heuristic.
 
 That is encouraging, but it is not the whole story. One of the strongest qualitative lessons from Task 23 is that a run can still emit a direct causal sentence that gets adjudicated as `contradicted`, even if the run-level heuristic marks it broadly cautious. The no-solution result is therefore better interpreted as:
 
@@ -226,6 +226,12 @@ An additional diagnostic figure is:
 
 4. [case_error_heatmap.svg](/Users/jiangcanxiang/Documents/OOD_Problem/results/figures/case_error_heatmap.svg)
 
+For the intervention ladder and ablation analysis, the most useful companion figures are:
+
+5. [research_agent_ablation_ladder.svg](/Users/jiangcanxiang/Documents/OOD_Problem/results/figures/research_agent_ablation_ladder.svg)
+6. [research_agent_cost_benefit.svg](/Users/jiangcanxiang/Documents/OOD_Problem/results/figures/research_agent_cost_benefit.svg)
+7. [research_agent_stage_metadata.svg](/Users/jiangcanxiang/Documents/OOD_Problem/results/figures/research_agent_stage_metadata.svg)
+
 ## 8. Failure Cases
 
 The qualitative failure analysis is in [results/failure_cases.md](/Users/jiangcanxiang/Documents/OOD_Problem/results/failure_cases.md). The five representative failures show a coherent pattern:
@@ -242,7 +248,75 @@ The most important conclusion from these examples is that the agent's weakness i
 - what the design requires
 - what the final claim table is allowed to say
 
-## 9. Limitations
+## 9. Intervention Ladder
+
+After freezing the main benchmark, the project added a controlled intervention ladder on the shared `10`-case `perturbed` subset.
+
+The sequence was:
+
+- `baseline`
+  - single-pass packet-grounded design memo
+- `research_agent_v1`
+  - critic-and-reconcile loop
+- `research_agent_v2_search`
+  - critic-and-reconcile plus explicit retrieval
+- `research_agent_v3_planner_debate`
+  - planner plus retrieval plus one-round critique-response debate
+
+The paired `mechanical reuse` headline is:
+
+- baseline: `9/10`
+- `v1`: `2/10`
+- `v2`: `0/10`
+- `v3`: `0/10`
+
+This produces a clean mechanism reading.
+
+### 9.1 What v1 Changes
+
+The largest gain comes from the first intervention step. Adding an explicit critic-and-reconcile loop sharply reduces broken-identification reuse. This suggests that a substantial part of the baseline problem is not lack of candidate ideas, but failure to force a final answer to reconcile with an explicit threat audit.
+
+### 9.2 What v2 Adds
+
+The second step adds real retrieval rather than nominal tool exposure.
+
+- retrieval attempted: `10/10`
+- retrieval successful: `10/10`
+- zero-tool-use runs: `0/10`
+
+`v2` removes the last two residual reuse cases left in `v1`, especially in settings where the downgrade requires stronger methodological backing for why a tempting salvage design should still be rejected.
+
+### 9.3 What v3 Adds
+
+`v3` adds a planner stage and an explicit critique-response loop.
+
+On the current `10`-case `perturbed` subset:
+
+- planner present: `10/10`
+- retrieval successful: `10/10`
+- mean debate rounds: `1.0`
+- mean retrieval tool calls:
+  - `v2 = 16.7`
+  - `v3 = 19.7`
+- mean pipeline duration:
+  - `v2 = 789.9s`
+  - `v3 = 899.7s`
+
+So `v3` is not empty ceremony. It produces richer traces, stronger auditability, and explicit resolution of critique focus points. But it does **not** improve the main paired-audit headline beyond `v2`.
+
+### 9.4 Final Recommendation
+
+The default recommended intervention arm is `research_agent_v2_search`.
+
+The reason is straightforward:
+
+- `v1` is a major first-order fix, but still leaves `2/10` residual failures.
+- `v2` reaches `0/10` on the current `perturbed` subset with real retrieval.
+- `v3` matches `v2` on the headline while adding more system complexity, more tool calls, and more runtime.
+
+`research_agent_v3_planner_debate` should therefore be treated as a useful diagnostic or ablation arm, not as the default upgraded production configuration for this benchmark slice.
+
+## 10. Limitations
 
 This benchmark is useful, but it is still limited.
 
@@ -250,7 +324,7 @@ This benchmark is useful, but it is still limited.
    - The main set has 10 cases, which is enough for structured diagnosis but not enough to claim exhaustive coverage of all business/economics causal-design settings.
 
 2. Variant coverage
-   - `no_solution` is intentionally sparse at 4 runs, so its estimates are lower-variance descriptively than inferentially robust.
+   - `no_solution` now spans the full 10-case main set, but its honesty metric remains heuristic and should not be read as a broad population rate.
 
 3. Annotation subjectivity
    - Task 21 adjudication improves reliability, but the label space still depends on human interpretation of overclaim strength and evidentiary scope.
@@ -269,7 +343,11 @@ This benchmark is useful, but it is still limited.
    - An APE-style pairwise design-memo comparison was added as an exploratory extension, but its current protocol strongly favors agent memos.
    - Because that result conflicts with the benchmark's claim-level adjudication, it is better interpreted as evidence of protocol sensitivity under memo compression and same-family judging than as a reversal of the main benchmark conclusion.
 
-## 10. Recommendations
+8. Intervention-metric stability
+   - For `v1`, `v2`, and `v3`, the most defensible headline is the paired manual `mechanical reuse` audit.
+   - The broader claim-level summary metrics for the intervention arms remain useful descriptive artifacts, but they should not replace the paired audit as the primary intervention comparison basis.
+
+## 11. Recommendations
 
 The benchmark suggests five concrete system improvements for research-design agents:
 
@@ -288,7 +366,7 @@ The benchmark suggests five concrete system improvements for research-design age
 5. Mechanism caution rule
    - when mechanism evidence is secondary, selected, or noisy, the agent should enumerate multiple explanations rather than commit to one.
 
-## 11. Bottom Line
+## 12. Bottom Line
 
 Business and economics causal-design tasks are a useful OOD benchmark for research agents because they stress exactly the behaviors that generic scientific-assistant evaluation often under-measures:
 
@@ -299,3 +377,10 @@ Business and economics causal-design tasks are a useful OOD benchmark for resear
 - honesty under no-solution conditions
 
 Under this benchmark, the agent is often competent at producing a formal design report, but noticeably less reliable at keeping its claims aligned with what the packet actually justifies. That is the central weakness this benchmark surfaces.
+
+The post-benchmark intervention ladder sharpens that conclusion. The most valuable additions are:
+
+- an explicit critic-and-reconcile loop (`v1`)
+- then a real retrieval layer (`v2`)
+
+Planner-and-debate structure (`v3`) is useful when auditability matters, but on the present benchmark it is not the default performance-maximizing configuration.

@@ -64,6 +64,7 @@
 | 36 | 构建 v3 的 planner 与 debate loop | 35 | [36_build_v3_planner_and_debate_loop.md](tasks/36_build_v3_planner_and_debate_loop.md) |
 | 37 | 执行 v3 planner-debate perturbed batch | 36 | [37_run_v3_planner_debate_perturbed_batch.md](tasks/37_run_v3_planner_debate_perturbed_batch.md) |
 | 38 | 汇总 v3 与 v1/v2 的 ablation 对比 | 37 | [38_analyze_v3_vs_v1_v2_ablation.md](tasks/38_analyze_v3_vs_v1_v2_ablation.md) |
+| 39 | 用单一外部 LLM Judge 做双轴最终报告质量评测 | 30,32,35,38 | [39_run_llm_judge_report_quality_eval.md](tasks/39_run_llm_judge_report_quality_eval.md) |
 
 ## 推荐执行顺序
 
@@ -92,7 +93,7 @@
   - `task31` complete
     - baseline `level2` threat-recognition audit headline: `19/20`
     - `9/10` cases scored `2/2`
-  - `task32` not started
+  - `task32` complete
   - `task33` complete
     - v2 retrieval stage/search gate implemented
     - `C001_perturbed` smoke passed end-to-end
@@ -120,15 +121,25 @@
     - downstream extraction / annotation / adjudication / metrics chain completed
     - `results/metrics_summary_research_agent_v3_planner_debate.csv` and `.md` generated
     - current claim-level headline metrics remain provisional; the main `v3 vs v1/v2` interpretation is deferred to `task38`
-  - `task38` planned
-    - v3 planner/debate ablation against `v1` and `v2`
+  - `task38` complete
+    - `v3` paired audit headline: `0/10`
+    - unified baseline / `v1` / `v2` / `v3` ablation table generated
+    - recommendation: stop at `research_agent_v2_search` as the default intervention arm
+    - `research_agent_v3_planner_debate` retained as a diagnostic / ablation arm rather than a default upgrade
+  - `task39` not started
+    - protocol target: single fixed non-DeepSeek web chatbot
+    - scope: report-level quality evaluation for baseline / `v1` / `v2` / `v3`
+    - output layers: absolute rubric score + within-case ranking
 
 当前最合理的后续顺序是：
 
-1. 若要继续做 agent redesign，执行 `task38`
-2. `task32` no-solution 扩展保持为独立 coverage extension，不与 v2/v3 ablation 混跑
+1. 若要收尾，优先做：
+   - 中文汇报版裁剪
+   - 英文论文叙事统一
+   - 仓库状态冻结与归档
+2. 若要补一层外部 report-level evaluation，执行 `task39`
 3. 如有需要，再补 `research_agent_v1` 的 run-specific annotation overrides，使其 claim-level headline metrics 也达到可稳定引用状态
-4. 如有需要，再把 `task31` 的轻量 audit 扩到 intervention arm，做 baseline vs `research_agent_v1` 的 threat-recognition appendix
+5. 如有需要，再把 `task31` 的轻量 audit 扩到 intervention arm，做 baseline vs `research_agent_v1` 的 threat-recognition appendix
 
 ## 完成定义
 

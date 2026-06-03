@@ -40,6 +40,27 @@ class AgentVariantPipelineTests(unittest.TestCase):
             module.perturbed_audit_path_for_variant("research_agent_v2_search").name,
             "perturbed_mechanical_reuse_v2.csv",
         )
+        self.assertEqual(
+            module.perturbed_audit_path_for_variant("research_agent_v3_planner_debate").name,
+            "perturbed_mechanical_reuse_v3.csv",
+        )
+
+    def test_compute_metrics_builds_error_counts_by_agent_variant(self) -> None:
+        module = load_script_module("scripts/compute_benchmark_metrics.py", "compute_metrics_error_counts")
+        rows = [
+            {"agent_variant": "benchmark_isolated", "final_error_type": "Overclaim"},
+            {"agent_variant": "benchmark_isolated", "final_error_type": "none"},
+            {"agent_variant": "research_agent_v1", "final_error_type": "none"},
+            {"agent_variant": "research_agent_v2_search", "final_error_type": "Unsupported Claim"},
+            {"agent_variant": "research_agent_v3_planner_debate", "final_error_type": "Contradiction"},
+        ]
+        counts = module.build_error_counts_by_agent_variant(rows)
+        by_key = {(row["agent_variant"], row["error_type"]): row for row in counts}
+        self.assertEqual(by_key[("benchmark_isolated", "Overclaim")]["count"], 1)
+        self.assertEqual(by_key[("benchmark_isolated", "none")]["n_claims"], 2)
+        self.assertEqual(by_key[("research_agent_v1", "none")]["count"], 1)
+        self.assertEqual(by_key[("research_agent_v2_search", "Unsupported Claim")]["count"], 1)
+        self.assertEqual(by_key[("research_agent_v3_planner_debate", "Contradiction")]["count"], 1)
 
     def test_postprocess_uses_session_file_as_tool_truth_source(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
