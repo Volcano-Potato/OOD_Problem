@@ -4,7 +4,7 @@ do_not_include_in_agent_context: true
 case_id: C014
 anonymous_short_name: corruption_monitoring
 paper_key: olken_2007_corruption_monitoring
-source_pdf: downloads/deepscientist_econ_business_experiment_papers/Olken_2007_Monitoring_Corruption_Evidence_from_a_Field_Experiment_in_Indonesia.pdf
+source_pdf: downloads/deepscientist_econ_business_experiment_papers/C014_Olken_2007_Monitoring_Corruption_Evidence_from_a_Field_Experiment_in_Indonesia.pdf
 
 taxonomy:
   domain: political_econ

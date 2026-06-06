@@ -14,7 +14,7 @@
 - registry_domain: `platform_economics`
 - registry_design_family: `field_experiment`
 - registry_key_failure_mode: `endogenous_exposure`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/Johnson_Lewis_Nubbemeyer_2017_Ghost_Ads_Improving_the_Economics_of_Measuring_Online_Ad_Effectiveness.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C005_Johnson_Lewis_Nubbemeyer_2017_Ghost_Ads_Improving_the_Economics_of_Measuring_Online_Ad_Effectiveness.pdf`
 - source_url: `https://conference.nber.org/confer/2016/EoDs16/Johnson_Lewis_Nubbemeyer.pdf`
 - pdf_pages: 41
 

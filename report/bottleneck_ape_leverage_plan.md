@@ -39,7 +39,7 @@ The current project is already in a good position to leverage both works:
 - `370` adjudicated claims
 - a complete `level1 -> level2 -> level3` information gradient
 - `perturbed` and `no_solution` challenge variants
-- a concrete paired result: `9/10` perturbed cases show mechanical reuse
+- a re-audited paired result: `1/10` perturbed baseline cases show mechanical reuse
 
 So the project does **not** need more scale first.
 It needs better **positioning**, **crosswalks**, and **one extra evaluation layer**.
@@ -256,7 +256,7 @@ Your benchmark already suggests:
 
 - major gain from `level1 -> level2`
 - almost no gain from `level2 -> level3`
-- `9/10` mechanical reuse in perturbed cases
+- `1/10` mechanical reuse in the re-audited perturbed baseline
 
 This implies the bottleneck is not "lack of more hints."
 It is something like:
@@ -298,7 +298,7 @@ Run it on:
 
 ### Desired headline
 
-- `mechanical reuse falls from 9/10 to X/10`
+- `mechanical reuse changes from the current re-audited baseline rate of 1/10 to X/10`
 
 If you can get even a modest reduction, the project becomes:
 
@@ -517,7 +517,7 @@ If these additions are executed, the strongest final story becomes:
 3. The benchmark shows:
    - strong gain from structured data information (`level1 -> level2`)
    - little gain from extra explicit threat hints (`level2 -> level3`)
-   - widespread mechanical reuse when identification conditions are broken (`9/10`)
+   - a narrow but real mechanical-reuse residual when identification conditions are broken (`1/10`)
 4. An APE-style pairwise comparison can then show whether agent designs are still judged inferior to published design logic overall.
 5. A final reviewer-style design-critic intervention can test whether the main weakness is actually reducible.
 

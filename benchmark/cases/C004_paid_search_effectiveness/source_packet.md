@@ -14,7 +14,7 @@
 - registry_domain: `platform_economics`
 - registry_design_family: `field_experiment`
 - registry_key_failure_mode: `endogenous_exposure`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/Blake_Nosko_Tadelis_2015_Consumer_Heterogeneity_and_Paid_Search_Effectiveness_A_Large_Scale_Field_Experiment.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C004_Blake_Nosko_Tadelis_2015_Consumer_Heterogeneity_and_Paid_Search_Effectiveness_A_Large_Scale_Field_Experiment.pdf`
 - source_url: `https://www.nber.org/papers/w20171`
 - pdf_pages: 43
 

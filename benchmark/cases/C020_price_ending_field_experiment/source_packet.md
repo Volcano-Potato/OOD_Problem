@@ -14,7 +14,7 @@
 - registry_domain: `marketing`
 - registry_design_family: `field_experiment`
 - registry_key_failure_mode: `mechanism_confounding`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/Anderson_Simester_2003_Effects_of_9_Price_Endings_on_Retail_Sales_Evidence_from_Field_Experiments.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C020_Anderson_Simester_2003_Effects_of_9_Price_Endings_on_Retail_Sales_Evidence_from_Field_Experiments.pdf`
 - source_url: `https://doi.org/10.1023/A:1023581927405`
 - pdf_pages: 18
 

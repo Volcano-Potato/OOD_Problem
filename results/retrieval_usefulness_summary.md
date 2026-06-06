@@ -59,4 +59,4 @@
 
 ## Bottom Line
 
-`research_agent_v2_search` shows real, stable retrieval behavior rather than merely exposing tools in the schema. The retrieval layer is helpful in a majority of cases, but its most important causal-design value is concentrated in the two residual reuse cases left over from `v1` (`C005`, `C008`) and in measurement-heavy perturbations (`C014`, `C016`).
+`research_agent_v2_search` shows real, stable retrieval behavior rather than merely exposing tools in the schema. The retrieval layer is helpful in a majority of cases, but its most important causal-design value is concentrated in the last residual reuse case left over from `v1` (`C005`) and in measurement-heavy perturbations (`C014`, `C016`).

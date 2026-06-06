@@ -14,7 +14,7 @@
 - registry_domain: `marketing`
 - registry_design_family: `IV`
 - registry_key_failure_mode: `endogenous_exposure`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/Hui_Inman_Huang_Suher_2013_The_Effect_of_In_Store_Travel_Distance_on_Unplanned_Spending_Applications_to_Mobile_Promotion_Strategies.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C019_Hui_Inman_Huang_Suher_2013_The_Effect_of_In_Store_Travel_Distance_on_Unplanned_Spending_Applications_to_Mobile_Promotion_Strategies.pdf`
 - source_url: `https://doi.org/10.1509/jm.11.0496`
 - pdf_pages: 16
 

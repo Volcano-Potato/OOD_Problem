@@ -1593,6 +1593,52 @@ def extract_tool_call_counts(data: dict) -> dict[str, int]:
 
 - Updated figure index and main entry points:
   - `results/figures/README.md`
+
+## 2026-06-06 - Baseline Perturbed Re-audit Correction
+
+### Goal
+
+- Re-read the 10 frozen baseline `perturbed` raw reports against their `perturbed_variant.md` notes and correct the paired `mechanical reuse` audit where the earlier labels overstated reuse.
+
+### What Changed
+
+- Rebuilt:
+  - `results/perturbed_mechanical_reuse.csv`
+- Updated downstream summaries, reports, and figure artifacts that had hard-coded the older baseline headline:
+  - `README.md`
+  - `AGENTS.md`
+  - `results/perturbed_pair_audit.md`
+  - `results/research_agent_ablation_summary.{csv,md}`
+  - `results/research_agent_v1_vs_baseline.md`
+  - `results/metrics_summary.{csv,md}`
+  - `results/bottleneck_crosswalk.md`
+  - `report/research_report.md`
+  - `report/presentation_outline.md`
+  - `report/agent_econ_capability_report.md`
+  - `report/bottleneck_ape_leverage_plan.md`
+  - `report/research_agent_redesign_plan.md`
+  - `results/figures/research_agent_ablation_ladder.{csv,svg}`
+  - `results/figures/research_agent_cost_benefit.{csv,svg}`
+
+### Corrected Headline
+
+- Baseline `perturbed mechanical reuse`:
+  - old draft headline: `9/10`
+  - corrected re-audited headline: `1/10`
+- Current four-arm paired-audit ladder:
+  - baseline: `1/10`
+  - `research_agent_v1`: `1/10`
+  - `research_agent_v2_search`: `0/10`
+  - `research_agent_v3_planner_debate`: `0/10`
+
+### Interpretation
+
+- The main baseline weakness should no longer be described as a broad `9/10` broken-identification reuse pattern.
+- The `v1` arm should now be described as matching the re-audited baseline on the paired headline, not as leaving `2/10` residual cases.
+- The cleaner current reading is:
+  - baseline retains one clear residual reuse case (`C005`)
+  - `v1` does not improve over that re-audited baseline on the paired headline
+  - `v2` is the first arm that removes the residual reuse cases entirely
   - `README.md`
   - `report/research_report.md`
 
@@ -2226,4 +2272,60 @@ Each packet contains:
 
 - `python3 -m py_compile scripts/compute_benchmark_metrics.py`
 - `python3 scripts/compute_benchmark_metrics.py`
+- `git diff --check`
+
+## 2026-06-04 - Rename Main-Set Source PDFs By Case ID
+
+### Goal
+
+- Make the downloaded source-paper files for the 10 main-set benchmark cases immediately readable by case ID from the `downloads/` directory itself.
+
+### Files Renamed
+
+- Added `C###_` prefixes to the 10 main-set source PDFs in:
+  - `downloads/deepscientist_econ_business_experiment_papers/`
+- Renamed files now correspond to:
+  - `C001`
+  - `C002`
+  - `C004`
+  - `C005`
+  - `C008`
+  - `C010`
+  - `C014`
+  - `C016`
+  - `C019`
+  - `C020`
+
+### Metadata Updates
+
+- Updated `benchmark/case_registry.csv`
+- Updated `metadata.yaml` and `source_packet.md` for each affected main-set case
+- Updated `downloads/deepscientist_econ_business_experiment_papers/sources.tsv`
+
+### Verification
+
+- Residual old-path grep over `benchmark/`, `downloads/`, `README.md`, `report/`, `results/`, `scripts/`, and `project_todo/` returned no stale references for the renamed main-set PDFs.
+- `git diff --check`
+
+## 2026-06-06 - Reconfirm v3 Perturbed Audit And Sync README
+
+### Goal
+
+- Re-read the `research_agent_v3_planner_debate` formal `perturbed` raw memos against the corresponding `perturbed_variant.md` notes, then sync the public-facing documentation so all four paired-audit tables are easy to find.
+
+### Findings
+
+- Reconfirmed `research_agent_v3_planner_debate perturbed mechanical reuse = 0/10`.
+- No `v3` case preserved a broken base estimand after the perturbation.
+- The strongest former residual-reuse candidates remained:
+  - `C005`: downgraded to assignment-level ITT; exposure-level causal effect rejected
+  - `C008`: downgraded to bounded/descriptive net-effect logic; no clean untreated-comparison salvage
+
+### Files Updated
+
+- `results/perturbed_pair_audit_v3.md`
+- `README.md`
+
+### Verification
+
 - `git diff --check`

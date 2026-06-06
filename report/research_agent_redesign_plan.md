@@ -2,6 +2,8 @@
 
 ## 当前规划版本与定位
 
+> Historical note: this planning document was drafted before the later baseline re-audit. Where older draft language refers to `9/10` baseline mechanical reuse, the current audited baseline headline is `1/10`. Treat those older references as planning-time premises, not current results.
+
 - **v1（本文档主体）**：单轮 critic intervention。**只测一件事**：在 perturbed packet 上，加一个独立 critic agent + 强制 Stage 5 reconcile critic verdict，能不能降低 mechanical reuse？只跑 10 条 perturbed。**不**含 planner、不含多轮 debate、不含强制工具检索。
 - **v2**（v1 达标后再启动，本文档只做 parking lot）：在 v1 之上加 Stage 2 literature scan（含 soft-gated search retry），作为"检索是否额外降低 mechanical reuse"的清洁 ablation。
 - **v3**（v2 达标后再启动）：在 v2 之上加 Stage 0 planner 和 Stage 3↔4 多轮 debate，作为"agent 自主规划/辩论是否再有增益"的 ablation。
@@ -13,7 +15,7 @@
 当前 baseline `benchmark_isolated` 一次性把整段 `agent_task_*.md` 喂给 agent，agent 一次推理直接吐 20-section 报告 + Claim-Evidence Table。两个核心问题：
 
 - `outputs/raw_agent_logs/main/` 多数 run 的 `actual tool use = none`。远程工具几乎没被调用。
-- 整个 trajectory 是一次 forward pass，没有 candidate 枚举、没有 critic 反查、没有 reconcile。9/10 perturbed mechanical reuse、no_solution backsliding 等失败模式的根本原因，就是"一次性推理没有给 agent 自我反查的机会"。
+- 整个 trajectory 是一次 forward pass，没有 candidate 枚举、没有 critic 反查、没有 reconcile。planning 时把 perturbed mechanical reuse 当作一次性推理缺少自我反查的核心 failure mode；后续 baseline re-audit 则把该 headline 收窄到了 `1/10`。
 
 v1 只针对第二个问题——把 critic 引进来，强制让最终输出对齐 critic verdict。第一个问题（tool use 缺失）显式留到 v2。这等于诚实地承认 v1 不解决你最开始 voice 的 "actual tool use = none" 那个 pain；v1 只解决"一次性推理没有自我反查"这个 pain。
 
@@ -21,7 +23,7 @@ v1 只针对第二个问题——把 critic 引进来，强制让最终输出对
 
 只有一条核心 hypothesis：
 
-- **H1**：在 10 个 perturbed case 上，research_agent 的 `mechanical_reuse=yes` 比例（沿用 `results/perturbed_mechanical_reuse.csv` 的手写 narrative 口径）≤ 5/10。Baseline 是 9/10。
+- **H1**：在 10 个 perturbed case 上，research_agent 的 `mechanical_reuse=yes` 比例（沿用 `results/perturbed_mechanical_reuse.csv` 的手写 narrative 口径）≤ 5/10。This threshold was set at planning time, before the later baseline re-audit revised the baseline headline from `9/10` to `1/10`.
 
 v1 的成功就是 H1 达标。没达标就不进 v2。
 
@@ -259,6 +261,6 @@ v1 达标且 H1 显著（mechanical reuse 至少降到 ≤ 5/10）后，才考�
 
 v1 跑完 H1 达标的最强故事就一句话：
 
-> 在 *Ideation Bottleneck* 的 idea-vs-execution 分解下，baseline benchmark_isolated 显示 OOD 经济学因果设计任务里 9/10 perturbed packet 出现 mechanical reuse；本项目给同一个 agent 加一个独立 critic agent + 强制 final memo 对齐 critic verdict 这一个干净 intervention，mechanical reuse 比例降至 X/10。Tool use、planner、debate 等更复杂 agent 元素在 v2/v3 ablation 中单独测量贡献。
+> Planning-time framing: under the original draft audit, baseline `benchmark_isolated` appeared to show `9/10` perturbed packets with mechanical reuse. The later re-audit revised that baseline headline to `1/10`, so this paragraph should now be read as the historical motivation for `v1`, not as the current result claim.
 
 这个 framing 故意保持窄：一个 hypothesis、一个机制差异、一个 headline 数字。这是 v1 的全部承诺。

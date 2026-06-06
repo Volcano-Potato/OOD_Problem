@@ -15,13 +15,13 @@
 
 ## Headline
 
-- `research_agent_v1` `perturbed mechanical reuse`: `2/10`
+- `research_agent_v1` `perturbed mechanical reuse`: `1/10`
 - `research_agent_v2_search` `perturbed mechanical reuse`: `0/10`
-- Absolute reduction from `v1` to `v2`: `-2/10 = -0.20`
+- Absolute reduction from `v1` to `v2`: `-1/10 = -0.10`
 - Relative reduction from `v1` to `v2`: `-100%`
 
 Interpretation:
-Within the perturbed subset, adding an explicit retrieval stage on top of the critic-and-reconcile loop removes the last two residual reuse cases left in `v1`.
+Within the perturbed subset, adding an explicit retrieval stage on top of the critic-and-reconcile loop removes the last residual reuse case left in `v1`.
 
 ## Where v2 Improves Over v1
 
@@ -68,7 +68,7 @@ This means `v2` is not just a prompt rename or schema exposure change. It is a g
 ## Cost-Benefit Reading
 
 - Benefit:
-  - removes the last `2/10` residual reuse failures left in `v1`
+  - removes the last `1/10` residual reuse failure left in `v1`
   - produces real, stable tool use
   - is especially helpful in packet settings where the perturbation creates a measurement or interference argument that external methodological literature can sharpen
 - Cost:

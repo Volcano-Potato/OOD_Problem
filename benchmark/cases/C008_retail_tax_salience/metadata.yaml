@@ -4,7 +4,7 @@ do_not_include_in_agent_context: true
 case_id: C008
 anonymous_short_name: retail_tax_salience
 paper_key: chetty_looney_kroft_2009_tax_salience
-source_pdf: downloads/deepscientist_econ_business_experiment_papers/Chetty_Looney_Kroft_2009_Salience_and_Taxation_Theory_and_Evidence.pdf
+source_pdf: downloads/deepscientist_econ_business_experiment_papers/C008_Chetty_Looney_Kroft_2009_Salience_and_Taxation_Theory_and_Evidence.pdf
 
 taxonomy:
   domain: public_econ

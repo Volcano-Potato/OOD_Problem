@@ -14,7 +14,7 @@
 - registry_domain: `consumer_finance`
 - registry_design_family: `factorial_RCT`
 - registry_key_failure_mode: `mechanism_confounding`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/Karlan_Zinman_2009_Observing_Unobservables_Identifying_Information_Asymmetries_with_a_Consumer_Credit_Field_Experiment.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C002_Karlan_Zinman_2009_Observing_Unobservables_Identifying_Information_Asymmetries_with_a_Consumer_Credit_Field_Experiment.pdf`
 - source_url: `https://sites.dartmouth.edu/jzinman/files/2021/02/KarlanZinman_OU_long.pdf`
 - pdf_pages: 49
 

@@ -124,9 +124,9 @@
     - `results/metrics_summary_research_agent_v1.md`
     - `results/research_agent_v1_vs_baseline.md`
   - 当前最重要的 intervention 结果是：
-    - baseline `perturbed mechanical reuse = 9/10`
-    - `research_agent_v1 perturbed mechanical reuse = 2/10`
-  - 解释上应把这视为 `task30` 的主结果
+    - baseline `perturbed mechanical reuse = 1/10` after the baseline re-audit
+    - `research_agent_v1 perturbed mechanical reuse = 1/10`
+  - 解释上不应再把这视为 “v1 relative to baseline” 的 headline improvement
   - 但 `research_agent_v1` 的一般 claim-level headline metrics 仍应暂作 provisional，因为现有 override 体系主要是围绕 baseline 冻结 run IDs 构建
 - `task31` 已完成：
   - 已新增轻量 threat-recognition audit：
@@ -171,7 +171,7 @@
     - `results/perturbed_mechanical_reuse_v2.csv`
     - `results/perturbed_pair_audit_v2.md`
   - headline 结果：
-    - `research_agent_v1 perturbed mechanical reuse = 2/10`
+    - `research_agent_v1 perturbed mechanical reuse = 1/10`
     - `research_agent_v2_search perturbed mechanical reuse = 0/10`
   - 已完成 retrieval usefulness audit：
     - `results/retrieval_usefulness_audit.csv`
@@ -185,7 +185,7 @@
     - `results/research_agent_v2_vs_v1.md`
   - 当前最合理的结论是：
     - `v2` 相对 `v1` 在 perturbed 子集上提供了真实且有增量价值的 retrieval layer
-    - 但该价值集中在少数关键 residual-reuse cases（尤其 `C005`, `C008`）和 measurement-heavy cases（`C014`, `C016`）
+    - 但该价值主要集中在最后一个 residual-reuse case（`C005`）和 measurement-heavy cases（`C014`, `C016`）
   - 推荐结论：
     - `go to v3`, 但把 `v3` 视为 clean optional ablation，而不是因为 `v2` 仍未修好
 - `task36` 已完成：
@@ -239,8 +239,8 @@
   - `v3` paired audit headline：
     - `research_agent_v3_planner_debate perturbed mechanical reuse = 0/10`
   - 统一 ablation headline：
-    - baseline `9/10`
-    - `v1` `2/10`
+    - baseline `1/10`
+    - `v1` `1/10`
     - `v2` `0/10`
     - `v3` `0/10`
   - `v3` 运行元数据总结：
@@ -256,10 +256,10 @@
 当前最重要的主结论是：
 
 - `level1 -> level2` 有明显提升，而 `level2 -> level3` 基本持平
-- `perturbed` 的配对审计显示 `9/10` case 存在 broken-identification 下的 mechanical reuse
+- baseline `perturbed` 的配对审计在重审后显示 `1/10` case 存在 clear broken-identification mechanical reuse
 - `no_solution` 结果当前应表述为 baseline heuristic honesty `8/10` tested runs，而不是无条件 headline rate
-- `task30` 的扩展性结论是：
-  - critic-and-reconcile intervention 在 `10` 条 `perturbed` case 上把 mechanical reuse 从 `9/10` 降到了 `2/10`
+- `task30` 的扩展性结论应收口为：
+  - `v1` 提供了更清晰的 critique trace，但不再能被表述为相对 re-audited baseline 的 headline 改善
 - `task31` 的扩展性结论是：
   - baseline `level2` threat-recognition audit 为 `19/20`
   - 因而主线弱点更像是 threat-to-claim alignment，而不是 threat recognition 缺失
@@ -267,7 +267,7 @@
   - `research_agent_v2_search` 已能稳定完成 `10` 条 `perturbed` retrieval-augmented batch
   - retrieval metadata 已被记录并接入正式评测链
 - `task35` 的扩展性结论是：
-  - `research_agent_v2_search` 将 `perturbed mechanical reuse` 从 `v1` 的 `2/10` 降到 `0/10`
+  - `research_agent_v2_search` 将 `perturbed mechanical reuse` 从 `v1` 的 `1/10` 降到 `0/10`
   - retrieval 是真实发生且多数情况下有帮助的，而不是名义上的 tool exposure
   - 但 `metrics_summary_research_agent_v2_search.csv` 中的 `Mean Claim Score = 1.0` 仍不应作为 headline 结果引用
 - `task36` 当前只证明：

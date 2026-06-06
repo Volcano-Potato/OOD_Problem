@@ -14,7 +14,7 @@
 - registry_domain: `behavioral`
 - registry_design_family: `mechanism_experiment`
 - registry_key_failure_mode: `mechanism_confounding`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/DellaVigna_List_Malmendier_2012_Testing_for_Altruism_and_Social_Pressure_in_Charitable_Giving.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C001_DellaVigna_List_Malmendier_2012_Testing_for_Altruism_and_Social_Pressure_in_Charitable_Giving.pdf`
 - source_url: `https://sdellavi.com/pdf/CharityQJEFeb12.pdf`
 - pdf_pages: 56
 

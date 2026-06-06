@@ -14,7 +14,7 @@
 - registry_domain: `public_econ`
 - registry_design_family: `DID`
 - registry_key_failure_mode: `timing_endogeneity`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/Chetty_Looney_Kroft_2009_Salience_and_Taxation_Theory_and_Evidence.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C008_Chetty_Looney_Kroft_2009_Salience_and_Taxation_Theory_and_Evidence.pdf`
 - source_url: `https://rajchetty.com/wp-content/uploads/2021/04/taxsalience_aer.pdf`
 - pdf_pages: 33
 

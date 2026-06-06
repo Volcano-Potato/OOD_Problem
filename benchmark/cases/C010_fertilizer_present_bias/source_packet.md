@@ -14,7 +14,7 @@
 - registry_domain: `development`
 - registry_design_family: `mechanism_experiment`
 - registry_key_failure_mode: `mechanism_confounding`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/Duflo_Kremer_Robinson_2011_Nudging_Farmers_to_Use_Fertilizer_Theory_and_Experimental_Evidence_from_Kenya.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C010_Duflo_Kremer_Robinson_2011_Nudging_Farmers_to_Use_Fertilizer_Theory_and_Experimental_Evidence_from_Kenya.pdf`
 - source_url: `https://www.nber.org/papers/w15131`
 - pdf_pages: 46
 

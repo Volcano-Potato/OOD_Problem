@@ -78,8 +78,8 @@ Visual:
 
 Takeaway:
 - performance drops most when one key identification condition is removed
-- paired audit result: `9/10` show mechanical reuse
-- strongest evidence that the agent struggles to recompute what remains identified
+- paired audit result after baseline re-audit: `1/10` show clear mechanical reuse
+- strongest remaining baseline example is `C005`, not a broad 9-case pattern
 
 ## Slide 10: Error-Type Distribution
 
@@ -139,8 +139,8 @@ Message:
 
 ## Slide 16: Intervention Ladder
 
-- baseline `perturbed` mechanical reuse: `9/10`
-- `research_agent_v1`: `2/10`
+- baseline `perturbed` mechanical reuse: `1/10`
+- `research_agent_v1`: `1/10`
 - `research_agent_v2_search`: `0/10`
 - `research_agent_v3_planner_debate`: `0/10`
 
@@ -148,7 +148,7 @@ Visual:
 - one compact ablation table or step-down chart
 
 Takeaway:
-- `v1` is the first-order fix
+- `v1` is not a headline gain over the re-audited baseline
 - `v2` is the strongest practical intervention arm
 - `v3` adds process structure but no extra headline gain over `v2`
 

@@ -14,7 +14,7 @@
 - registry_domain: `political_econ`
 - registry_design_family: `field_experiment`
 - registry_key_failure_mode: `measurement_error`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/Olken_2007_Monitoring_Corruption_Evidence_from_a_Field_Experiment_in_Indonesia.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C014_Olken_2007_Monitoring_Corruption_Evidence_from_a_Field_Experiment_in_Indonesia.pdf`
 - source_url: `https://www.povertyactionlab.org/sites/default/files/research-paper/27_Olken_Monitoring_Corruption.pdf`
 - pdf_pages: 50
 

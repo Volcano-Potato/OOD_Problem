@@ -14,7 +14,7 @@
 - registry_domain: `health`
 - registry_design_family: `field_experiment`
 - registry_key_failure_mode: `measurement_error`
-- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/Dupas_2011_Do_Teenagers_Respond_to_HIV_Risk_Information_Evidence_from_a_Field_Experiment_in_Kenya.pdf`
+- source_pdf: `downloads/deepscientist_econ_business_experiment_papers/C016_Dupas_2011_Do_Teenagers_Respond_to_HIV_Risk_Information_Evidence_from_a_Field_Experiment_in_Kenya.pdf`
 - source_url: `http://www.aeaweb.org/articles.php?doi=10.1257/app.3.1.1`
 - pdf_pages: 34
 
