@@ -16,18 +16,6 @@ This project does not try to re-measure idea quality. Instead, it treats OOD bus
 - measurement credibility
 - claim calibration when strong causal design is unavailable
 
-The concrete question here is:
-
-> When a research agent is given an anonymized applied business/economics research-design task, where does it actually fail?
-
-The benchmark focuses on weaknesses that are easy to hide behind fluent output:
-
-- overclaiming beyond the task packet
-- reusing a base design after a key identifying condition is removed
-- treating weak or contaminated measurement as clean evidence
-- making mechanism claims stronger than the design supports
-- failing to honestly downgrade in no-solution settings
-
 ## Quick Start
 
 If you only want the shortest path through the repository:
@@ -404,29 +392,6 @@ Important interpretation rule:
   - `research_agent_v2_search` for the strongest practical intervention arm
   - `research_agent_v3_planner_debate` only when richer diagnostic traces are needed
 
-## Repository Layout
-
-Top-level directories you will actually use:
-
-- [benchmark/](benchmark)
-  - benchmark definition, case taxonomy, case registry, case files
-- [annotations/](annotations)
-  - annotation guide, first-pass labels, second labels, adjudicated labels
-- [outputs/](outputs)
-  - raw agent logs, run manifest, parsed claims
-- [results/](results)
-  - metrics, grouped tables, figures, failure-case analysis
-- [report/](report)
-  - final report, reproducibility guide, presentation outline
-- [project_todo/](project_todo)
-  - detailed task-level execution record for the whole pipeline
-
-Useful index files:
-
-- [project_todo/README.md](project_todo/README.md)
-- [benchmark/run_configs/run_config.md](benchmark/run_configs/run_config.md)
-- [AGENTS.md](AGENTS.md)
-- [RUN_LOG.md](RUN_LOG.md)
 
 
 
@@ -482,12 +447,6 @@ That is why the benchmark emphasizes:
 - `no_solution` claim-calibration tests
 - claim-level adjudication instead of only holistic scoring
 
-Associated scripts:
-
-- [scripts/extract_agent_claims.py](scripts/extract_agent_claims.py)
-- [scripts/build_first_pass_annotations.py](scripts/build_first_pass_annotations.py)
-- [scripts/build_second_labels_and_adjudication.py](scripts/build_second_labels_and_adjudication.py)
-- [scripts/compute_benchmark_metrics.py](scripts/compute_benchmark_metrics.py)
 
 ## How To Re-run Key Parts
 
