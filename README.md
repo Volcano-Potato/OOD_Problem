@@ -32,16 +32,173 @@ The benchmark focuses on weaknesses that are easy to hide behind fluent output:
 
 If you only want the shortest path through the repository:
 
-1. Read the final report:
-   - [report/research_report.md](report/research_report.md)
-2. Read the reproducibility guide:
+1. Read the reproducibility guide:
    - [report/reproducibility_readme.md](report/reproducibility_readme.md)
-3. Inspect the frozen benchmark results:
-   - [results/metrics_summary.md](results/metrics_summary.md)
+2. Inspect the remaining benchmark artifacts:
    - [results/failure_cases.md](results/failure_cases.md)
-4. Inspect one concrete case:
+3. Inspect one concrete case:
    - [benchmark/case_file_guide.md](benchmark/case_file_guide.md)
    - [benchmark/cases/C001_charitable_giving](benchmark/cases/C001_charitable_giving)
+
+## Setup And Running Agents
+
+This repository does not vendor the full OpenClaw runtime. The commands below assume:
+
+- a working local `openclaw` CLI is already installed and on `PATH`
+- the local OpenClaw agent profile `benchmark_isolated` already exists
+- Python 3 is available as `python3`
+- you run commands from the repository root
+
+Recommended first smoke test from the benchmark config:
+
+- case: `C001`
+- variant: `level2`
+- packet: `benchmark/cases/C001_charitable_giving/agent_task_level2.md`
+
+### 1. Baseline: `benchmark_isolated`
+
+Single-case smoke test:
+
+```bash
+THINKING_LEVEL=high \
+scripts/run_isolated_packet.sh \
+  benchmark/cases/C001_charitable_giving/agent_task_level2.md \
+  1200
+```
+
+This directly sends one agent-facing packet to the locally isolated OpenClaw agent and prints the raw JSON response to stdout.
+
+Formal batch run with automatic postprocessing into `outputs/raw_agent_logs/main/` and `outputs/run_manifest.csv`:
+
+```bash
+THINKING_LEVEL=high \
+scripts/run_batch_isolated.sh \
+  benchmark/run_configs/main_run_batch_spec.csv \
+  86400
+```
+
+Useful baseline files:
+
+- runner: [scripts/run_isolated_packet.sh](scripts/run_isolated_packet.sh)
+- batch wrapper: [scripts/run_batch_isolated.sh](scripts/run_batch_isolated.sh)
+- postprocessor: [scripts/postprocess_openclaw_run.py](scripts/postprocess_openclaw_run.py)
+- run policy: [benchmark/run_configs/run_config.md](benchmark/run_configs/run_config.md)
+
+### 2. `research_agent_v1`
+
+`v1` is a three-stage critic-and-reconcile pipeline:
+
+- Stage 3 candidate generation
+- Stage 4 independent critique
+- Stage 5 reconciled final memo
+
+Single-case smoke test on one `perturbed` packet:
+
+```bash
+python3 scripts/run_research_agent_v1.py \
+  --input-file benchmark/cases/C001_charitable_giving/agent_task_perturbed.md \
+  --timeout-seconds 1800 \
+  --thinking-level high
+```
+
+Batch run over the `10`-case `perturbed` intervention set:
+
+```bash
+THINKING_LEVEL=high \
+scripts/run_research_agent_v1_batch.sh \
+  benchmark/run_configs/perturbed_intervention_batch_spec.csv \
+  1800
+```
+
+Useful `v1` files:
+
+- runner: [scripts/run_research_agent_v1.py](scripts/run_research_agent_v1.py)
+- batch wrapper: [scripts/run_research_agent_v1_batch.sh](scripts/run_research_agent_v1_batch.sh)
+- postprocessor: [scripts/postprocess_research_agent_v1_run.py](scripts/postprocess_research_agent_v1_run.py)
+- prompts: [benchmark/prompts/research_agent_v1](benchmark/prompts/research_agent_v1)
+
+### 3. `research_agent_v2_search`
+
+`v2` adds a mandatory retrieval stage on top of `v1`. Before running it, create a local env file for retrieval credentials:
+
+```bash
+cp .benchmark.local.env.example .benchmark.local.env
+```
+
+At minimum, fill these values in `.benchmark.local.env`:
+
+- `OPENALEX_API_KEY`
+- `OPENALEX_EMAIL`
+
+Single-case smoke test:
+
+```bash
+python3 scripts/run_research_agent_v2.py \
+  --input-file benchmark/cases/C001_charitable_giving/agent_task_perturbed.md \
+  --timeout-seconds 1800 \
+  --thinking-level high
+```
+
+Batch run over the `10`-case retrieval-augmented `perturbed` set:
+
+```bash
+THINKING_LEVEL=high \
+scripts/run_research_agent_v2_batch.sh \
+  benchmark/run_configs/perturbed_retrieval_v2_batch_spec.csv \
+  1800
+```
+
+Useful `v2` files:
+
+- runner: [scripts/run_research_agent_v2.py](scripts/run_research_agent_v2.py)
+- batch wrapper: [scripts/run_research_agent_v2_batch.sh](scripts/run_research_agent_v2_batch.sh)
+- postprocessor: [scripts/postprocess_research_agent_v2_run.py](scripts/postprocess_research_agent_v2_run.py)
+- prompts: [benchmark/prompts/research_agent_v2](benchmark/prompts/research_agent_v2)
+- local env template: [.benchmark.local.env.example](.benchmark.local.env.example)
+
+### 4. `research_agent_v3_planner_debate`
+
+`v3` keeps the `v2` retrieval layer and adds:
+
+- Stage 0 planner
+- one critique-response debate round (`Stage 3b` and `Stage 4b`)
+
+It uses the same `.benchmark.local.env` retrieval setup as `v2`.
+
+Single-case smoke test:
+
+```bash
+python3 scripts/run_research_agent_v3.py \
+  --input-file benchmark/cases/C005_online_ad_measurement/agent_task_perturbed.md \
+  --timeout-seconds 1800 \
+  --thinking-level high
+```
+
+Batch run over the `10`-case planner-debate `perturbed` set:
+
+```bash
+THINKING_LEVEL=high \
+scripts/run_research_agent_v3_batch.sh \
+  benchmark/run_configs/perturbed_planner_debate_v3_batch_spec.csv \
+  1800
+```
+
+Useful `v3` files:
+
+- runner: [scripts/run_research_agent_v3.py](scripts/run_research_agent_v3.py)
+- batch wrapper: [scripts/run_research_agent_v3_batch.sh](scripts/run_research_agent_v3_batch.sh)
+- postprocessor: [scripts/postprocess_research_agent_v3_run.py](scripts/postprocess_research_agent_v3_run.py)
+- prompts: [benchmark/prompts/research_agent_v3](benchmark/prompts/research_agent_v3)
+
+### 5. Which Arm Should I Demo First?
+
+For a course demo or a QQ / WeChat channel proof-of-execution:
+
+- start with the baseline `benchmark_isolated` smoke test
+- if you need one intervention arm, `research_agent_v1` is the simplest extension
+- `v2` and `v3` are better treated as script-driven back-end pipelines rather than manual single-chat demos because they depend on retrieval state and multi-stage orchestration
+
+If you use QQ, WeChat, or another chat frontend as the operator channel, record that channel in the run log and preserve screenshots or exported chat logs as described in [benchmark/run_configs/run_config.md](benchmark/run_configs/run_config.md).
 
 ## Key Results
 
@@ -49,50 +206,63 @@ Headline numbers from the current main benchmark:
 
 - successful annotated main runs: `50`
 - total adjudicated claims: `414`
-- Mean Claim Score: `0.8200`
-- Design-Evidence Inconsistency Rate: `0.2415`
-- Overclaim Rate: `0.1232`
-- Unsupported Design Claim Rate: `0.1014`
-- `8/10` tested `no_solution` runs avoided supported causal claims under the current heuristic
-- `perturbed` mechanical reuse: `9/10`
-- `level1` mean run score: `0.6902`
-- `level2` mean run score: `0.8313`
-- `level3` mean run score: `0.8421`
-- `perturbed` mean run score: `0.7562`
+- baseline metric artifacts have been generated, but they should currently be treated as **provisional / not for headline use**
+- reason: after later audit and review, the benchmark was found to have specification and evaluation-rigor issues that need cleanup before these summary rates can be treated as final
+- for now, use the repository as a record of runs, annotations, and audit artifacts rather than as a finalized benchmark leaderboard
+- a separate manual review of `C001` baseline `level1/level2/level3` report problems is recorded in [human_eval.md](human_eval.md)
 
 Main conclusion:
 
-> The benchmark's main signal is an execution weakness, not an ideation weakness: once a plausible design direction is on the table, the agent often fails to keep identification logic, measurement assumptions, and final claims aligned with what the packet actually justifies.
+> The current repository should be read as an audited benchmark construction and intervention workspace, not yet as a finalized source of stable headline metrics.
 
 Intervention ladder after the frozen baseline:
 
 - evaluation subset: `10` `perturbed` cases
-- baseline `perturbed` mechanical reuse: `9/10`
-- `research_agent_v1` `perturbed` mechanical reuse: `2/10`
+- baseline `perturbed` mechanical reuse: `1/10`
+- `research_agent_v1` `perturbed` mechanical reuse: `1/10`
 - `research_agent_v2_search` `perturbed` mechanical reuse: `0/10`
 - `research_agent_v3_planner_debate` `perturbed` mechanical reuse: `0/10`
 
 Reading:
 
-- `v1` is the first-order fix: critic-and-reconcile removes most broken-identification reuse.
-- `v2` is the default recommended intervention arm: adding explicit retrieval removes the last residual reuse cases.
+- `v1` is not a headline improvement over the re-audited baseline; it matches baseline at `1/10`, with `C005` remaining the residual reuse case.
+- the only clear re-audited `perturbed` mechanical-reuse case in the frozen baseline is `C005`, corresponding to:
+  - [baseline C005 perturbed report](/Users/jiangcanxiang/Documents/OOD_Problem/outputs/raw_agent_logs/main/C005_perturbed_openclaw_RUN_20260527_225443_13_openclaw_deepseekv4pro_isolated.md)
+- the only clear re-audited `perturbed` mechanical-reuse case in `research_agent_v1` is also `C005`, corresponding to:
+  - [v1 C005 perturbed report](/Users/jiangcanxiang/Documents/OOD_Problem/outputs/raw_agent_logs/main/C005_perturbed__research_agent_v1__RUN_20260531_170002_04_openclaw_deepseekv4pro_researchagentv1.md)
+- `v2` is the default recommended intervention arm: adding explicit retrieval removes the residual reuse cases present in baseline and `v1`.
 - `v3` is useful as a richer diagnostic arm, but it does not improve the headline beyond `v2` on the current `10`-case `perturbed` subset.
+
+Paired audit tables:
+
+- baseline:
+  - [results/perturbed_mechanical_reuse.csv](results/perturbed_mechanical_reuse.csv)
+- `research_agent_v1`:
+  - [results/perturbed_pair_audit_v1.md](results/perturbed_pair_audit_v1.md)
+  - [results/perturbed_mechanical_reuse_v1.csv](results/perturbed_mechanical_reuse_v1.csv)
+- `research_agent_v2_search`:
+  - [results/perturbed_pair_audit_v2.md](results/perturbed_pair_audit_v2.md)
+  - [results/perturbed_mechanical_reuse_v2.csv](results/perturbed_mechanical_reuse_v2.csv)
+- `research_agent_v3_planner_debate`:
+  - [results/perturbed_pair_audit_v3.md](results/perturbed_pair_audit_v3.md)
+  - [results/perturbed_mechanical_reuse_v3.csv](results/perturbed_mechanical_reuse_v3.csv)
 
 Core output files:
 
-- [results/metrics_summary.md](results/metrics_summary.md)
 - [results/failure_cases.md](results/failure_cases.md)
 - [results/figures/information_gradient_scores.svg](results/figures/information_gradient_scores.svg)
 - [results/figures/error_type_distribution.svg](results/figures/error_type_distribution.svg)
 - [results/figures/perturbed_downgrade.svg](results/figures/perturbed_downgrade.svg)
-- [results/perturbed_pair_audit.md](results/perturbed_pair_audit.md)
+- [results/perturbed_mechanical_reuse.csv](results/perturbed_mechanical_reuse.csv)
 - [results/perturbed_pair_audit_v1.md](results/perturbed_pair_audit_v1.md)
+- [results/perturbed_mechanical_reuse_v1.csv](results/perturbed_mechanical_reuse_v1.csv)
 - [results/perturbed_pair_audit_v2.md](results/perturbed_pair_audit_v2.md)
+- [results/perturbed_mechanical_reuse_v2.csv](results/perturbed_mechanical_reuse_v2.csv)
 - [results/perturbed_pair_audit_v3.md](results/perturbed_pair_audit_v3.md)
+- [results/perturbed_mechanical_reuse_v3.csv](results/perturbed_mechanical_reuse_v3.csv)
 - [results/research_agent_v1_vs_baseline.md](results/research_agent_v1_vs_baseline.md)
 - [results/research_agent_v2_vs_v1.md](results/research_agent_v2_vs_v1.md)
 - [results/research_agent_v3_vs_v1_v2.md](results/research_agent_v3_vs_v1_v2.md)
-- [results/research_agent_ablation_summary.md](results/research_agent_ablation_summary.md)
 
 ## What This Repository Contains
 
@@ -103,14 +273,13 @@ The repository is the full benchmark pipeline, not just a prompt demo.
 - agent-facing task packets
 - OpenClaw run configuration and batch orchestration
 - claim extraction
-- annotation and adjudication
-- metrics and figures
+- annotation artifacts and review materials
+- figures and downstream comparison notes
 - failure-case analysis
-- final report and reproducibility package
+- reproducibility package
 
 The final benchmark package is documented in:
 
-- [report/research_report.md](report/research_report.md)
 - [report/reproducibility_readme.md](report/reproducibility_readme.md)
 - [report/presentation_outline.md](report/presentation_outline.md)
 
@@ -204,10 +373,9 @@ The repository now has two result layers:
 
 - frozen benchmark baseline
   - main benchmark complete through `task26`
-  - primary headline files remain:
-    - [results/metrics_summary.md](results/metrics_summary.md)
+  - headline metric outputs were later withdrawn pending reevaluation
+  - remaining baseline-facing file:
     - [results/failure_cases.md](results/failure_cases.md)
-    - [results/perturbed_pair_audit.md](results/perturbed_pair_audit.md)
 - post-benchmark extensions
   - `task27-29` complete
   - `task30` complete as the first intervention study on `perturbed` cases
@@ -223,10 +391,8 @@ The repository now has two result layers:
     - [results/research_agent_v1_vs_baseline.md](results/research_agent_v1_vs_baseline.md)
     - [results/research_agent_v2_vs_v1.md](results/research_agent_v2_vs_v1.md)
     - [results/research_agent_v3_vs_v1_v2.md](results/research_agent_v3_vs_v1_v2.md)
-    - [results/research_agent_ablation_summary.md](results/research_agent_ablation_summary.md)
   - primary task31 files:
     - [results/threat_recognition_audit.csv](results/threat_recognition_audit.csv)
-    - [results/threat_recognition_summary.md](results/threat_recognition_summary.md)
 
 Important interpretation rule:
 
@@ -262,18 +428,7 @@ Useful index files:
 - [AGENTS.md](AGENTS.md)
 - [RUN_LOG.md](RUN_LOG.md)
 
-## Recommended Reading Order
 
-If you are new to the project, this order is the fastest way to understand it:
-
-1. this `README.md`
-2. [report/research_report.md](report/research_report.md)
-3. [benchmark/case_file_guide.md](benchmark/case_file_guide.md)
-4. one case directory under [benchmark/cases/](benchmark/cases)
-5. [outputs/run_manifest.csv](outputs/run_manifest.csv)
-6. [annotations/adjudicated_labels.csv](annotations/adjudicated_labels.csv)
-7. [results/metrics_summary.md](results/metrics_summary.md)
-8. [results/failure_cases.md](results/failure_cases.md)
 
 ## Execution Logic
 
@@ -310,14 +465,7 @@ The orchestration is script-driven, not agent-driven:
 - [scripts/postprocess_openclaw_run.py](scripts/postprocess_openclaw_run.py)
   - raw JSON postprocessing, normalized logs, manifest append
 
-### 3. Score the outputs
 
-1. extract claims from the `Claim-Evidence Table`
-2. annotate claims
-3. sample claims for second labeling
-4. adjudicate disagreements
-5. compute metrics
-6. analyze representative failures
 
 ## Research Positioning
 
@@ -392,93 +540,11 @@ There are three common ways to use this repository:
 - do not mix multiple variants into one run
 - regenerate claims, labels, and metrics after any new runs
 
-## Where To Find Outputs
 
-### Raw run artifacts
 
-- [outputs/run_manifest.csv](outputs/run_manifest.csv)
-- [outputs/raw_agent_logs/pilot](outputs/raw_agent_logs/pilot)
-- [outputs/raw_agent_logs/main](outputs/raw_agent_logs/main)
 
-### Parsed claims
 
-- [outputs/parsed_claims/claims_to_annotate.csv](outputs/parsed_claims/claims_to_annotate.csv)
-- [outputs/parsed_claims/claim_extraction_summary.md](outputs/parsed_claims/claim_extraction_summary.md)
 
-### Final labels
-
-- [annotations/adjudicated_labels.csv](annotations/adjudicated_labels.csv)
-- [annotations/adjudication_notes.md](annotations/adjudication_notes.md)
-
-### Metrics and figures
-
-- [results/metrics_summary.csv](results/metrics_summary.csv)
-- [results/metrics_summary.md](results/metrics_summary.md)
-- [results/grouped_metrics.csv](results/grouped_metrics.csv)
-- [results/figures/](results/figures)
-- Intervention figure highlights:
-  - [results/figures/research_agent_ablation_ladder.svg](results/figures/research_agent_ablation_ladder.svg)
-  - [results/figures/research_agent_cost_benefit.svg](results/figures/research_agent_cost_benefit.svg)
-  - [results/figures/research_agent_stage_metadata.svg](results/figures/research_agent_stage_metadata.svg)
-
-### Failure analysis
-
-- [results/failure_cases.md](results/failure_cases.md)
-
-## Main Findings
-
-The benchmark suggests five recurring failure families:
-
-- unsupported operational concretization
-- mechanical reuse under broken identification
-- measurement credulity
-- mechanism over-interpretation from limited evidence
-- no-solution causal backsliding
-
-The strongest general pattern is that the agent is often able to produce a plausible research-design report, but less reliable at keeping its claim strength aligned with what the packet truly supports.
-
-The most important Task 26 update is that the information gradient is no longer flat by construction:
-
-- `level1 -> level2` shows a large improvement (`0.6902 -> 0.8313`)
-- `level2 -> level3` is nearly flat (`0.8313 -> 0.8421`)
-
-That makes the benchmark story sharper: structured data and design information matter, but additional explicit threat hints did not produce a meaningful further gain in this round.
-
-## Failure Taxonomy
-
-Representative failure families:
-
-- unsupported operational concretization
-- mechanical reuse under broken identification
-- measurement credulity
-- mechanism over-interpretation from limited evidence
-- no-solution causal backsliding
-
-See:
-
-- [results/failure_cases.md](results/failure_cases.md)
-
-## Recommended Reading Order
-
-## Guidance For Continuing The Project
-
-If you want to extend the benchmark:
-
-- add more cases using the same `05-14` case-construction pipeline
-- keep agent-facing and evaluator-only files separated
-- do not mix multiple variants into one run
-- keep `run_manifest.csv` and raw logs synchronized
-- treat `adjudicated_labels.csv` as the only source for final metrics
-
-If you want to compare new agents or models:
-
-- keep the same case set and variant matrix
-- keep the same `benchmark_isolated` logic or document any deviation clearly
-- rerun claim extraction, annotation, adjudication, and metrics on the new outputs
-
-If you want to prepare a class presentation:
-
-- start from [report/presentation_outline.md](report/presentation_outline.md)
 
 ## Project Status
 
