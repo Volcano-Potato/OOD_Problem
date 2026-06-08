@@ -235,22 +235,6 @@ Paired audit tables:
   - [results/perturbed_pair_audit_v3.md](results/perturbed_pair_audit_v3.md)
   - [results/perturbed_mechanical_reuse_v3.csv](results/perturbed_mechanical_reuse_v3.csv)
 
-Core output files:
-
-- [results/failure_cases.md](results/failure_cases.md)
-- [results/figures/information_gradient_scores.svg](results/figures/information_gradient_scores.svg)
-- [results/figures/error_type_distribution.svg](results/figures/error_type_distribution.svg)
-- [results/figures/perturbed_downgrade.svg](results/figures/perturbed_downgrade.svg)
-- [results/perturbed_mechanical_reuse.csv](results/perturbed_mechanical_reuse.csv)
-- [results/perturbed_pair_audit_v1.md](results/perturbed_pair_audit_v1.md)
-- [results/perturbed_mechanical_reuse_v1.csv](results/perturbed_mechanical_reuse_v1.csv)
-- [results/perturbed_pair_audit_v2.md](results/perturbed_pair_audit_v2.md)
-- [results/perturbed_mechanical_reuse_v2.csv](results/perturbed_mechanical_reuse_v2.csv)
-- [results/perturbed_pair_audit_v3.md](results/perturbed_pair_audit_v3.md)
-- [results/perturbed_mechanical_reuse_v3.csv](results/perturbed_mechanical_reuse_v3.csv)
-- [results/research_agent_v1_vs_baseline.md](results/research_agent_v1_vs_baseline.md)
-- [results/research_agent_v2_vs_v1.md](results/research_agent_v2_vs_v1.md)
-- [results/research_agent_v3_vs_v1_v2.md](results/research_agent_v3_vs_v1_v2.md)
 
 ## What This Repository Contains
 
